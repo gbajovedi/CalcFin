@@ -2747,13 +2747,64 @@
             outline-color: #0f172a !important;
             box-shadow: 0 0 0 2px #fbbf24 !important;
         }
+        /* Layout responsivo do cabeçalho */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        .header-container {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-rows: auto auto;
+            gap: 0.5rem 0.5rem;
+            align-items: center;
+        }
+        .header-brand {
+            grid-column: 1;
+            grid-row: 1;
+            min-width: 0;
+        }
+        .header-theme {
+            grid-column: 2;
+            grid-row: 1;
+            justify-self: end;
+            display: flex;
+            align-items: center;
+        }
+        .header-controls {
+            grid-column: 1 / -1;
+            grid-row: 2;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.375rem 0.5rem;
+        }
+        @media (min-width: 1024px) {
+            .header-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+            .header-brand {
+                flex: 1 1 auto;
+            }
+            .header-controls {
+                flex: 0 0 auto;
+                order: 2;
+            }
+            .header-theme {
+                flex: 0 0 auto;
+                order: 3;
+            }
+        }
         @media (max-width: 540px) {
-            .theme-toggle { min-width: 82px; min-height: 40px; gap: 4px; padding: 6px 7px; }
-            .theme-icon { width: 15px; height: 15px; flex-basis: 15px; }
-            .theme-switch-track { width: 40px; flex-basis: 40px; height: 24px; }
-            .theme-switch-knob { width: 16px; height: 16px; flex-basis: 16px; }
-            body.light-mode .theme-switch-knob { transform: translateX(18px); }
-            body.light-mode header > div:first-child { align-items: flex-start; }
+            .theme-toggle { min-width: 76px; min-height: 36px; gap: 4px; padding: 4px 6px; }
+            .theme-icon { width: 14px; height: 14px; flex-basis: 14px; }
+            .theme-switch-track { width: 36px; flex-basis: 36px; height: 22px; }
+            .theme-switch-knob { width: 14px; height: 14px; flex-basis: 14px; }
+            body.light-mode .theme-switch-knob { transform: translateX(16px); }
         }
 
 
@@ -3087,36 +3138,23 @@
 <body class="light-mode bg-[#080c14] text-slate-100 font-sans min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950 mobile-view-calc">
 
     <!-- CABEÇALHO SUPERIOR · v16.2 -->
-    <header class="border-b border-slate-800 bg-[#0e1424]/90 backdrop-blur sticky top-0 z-40 px-4 py-2.5">
-        <div class="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center font-black text-slate-950 shadow-lg shadow-amber-500/20 text-sm">
+    <header class="border-b border-slate-800 bg-[#0e1424]/90 backdrop-blur sticky top-0 z-40 px-3 py-2 sm:px-4 sm:py-2.5">
+        <div class="header-container max-w-[1720px] mx-auto">
+            <div class="header-brand flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center font-black text-slate-950 shadow-lg shadow-amber-500/20 text-xs sm:text-sm shrink-0">
                     HP
                 </div>
-                <div>
-                    <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight flex items-center gap-2">
-                        Calculadora Financeira HP 17bII+
-                        <span class="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">Silver</span>
+                <div class="min-w-0">
+                    <h1 class="text-sm sm:text-lg font-extrabold text-white tracking-tight flex items-center gap-1.5 sm:gap-2">
+                        <span class="truncate">HP 17bII+</span>
+                        <span class="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest px-1.5 sm:px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 shrink-0">Silver</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Calculadora financeira para precificação, vendas e gestão de estoque no varejo de móveis.</p>
+                    <p class="text-[11px] sm:text-xs text-slate-400 hidden sm:block truncate">Calculadora financeira para precificação, vendas e gestão de estoque no varejo de móveis.</p>
                 </div>
             </div>
 
-            <!-- Controles de Modo RPN / TVM -->
-            <div class="flex items-center gap-2">
-                <button id="btn-mode-toggle" type="button" aria-pressed="true" onclick="app.toggleRpnMode()" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-amber-400 transition flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                    <span id="label-mode-indicator">MODO: RPN</span>
-                </button>
-                <button id="btn-tvm-toggle" type="button" aria-pressed="false" onclick="app.toggleBgnEnd()" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-sky-400 transition">
-                    <span id="label-tvm-indicator">TVM: END</span>
-                </button>
-                <button id="btn-shortcuts-help" type="button" onclick="app.toggleShortcuts()" aria-haspopup="dialog" aria-controls="shortcutsDialog" class="px-3 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-slate-800/90 text-slate-200 hover:bg-slate-700 transition inline-flex items-center gap-1.5" title="Ver atalhos do teclado">
-                    <span aria-hidden="true">⌨</span><span>Atalhos</span>
-                </button>
-                <button id="btn-factory-reset" type="button" onclick="app.resetToFactoryDefaults(true)" class="px-2.5 py-2 rounded-lg text-xs font-mono font-bold border border-slate-700 bg-slate-800/90 text-slate-300 hover:text-rose-300 hover:border-rose-800/70 hover:bg-rose-950/40 transition inline-flex items-center gap-1" title="Reiniciar dados da calculadora para os padrões de fábrica">
-                    <span aria-hidden="true">↺</span><span>Padrão Fábrica</span>
-                </button>
+            <!-- Botão de Alternância de Tema Claro/Escuro (topo direito imediato no celular) -->
+            <div class="header-theme shrink-0">
                 <button id="theme-toggle" type="button" role="switch" aria-checked="true"
                     aria-label="Ativar modo escuro" title="Alternar para modo escuro"
                     onclick="app.toggleTheme()" class="theme-toggle" aria-describedby="theme-toggle-description">
@@ -3131,6 +3169,23 @@
                         <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path>
                     </svg>
                     <span id="theme-toggle-description" class="sr-only">Lua à esquerda para representar o modo escuro e sol à direita para representar o modo claro. O controle alterna entre as duas aparências.</span>
+                </button>
+            </div>
+
+            <!-- Controles de Modo RPN / TVM / Atalhos / Padrão Fábrica -->
+            <div class="header-controls flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <button id="btn-mode-toggle" type="button" aria-pressed="true" onclick="app.toggleRpnMode()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-mono font-bold bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-amber-400 transition flex items-center gap-1 sm:gap-1.5">
+                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="label-mode-indicator">MODO: RPN</span>
+                </button>
+                <button id="btn-tvm-toggle" type="button" aria-pressed="false" onclick="app.toggleBgnEnd()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-mono font-bold bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-sky-400 transition">
+                    <span id="label-tvm-indicator">TVM: END</span>
+                </button>
+                <button id="btn-shortcuts-help" type="button" onclick="app.toggleShortcuts()" aria-haspopup="dialog" aria-controls="shortcutsDialog" class="px-2.5 py-1 sm:px-3 sm:py-2 rounded-lg text-[11px] sm:text-xs font-bold border border-slate-700 bg-slate-800/90 text-slate-200 hover:bg-slate-700 transition inline-flex items-center gap-1 sm:gap-1.5" title="Ver atalhos do teclado">
+                    <span aria-hidden="true">⌨</span><span>Atalhos</span>
+                </button>
+                <button id="btn-factory-reset" type="button" onclick="app.resetToFactoryDefaults(true)" class="px-2 py-1 sm:px-2.5 sm:py-2 rounded-lg text-[11px] sm:text-xs font-mono font-bold border border-slate-700 bg-slate-800/90 text-slate-300 hover:text-rose-300 hover:border-rose-800/70 hover:bg-rose-950/40 transition inline-flex items-center gap-1" title="Reiniciar dados da calculadora para os padrões de fábrica">
+                    <span aria-hidden="true">↺</span><span class="hidden sm:inline">Padrão Fábrica</span><span class="sm:hidden">Fábrica</span>
                 </button>
             </div>
         </div>
@@ -3325,33 +3380,33 @@
                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">N (Períodos / F1)</label>
-                                        <input type="number" step="any" id="input-tvm-N" value="12" onchange="app.syncInputToState('tvm', 'N', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-N" value="12" onchange="app.syncInputToState('tvm', 'N', this.value)" oninput="app.syncInputToState('tvm', 'N', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
                                         <button onclick="app.calculateTVM('N')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular N</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">I%YR (Taxa / F2)</label>
-                                        <input type="number" step="any" id="input-tvm-I" value="12" onchange="app.syncInputToState('tvm', 'I', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-I" value="12" onchange="app.syncInputToState('tvm', 'I', this.value)" oninput="app.syncInputToState('tvm', 'I', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
                                         <button onclick="app.calculateTVM('I')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular I%</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">PV (Valor Pres. / F3)</label>
-                                        <input type="number" step="any" id="input-tvm-PV" value="-10000" onchange="app.syncInputToState('tvm', 'PV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-PV" value="-10000" onchange="app.syncInputToState('tvm', 'PV', this.value)" oninput="app.syncInputToState('tvm', 'PV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
                                         <button onclick="app.calculateTVM('PV')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular PV</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">PMT (Parcela / F4)</label>
-                                        <input type="number" step="any" id="input-tvm-PMT" value="0" onchange="app.syncInputToState('tvm', 'PMT', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-PMT" value="0" onchange="app.syncInputToState('tvm', 'PMT', this.value)" oninput="app.syncInputToState('tvm', 'PMT', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
                                         <button onclick="app.calculateTVM('PMT')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular PMT</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">FV (Valor Futuro / F5)</label>
-                                        <input type="number" step="any" id="input-tvm-FV" value="0" onchange="app.syncInputToState('tvm', 'FV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-FV" value="0" onchange="app.syncInputToState('tvm', 'FV', this.value)" oninput="app.syncInputToState('tvm', 'FV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
                                         <button onclick="app.calculateTVM('FV')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular FV</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex flex-col justify-between">
                                         <div>
                                             <label class="text-[11px] font-mono text-slate-300 font-bold block mb-1">P/YR (Períodos/Ano)</label>
-                                            <input type="number" id="input-tvm-PYR" value="12" onchange="app.syncInputToState('tvm', 'PYR', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                            <input type="number" id="input-tvm-PYR" value="12" onchange="app.syncInputToState('tvm', 'PYR', this.value)" oninput="app.syncInputToState('tvm', 'PYR', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
                                         </div>
                                         <button onclick="app.toggleBgnEnd()" class="w-full mt-1 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded text-xs font-mono font-bold" id="btn-amort-mode-label">Modo: END</button>
                                     </div>
@@ -3411,7 +3466,7 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-slate-400 block mb-1">Taxa de Desconto I% (Ano)</label>
-                                        <input type="number" step="any" id="input-cflo-rate" value="10" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-cflo-rate" value="10" onchange="app.syncCfloRate(this.value)" oninput="app.syncCfloRate(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-end">
                                         <button onclick="app.computeNPV()" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs font-mono">Calcular VPL (NPV)</button>
@@ -3454,11 +3509,11 @@
                                         <div class="space-y-2 text-xs font-mono">
                                             <div>
                                                 <label class="text-slate-400 block">Taxa Nominal (% a.a.)</label>
-                                                <input type="number" id="input-icnv-nom" value="12" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-icnv-nom" value="12" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                                             </div>
                                             <div>
                                                 <label class="text-slate-400 block">Períodos por Ano (P/YR)</label>
-                                                <input type="number" id="input-icnv-pyr" value="12" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-icnv-pyr" value="12" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                                             </div>
                                             <button onclick="app.calcEffRate()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded">Calcular Taxa Efetiva</button>
                                         </div>
@@ -3468,15 +3523,15 @@
                                         <div class="space-y-2 text-xs font-mono">
                                             <div>
                                                 <label class="text-slate-400 block">Custo Inicial (R$)</label>
-                                                <input type="number" id="input-depr-cost" value="50000" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-depr-cost" value="50000" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                                             </div>
                                             <div>
                                                 <label class="text-slate-400 block">Valor Residual (R$)</label>
-                                                <input type="number" id="input-depr-salvage" value="5000" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-depr-salvage" value="5000" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                                             </div>
                                             <div>
                                                 <label class="text-slate-400 block">Vida Útil (Anos)</label>
-                                                <input type="number" id="input-depr-life" value="5" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-depr-life" value="5" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                                             </div>
                                             <button onclick="app.calcDepreciationSL()" class="w-full py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded">Calcular Depreciação / Ano</button>
                                         </div>
@@ -3497,11 +3552,11 @@
                                         <h3 class="font-bold text-white">%CHG — Variação Percentual</h3>
                                         <div>
                                             <label class="text-slate-400 block">Valor Anterior (Old)</label>
-                                            <input type="number" id="input-pchg-old" value="150" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                            <input type="number" id="input-pchg-old" value="150" onchange="app.syncBusSum()" oninput="app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                                         </div>
                                         <div>
                                             <label class="text-slate-400 block">Novo Valor (New)</label>
-                                            <input type="number" id="input-pchg-new" value="180" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                            <input type="number" id="input-pchg-new" value="180" onchange="app.syncBusSum()" oninput="app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
                                         </div>
                                         <button onclick="app.calcPercentChange()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded">Calcular % Variação</button>
                                     </div>
@@ -5026,6 +5081,41 @@
                         if (this.solve.varNames[i]) labels[i] = this.solve.varNames[i];
                     }
                     labels[5] = 'MAIN';
+                } else if (this.currentMenu === 'TVM') {
+                    labels[0] = 'N';
+                    labels[1] = 'I%YR';
+                    labels[2] = 'PV';
+                    labels[3] = 'PMT';
+                    labels[4] = 'FV';
+                    labels[5] = 'MAIN';
+                } else if (this.currentMenu === 'CFLO') {
+                    labels[0] = 'FLOW';
+                    labels[1] = 'I%';
+                    labels[2] = 'NPV';
+                    labels[3] = 'IRR';
+                    labels[4] = 'RESET';
+                    labels[5] = 'MAIN';
+                } else if (this.currentMenu === 'FIN_TOOLS') {
+                    labels[0] = 'NOM%';
+                    labels[1] = 'EFF%';
+                    labels[2] = 'P/YR';
+                    labels[3] = 'SL';
+                    labels[4] = 'CUSTO';
+                    labels[5] = 'MAIN';
+                } else if (this.currentMenu === 'BUS_SUM') {
+                    labels[0] = '%CHG';
+                    labels[1] = 'OLD';
+                    labels[2] = 'NEW';
+                    labels[3] = 'SUM+';
+                    labels[4] = 'MEAN';
+                    labels[5] = 'MAIN';
+                } else if (this.currentMenu === 'TAPE') {
+                    labels[0] = 'COPIAR';
+                    labels[1] = 'LIMPAR';
+                    labels[2] = 'RCL';
+                    labels[3] = 'STO';
+                    labels[4] = 'REG';
+                    labels[5] = 'MAIN';
                 } else if (this.currentMenu === 'MATH') {
                     labels[0] = 'LOG';
                     labels[1] = 'LN';
@@ -5045,7 +5135,7 @@
                     labels[1] = 'FIN';
                     labels[2] = 'BUS';
                     labels[3] = 'SUM';
-                    labels[4] = 'TIME';
+                    labels[4] = 'CFLO';
                     labels[5] = 'MATH';
                 }
 
@@ -5070,6 +5160,256 @@
                         this.updateLCD();
                         return;
                     }
+                }
+
+                if (this.currentMenu === 'TVM') {
+                    if (index === 5) {
+                        this.currentMenu = 'MAIN';
+                        document.getElementById('lcdLine1').textContent = 'HP 17bII+ Menu Principal';
+                        this.updateLCD();
+                        return;
+                    }
+                    const keys = ['N', 'I', 'PV', 'PMT', 'FV'];
+                    const key = keys[index];
+                    if (this.entry.isEntering) {
+                        const typed = parseFloat(this.entry.buffer.replace(',', '.'));
+                        const val = isNaN(typed) ? 0 : this.cleanFloat(typed, this.decimals);
+                        this.tvm[key] = val;
+                        this.syncStateToInputs();
+                        this.entry.isEntering = false;
+                        this.entry.buffer = '0';
+                        this.entry.hasDot = false;
+                        this.setResult(val, `TVM: ${key} armazenado`);
+                        this.syncModuleToCalculator('TVM');
+                        this.saveWorkspaceState();
+                    } else {
+                        this.calculateTVM(key);
+                        this.syncModuleToCalculator('TVM');
+                    }
+                    return;
+                }
+
+                if (this.currentMenu === 'CFLO') {
+                    if (index === 5) {
+                        this.currentMenu = 'MAIN';
+                        document.getElementById('lcdLine1').textContent = 'HP 17bII+ Menu Principal';
+                        this.updateLCD();
+                        return;
+                    }
+                    switch (index) {
+                        case 0: // FLOW
+                            if (this.entry.isEntering) {
+                                const typed = parseFloat(this.entry.buffer.replace(',', '.'));
+                                if (!isNaN(typed)) {
+                                    this.cflo.push({ amount: this.cleanFloat(typed, this.decimals), count: 1 });
+                                    this.renderCashFlows();
+                                    this.entry.isEntering = false;
+                                    this.entry.buffer = '0';
+                                    this.entry.hasDot = false;
+                                    this.setResult(typed, `CF${this.cflo.length - 1} = ${this.formatNum(typed)} armazenado`);
+                                    this.saveWorkspaceState();
+                                }
+                            } else {
+                                const total = this.cflo.reduce((s, c) => s + (c.amount * (c.count || 1)), 0);
+                                this.setResult(total, `CFLO: ${this.cflo.length} fluxos (Total: ${this.formatNum(total)})`);
+                            }
+                            break;
+                        case 1: // I%
+                            if (this.entry.isEntering) {
+                                const typed = parseFloat(this.entry.buffer.replace(',', '.'));
+                                if (!isNaN(typed)) {
+                                    const rateEl = document.getElementById('input-cflo-rate');
+                                    if (rateEl) rateEl.value = typed;
+                                    this.entry.isEntering = false;
+                                    this.entry.buffer = '0';
+                                    this.entry.hasDot = false;
+                                    this.setResult(typed, `Taxa I% = ${this.formatNum(typed)}%`);
+                                    this.saveWorkspaceState();
+                                }
+                            } else {
+                                const rate = parseFloat(document.getElementById('input-cflo-rate')?.value || '10');
+                                this.setResult(rate, `Taxa I% = ${this.formatNum(rate)}%`);
+                            }
+                            break;
+                        case 2: // NPV
+                            this.computeNPV();
+                            break;
+                        case 3: // IRR
+                            this.computeIRR();
+                            break;
+                        case 4: // RESET
+                            this.cflo = [];
+                            this.renderCashFlows();
+                            this.setResult(0, 'Fluxos de caixa zerados');
+                            this.saveWorkspaceState();
+                            break;
+                    }
+                    this.syncModuleToCalculator('CFLO');
+                    return;
+                }
+
+                if (this.currentMenu === 'FIN_TOOLS') {
+                    if (index === 5) {
+                        this.currentMenu = 'MAIN';
+                        document.getElementById('lcdLine1').textContent = 'HP 17bII+ Menu Principal';
+                        this.updateLCD();
+                        return;
+                    }
+                    switch (index) {
+                        case 0: // NOM%
+                            if (this.entry.isEntering) {
+                                const typed = parseFloat(this.entry.buffer.replace(',', '.'));
+                                if (!isNaN(typed)) {
+                                    const el = document.getElementById('input-icnv-nom');
+                                    if (el) el.value = typed;
+                                    this.entry.isEntering = false;
+                                    this.entry.buffer = '0';
+                                    this.entry.hasDot = false;
+                                    this.setResult(typed, `Taxa Nominal = ${this.formatNum(typed)}%`);
+                                }
+                            } else {
+                                const val = parseFloat(document.getElementById('input-icnv-nom')?.value || '12');
+                                this.setResult(val, `Taxa Nominal = ${this.formatNum(val)}%`);
+                            }
+                            break;
+                        case 1: // EFF%
+                            this.calcEffRate();
+                            break;
+                        case 2: // P/YR
+                            if (this.entry.isEntering) {
+                                const typed = parseFloat(this.entry.buffer.replace(',', '.'));
+                                if (!isNaN(typed)) {
+                                    const el = document.getElementById('input-icnv-pyr');
+                                    if (el) el.value = typed;
+                                    this.entry.isEntering = false;
+                                    this.entry.buffer = '0';
+                                    this.entry.hasDot = false;
+                                    this.setResult(typed, `P/YR = ${typed}`);
+                                }
+                            } else {
+                                const val = parseFloat(document.getElementById('input-icnv-pyr')?.value || '12');
+                                this.setResult(val, `P/YR = ${val}`);
+                            }
+                            break;
+                        case 3: // SL
+                            this.calcDepreciationSL();
+                            break;
+                        case 4: // CUSTO
+                            if (this.entry.isEntering) {
+                                const typed = parseFloat(this.entry.buffer.replace(',', '.'));
+                                if (!isNaN(typed)) {
+                                    const el = document.getElementById('input-depr-cost');
+                                    if (el) el.value = typed;
+                                    this.entry.isEntering = false;
+                                    this.entry.buffer = '0';
+                                    this.entry.hasDot = false;
+                                    this.setResult(typed, `Custo = ${this.formatNum(typed)}`);
+                                }
+                            } else {
+                                const val = parseFloat(document.getElementById('input-depr-cost')?.value || '50000');
+                                this.setResult(val, `Custo = ${this.formatNum(val)}`);
+                            }
+                            break;
+                    }
+                    this.syncModuleToCalculator('FIN_TOOLS');
+                    return;
+                }
+
+                if (this.currentMenu === 'BUS_SUM') {
+                    if (index === 5) {
+                        this.currentMenu = 'MAIN';
+                        document.getElementById('lcdLine1').textContent = 'HP 17bII+ Menu Principal';
+                        this.updateLCD();
+                        return;
+                    }
+                    switch (index) {
+                        case 0: // %CHG
+                            this.calcPercentChange();
+                            break;
+                        case 1: // OLD
+                            if (this.entry.isEntering) {
+                                const typed = parseFloat(this.entry.buffer.replace(',', '.'));
+                                if (!isNaN(typed)) {
+                                    const el = document.getElementById('input-pchg-old');
+                                    if (el) el.value = typed;
+                                    this.entry.isEntering = false;
+                                    this.entry.buffer = '0';
+                                    this.entry.hasDot = false;
+                                    this.setResult(typed, `Valor Anterior = ${this.formatNum(typed)}`);
+                                }
+                            } else {
+                                const val = parseFloat(document.getElementById('input-pchg-old')?.value || '150');
+                                this.setResult(val, `Valor Anterior = ${this.formatNum(val)}`);
+                            }
+                            break;
+                        case 2: // NEW
+                            if (this.entry.isEntering) {
+                                const typed = parseFloat(this.entry.buffer.replace(',', '.'));
+                                if (!isNaN(typed)) {
+                                    const el = document.getElementById('input-pchg-new');
+                                    if (el) el.value = typed;
+                                    this.entry.isEntering = false;
+                                    this.entry.buffer = '0';
+                                    this.entry.hasDot = false;
+                                    this.setResult(typed, `Novo Valor = ${this.formatNum(typed)}`);
+                                }
+                            } else {
+                                const val = parseFloat(document.getElementById('input-pchg-new')?.value || '180');
+                                this.setResult(val, `Novo Valor = ${this.formatNum(val)}`);
+                            }
+                            break;
+                        case 3: // SUM+
+                            {
+                                const x = this.getDisplayValue();
+                                const y = this.stack.y;
+                                if (!this.stats) this.stats = { pairs: [] };
+                                if (!Array.isArray(this.stats.pairs)) this.stats.pairs = [];
+                                this.stats.pairs.push({ x: isFinite(x) ? x : 0, y: isFinite(y) ? y : 0 });
+                                this.renderStatPairsList();
+                                this.entry.isEntering = false;
+                                this.entry.buffer = '0';
+                                this.entry.hasDot = false;
+                                this.setResult(this.stats.pairs.length, `SUM+: Par #${this.stats.pairs.length} inserido`);
+                                this.saveWorkspaceState();
+                            }
+                            break;
+                        case 4: // MEAN
+                            this.calcStats();
+                            break;
+                    }
+                    this.syncModuleToCalculator('BUS_SUM');
+                    return;
+                }
+
+                if (this.currentMenu === 'TAPE') {
+                    if (index === 5) {
+                        this.currentMenu = 'MAIN';
+                        document.getElementById('lcdLine1').textContent = 'HP 17bII+ Menu Principal';
+                        this.updateLCD();
+                        return;
+                    }
+                    switch (index) {
+                        case 0: // COPIAR
+                            this.copyTape();
+                            break;
+                        case 1: // LIMPAR
+                            this.clearTape();
+                            this.setResult(0, 'Fita de auditoria limpa');
+                            break;
+                        case 2: // RCL
+                            if (this.lastResult && Number.isFinite(this.lastResult.value)) {
+                                this.setResult(this.lastResult.value, `RCL: ${this.formatNum(this.lastResult.value)}`);
+                            }
+                            break;
+                        case 3: // STO
+                            document.getElementById('lcdLine1').textContent = `STO: Valor ${this.formatNum(this.stack.x)} guardado`;
+                            break;
+                        case 4: // REG
+                            document.getElementById('lcdLine1').textContent = `REG: X=${this.formatNum(this.stack.x)} Y=${this.formatNum(this.stack.y)}`;
+                            break;
+                    }
+                    this.syncModuleToCalculator('TAPE');
+                    return;
                 }
 
                 if (this.currentMenu === 'MATH') {
@@ -5127,7 +5467,6 @@
                 // MENU MAIN
                 switch (index) {
                     case 0:
-                        this.currentMenu = 'SOLVE';
                         this.switchTab('SOLVE');
                         break;
                     case 1:
@@ -5137,13 +5476,14 @@
                         this.switchTab('BUS_SUM');
                         break;
                     case 3:
-                        this.switchTab('BUS_SUM');
+                        this.switchTab('CFLO');
                         break;
                     case 4:
-                        this.switchTab('BUS_SUM');
+                        this.switchTab('FIN_TOOLS');
                         break;
                     case 5:
                         this.currentMenu = 'MATH';
+                        document.getElementById('lcdLine1').textContent = 'MENU MATH: Funções Matemáticas';
                         break;
                 }
                 this.updateLCD();
@@ -5930,7 +6270,89 @@
                 if (module === 'tvm') {
                     this.tvm[key] = isNaN(n) ? 0 : n;
                     this.saveWorkspaceState();
+                    if (this.currentMenu === 'TVM') {
+                        this.syncModuleToCalculator('TVM');
+                    }
                 }
+            },
+
+            syncCfloRate(val) {
+                this.saveWorkspaceState();
+                if (this.currentMenu === 'CFLO') {
+                    this.syncModuleToCalculator('CFLO');
+                }
+            },
+
+            syncFinTools() {
+                this.saveWorkspaceState();
+                if (this.currentMenu === 'FIN_TOOLS') {
+                    this.syncModuleToCalculator('FIN_TOOLS');
+                }
+            },
+
+            syncBusSum() {
+                this.saveWorkspaceState();
+                if (this.currentMenu === 'BUS_SUM') {
+                    this.syncModuleToCalculator('BUS_SUM');
+                }
+            },
+
+            copyTape() {
+                const text = (this.tape || []).join('\n');
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).catch(() => {});
+                }
+                const lcd1 = document.getElementById('lcdLine1');
+                if (lcd1) lcd1.textContent = 'FITA: Copiada para área de transferência';
+            },
+
+            syncModuleToCalculator(tabId) {
+                this.currentMenu = tabId;
+                const lcdLine1 = document.getElementById('lcdLine1');
+
+                if (tabId === 'TVM') {
+                    this.syncStateToInputs();
+                    if (lcdLine1) {
+                        const nStr = this.formatNum(this.tvm.N, 0);
+                        const iStr = this.formatNum(this.tvm.I);
+                        const pvStr = this.formatNum(this.tvm.PV);
+                        const pmtStr = this.formatNum(this.tvm.PMT);
+                        const fvStr = this.formatNum(this.tvm.FV);
+                        lcdLine1.textContent = `TVM: N=${nStr} | I%=${iStr} | PV=${pvStr} | PMT=${pmtStr} | FV=${fvStr}`;
+                    }
+                } else if (tabId === 'CFLO') {
+                    const rateEl = document.getElementById('input-cflo-rate');
+                    const rate = rateEl ? parseFloat(rateEl.value) || 10 : 10;
+                    const total = (this.cflo || []).reduce((s, c) => s + (c.amount * (c.count || 1)), 0);
+                    if (lcdLine1) {
+                        lcdLine1.textContent = `CFLO: ${this.cflo.length} fluxos | I%=${this.formatNum(rate)}% | Total: ${this.formatNum(total)}`;
+                    }
+                } else if (tabId === 'FIN_TOOLS') {
+                    const nomEl = document.getElementById('input-icnv-nom');
+                    const pyrEl = document.getElementById('input-icnv-pyr');
+                    const nom = nomEl ? parseFloat(nomEl.value) || 12 : 12;
+                    const pyr = pyrEl ? parseFloat(pyrEl.value) || 12 : 12;
+                    if (lcdLine1) {
+                        lcdLine1.textContent = `ICNV & DEPR: NOM=${this.formatNum(nom)}% | P/YR=${pyr}`;
+                    }
+                } else if (tabId === 'BUS_SUM') {
+                    const count = (this.stats && this.stats.pairs) ? this.stats.pairs.length : 0;
+                    if (lcdLine1) {
+                        lcdLine1.textContent = `BUS & SUM: Varejo e Estatística (${count} pares)`;
+                    }
+                } else if (tabId === 'TAPE') {
+                    if (lcdLine1) {
+                        lcdLine1.textContent = `HISTÓRICO: Fita de Auditoria (${this.tape.length} registros)`;
+                    }
+                } else if (tabId === 'SOLVE') {
+                    const form = this.formulas.find(f => f.id === this.solve.activeFormulaId) || this.formulas[0];
+                    if (lcdLine1) {
+                        lcdLine1.textContent = `SOLVE: ${form.title}`;
+                    }
+                    this.renderSolveVariables();
+                }
+
+                this.updateLCD();
             },
 
             generateAmortizationTable() {
@@ -6069,6 +6491,9 @@
                 this.cflo.push({ amount, count: 1 });
                 this.renderCashFlows();
                 this.saveWorkspaceState();
+                if (this.currentMenu === 'CFLO') {
+                    this.syncModuleToCalculator('CFLO');
+                }
                 if (feedback) {
                     feedback.classList.remove('text-rose-400');
                     feedback.classList.add('text-emerald-400');
@@ -6085,6 +6510,9 @@
                 this.cflo.splice(idx, 1);
                 this.renderCashFlows();
                 this.saveWorkspaceState();
+                if (this.currentMenu === 'CFLO') {
+                    this.syncModuleToCalculator('CFLO');
+                }
             },
 
             computeNPV() {
@@ -6293,6 +6721,7 @@
                 this.renderStatPairsList();
                 this.setModuleActionFeedback(`Par #${this.stats.pairs.length} (${this.formatNum(x)}; ${this.formatNum(y)}) inserido (Σ+).`, 'success');
                 this.setResult(this.stats.pairs.length, `SUM: Par (${this.formatNum(x)}; ${this.formatNum(y)}) inserido`, null, 'pares');
+                if (this.currentMenu === 'BUS_SUM') this.syncModuleToCalculator('BUS_SUM');
             },
 
             removeLastStatPair() {
@@ -6304,6 +6733,7 @@
                 this.renderStatPairsList();
                 this.setModuleActionFeedback(`Último par (${this.formatNum(removed.x)}; ${this.formatNum(removed.y)}) removido (Σ-).`, 'info');
                 this.setResult(this.stats.pairs.length, `SUM: Par removido`, null, 'pares');
+                if (this.currentMenu === 'BUS_SUM') this.syncModuleToCalculator('BUS_SUM');
             },
 
             removeStatPairAt(index) {
@@ -6312,6 +6742,7 @@
                     this.renderStatPairsList();
                     this.setModuleActionFeedback(`Par #${index + 1} (${this.formatNum(removed.x)}; ${this.formatNum(removed.y)}) removido.`, 'info');
                     this.setResult(this.stats.pairs.length, `SUM: Par removido`, null, 'pares');
+                    if (this.currentMenu === 'BUS_SUM') this.syncModuleToCalculator('BUS_SUM');
                 }
             },
 
@@ -6322,7 +6753,7 @@
                 const panel = document.getElementById('result-panel');
                 if (panel) panel.classList.add('hidden');
                 document.getElementById('lcdLine1').textContent = 'SUM: Registros limpos (CLΣ)';
-                this.updateLCD();
+                if (this.currentMenu === 'BUS_SUM') this.syncModuleToCalculator('BUS_SUM'); else this.updateLCD();
                 this.saveWorkspaceState();
             },
 
@@ -6739,6 +7170,9 @@
 
                 // Expande o catálogo automaticamente na aba Fórmulas (SOLVE) e recolhe nas demais abas
                 this.toggleCatalog(tabId !== 'SOLVE');
+
+                // Sincroniza a réplica da calculadora HP com as variáveis do módulo ativo
+                this.syncModuleToCalculator(tabId);
             },
 
             // Alternância de visualização em tablets e celulares.
@@ -6874,6 +7308,7 @@
                 const result = document.getElementById('result-panel');
                 if (result) result.classList.add('hidden');
                 this.saveWorkspaceState();
+                this.syncModuleToCalculator(module);
                 this.setModuleActionFeedback('Campos do módulo limpos.', 'info');
             },
 
@@ -6904,6 +7339,7 @@
                 const result = document.getElementById('result-panel');
                 if (result) result.classList.add('hidden');
                 this.saveWorkspaceState();
+                this.syncModuleToCalculator(module);
                 this.setModuleActionFeedback('Valores de exemplo restaurados.', 'success');
             },
 
