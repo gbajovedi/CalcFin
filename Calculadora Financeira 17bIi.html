@@ -3351,7 +3351,7 @@
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex flex-col justify-between">
                                         <div>
                                             <label class="text-[11px] font-mono text-slate-300 font-bold block mb-1">P/YR (Períodos/Ano)</label>
-                                            <input type="number" id="input-tvm-PYR" value="12" onchange="app.tvm.PYR = this.value === '' ? 0 : (parseFloat(this.value) || 0)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                            <input type="number" id="input-tvm-PYR" value="12" onchange="app.syncInputToState('tvm', 'PYR', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
                                         </div>
                                         <button onclick="app.toggleBgnEnd()" class="w-full mt-1 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded text-xs font-mono font-bold" id="btn-amort-mode-label">Modo: END</button>
                                     </div>
