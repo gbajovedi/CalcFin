@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora Financeira HP 17bII+ Silver — v16.20</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Tailwind CSS CDN -->
 <style id="tailwind-utilities">
 /*! tailwindcss v4.1.10 | MIT License | https://tailwindcss.com */
@@ -167,7 +169,6 @@
   }
   img, svg, video, canvas, audio, iframe, embed, object {
     display: block;
-    vertical-align: middle;
   }
   img, video {
     max-width: 100%;
@@ -2069,7 +2070,7 @@
 
     </style>
     <style>
-500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap');
 
         /* Scrollbars elegantes */
         .custom-scroll::-webkit-scrollbar {
@@ -2170,6 +2171,7 @@
             overflow-wrap: anywhere;
             word-break: normal;
             line-height: 1.55;
+            color: #ffcc00;
         }
 
         /* O resultado fica logo abaixo do cabeçalho fixo, cuja altura varia por tela. */
@@ -2222,6 +2224,7 @@
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 1;
+                line-clamp: 1;
                 overflow: hidden;
                 font-size: 0.75rem;
                 line-height: 1.25;
@@ -2557,6 +2560,7 @@
         body.light-mode #workstation-left-wrapper .text-amber-200,
         body.light-mode #workstation-left-wrapper .text-amber-300,
         body.light-mode #workstation-left-wrapper .text-amber-400 { color: #925400 !important; }
+        body.light-mode #workstation-left-wrapper .formula-equation { color: #925400 !important; }
         body.light-mode #workstation-left-wrapper .text-sky-300,
         body.light-mode #workstation-left-wrapper .text-sky-400 { color: #075985 !important; }
         body.light-mode #workstation-left-wrapper .text-cyan-300,
@@ -2618,6 +2622,31 @@
             background: #fff7e6 !important;
             border-color: #d97706 !important;
         }
+        body.light-mode #workstation-left-wrapper #amort-table-foot {
+            background-color: #f1f5f9 !important;
+            border-top-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        body.light-mode #workstation-left-wrapper #amort-table-body tr:nth-child(even) {
+            background-color: #f8fafc !important;
+        }
+        body.light-mode #workstation-left-wrapper #amort-table-body tr:nth-child(odd) {
+            background-color: transparent !important;
+        }
+        body.light-mode #workstation-left-wrapper #amort-bgn-indicator.bg-slate-800 {
+            background-color: #e2e8f0 !important;
+            color: #334155 !important;
+        }
+        body.light-mode #workstation-left-wrapper #panel-BUS_SUM button[class*="bg-slate-800"],
+        body.light-mode #workstation-left-wrapper #panel-BUS_SUM button[class*="bg-slate-900"] {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
+        }
+        body.light-mode #workstation-left-wrapper #panel-BUS_SUM button[class*="bg-slate-800"]:hover,
+        body.light-mode #workstation-left-wrapper #panel-BUS_SUM button[class*="bg-slate-900"]:hover {
+            background-color: #e2e8f0 !important;
+        }
         body.light-mode #workstation-left-wrapper .custom-scroll::-webkit-scrollbar-track {
             background: #e8edf4;
         }
@@ -2625,23 +2654,82 @@
             background: rgba(180, 111, 24, .45);
         }
 
-        /* Dock de atalhos acompanha o tema da aplicação. */
+        /* Modal de atalhos no modo claro: fundo translúcido suave e card nítido */
         body.light-mode #shortcutsDock {
-            background: rgba(255, 255, 255, .97) !important;
-            border-color: #cbd5e1 !important;
-            box-shadow: 0 16px 42px rgba(30, 41, 59, .16) !important;
-            color: #1e293b !important;
+            background: rgba(15, 23, 42, 0.48) !important;
+            backdrop-filter: blur(6px) !important;
+            -webkit-backdrop-filter: blur(6px) !important;
+            border: none !important;
+            box-shadow: none !important;
         }
-        body.light-mode #shortcutsDock [class*="bg-slate-950"] { background-color: #f8fafc !important; }
-        body.light-mode #shortcutsDock [class*="bg-slate-900"],
-        body.light-mode #shortcutsDock [class*="bg-slate-800"] { background-color: #edf2f7 !important; }
-        body.light-mode #shortcutsDock [class*="border-slate-800"],
-        body.light-mode #shortcutsDock [class*="border-slate-700"] { border-color: #d5dee9 !important; }
-        body.light-mode #shortcutsDock .text-white { color: #172033 !important; }
-        body.light-mode #shortcutsDock .text-slate-400,
-        body.light-mode #shortcutsDock .text-slate-300 { color: #526176 !important; }
-        body.light-mode #shortcutsDock .text-amber-400,
-        body.light-mode #shortcutsDock .text-amber-300 { color: #925400 !important; }
+        body.light-mode #shortcutsDialog {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(15, 23, 42, 0.05) !important;
+            color: #0f172a !important;
+            border-radius: 1rem !important;
+        }
+        body.light-mode #shortcutsDialog header {
+            background-color: #f8fafc !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            box-shadow: none !important;
+            border-top-left-radius: 1rem !important;
+            border-top-right-radius: 1rem !important;
+        }
+        body.light-mode #shortcutsDialogTitle {
+            color: #0f172a !important;
+            font-size: 0.9375rem !important;
+        }
+        body.light-mode #shortcutsDialog header p {
+            color: #475569 !important;
+            font-size: 0.8125rem !important;
+        }
+        body.light-mode #shortcuts-close {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #475569 !important;
+            transition: all 0.15s ease;
+        }
+        body.light-mode #shortcuts-close:hover {
+            background-color: #f1f5f9 !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+        body.light-mode #shortcuts-close:focus-visible {
+            outline: 2px solid #b45309 !important;
+            outline-offset: 2px !important;
+            box-shadow: none !important;
+        }
+        body.light-mode #shortcutsContent {
+            background-color: #ffffff !important;
+            border-bottom-left-radius: 1rem !important;
+            border-bottom-right-radius: 1rem !important;
+        }
+        body.light-mode #shortcutsContent .shortcut-tile {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+            transition: all 0.15s ease;
+        }
+        body.light-mode #shortcutsContent .shortcut-tile:hover {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode #shortcutsContent .shortcut-tile span:first-child {
+            color: #b45309 !important;
+            font-weight: 700 !important;
+            font-size: 0.8125rem !important;
+        }
+        body.light-mode #shortcutsContent .shortcut-tile span:last-child {
+            color: #334155 !important;
+            font-family: Inter, system-ui, -apple-system, sans-serif !important;
+            font-size: 0.75rem !important;
+            line-height: 1.35 !important;
+        }
+        body.light-mode #shortcutsContent p {
+            color: #64748b !important;
+            font-size: 0.75rem !important;
+        }
 
         body.light-mode button:focus-visible,
         body.light-mode input:focus-visible,
@@ -2893,19 +2981,6 @@
             border-color: #b45309 !important;
             color: #78350f !important;
         }
-        body.light-mode #shortcutsDock { background: rgba(30, 41, 59, .45); }
-        body.light-mode #shortcutsDialog { color: #172033; }
-        body.light-mode #shortcutsContent .shortcut-tile {
-            background: #f8fafc !important;
-            border-color: #cbd5e1 !important;
-        }
-        body.light-mode #shortcutsContent .shortcut-tile span:first-child { color: #925400 !important; }
-        body.light-mode #shortcutsContent .shortcut-tile span:last-child { color: #526176 !important; }
-        body.light-mode #shortcutsDialog .text-white { color: #172033 !important; }
-        body.light-mode #shortcutsDialog .bg-slate-900,
-        body.light-mode #shortcutsDialog .bg-slate-950 { background-color: #f8fafc !important; }
-        body.light-mode #shortcutsDialog .border-slate-700,
-        body.light-mode #shortcutsDialog .border-slate-800 { border-color: #cbd5e1 !important; }
         @media (max-width: 540px) {
             #shortcutsDock { padding: .625rem; }
             #shortcutsDialog { max-height: 88dvh; }
@@ -3038,6 +3113,9 @@
                 </button>
                 <button id="btn-shortcuts-help" type="button" onclick="app.toggleShortcuts()" aria-haspopup="dialog" aria-controls="shortcutsDialog" class="px-3 py-2 rounded-lg text-xs font-bold border border-slate-700 bg-slate-800/90 text-slate-200 hover:bg-slate-700 transition inline-flex items-center gap-1.5" title="Ver atalhos do teclado">
                     <span aria-hidden="true">⌨</span><span>Atalhos</span>
+                </button>
+                <button id="btn-factory-reset" type="button" onclick="app.resetToFactoryDefaults(true)" class="px-2.5 py-2 rounded-lg text-xs font-mono font-bold border border-slate-700 bg-slate-800/90 text-slate-300 hover:text-rose-300 hover:border-rose-800/70 hover:bg-rose-950/40 transition inline-flex items-center gap-1" title="Reiniciar dados da calculadora para os padrões de fábrica">
+                    <span aria-hidden="true">↺</span><span>Padrão Fábrica</span>
                 </button>
                 <button id="theme-toggle" type="button" role="switch" aria-checked="true"
                     aria-label="Ativar modo escuro" title="Alternar para modo escuro"
@@ -3282,13 +3360,27 @@
 
                                 <!-- Tabela de Amortização -->
                                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 mt-1">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <h3 class="text-xs font-mono font-bold text-emerald-400">Tabela de Amortização (AMRT)</h3>
-                                        <button onclick="app.generateAmortizationTable()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-bold">Gerar Tabela Completa</button>
+                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="text-xs font-mono font-bold text-emerald-400">Tabela de Amortização (AMRT)</h3>
+                                            <span id="amort-bgn-indicator" class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Modo: END (Postecipado)</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-[11px] font-mono text-slate-400 flex items-center gap-1">
+                                                Exibir:
+                                                <select id="amort-limit-select" onchange="app.generateAmortizationTable()" class="bg-slate-900 border border-slate-700 text-slate-200 rounded px-2 py-1 text-xs font-mono">
+                                                    <option value="60" selected>60 parcelas</option>
+                                                    <option value="120">120 parcelas</option>
+                                                    <option value="360">360 parcelas</option>
+                                                    <option value="all">Todas as parcelas</option>
+                                                </select>
+                                            </label>
+                                            <button onclick="app.generateAmortizationTable()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-bold transition">Gerar Tabela</button>
+                                        </div>
                                     </div>
-                                    <div class="max-h-56 overflow-y-auto custom-scroll border border-slate-800 rounded">
+                                    <div class="max-h-64 overflow-y-auto custom-scroll border border-slate-800 rounded">
                                         <table class="w-full text-[11px] font-mono text-left">
-                                            <thead class="bg-slate-900 text-slate-400 sticky top-0">
+                                            <thead class="bg-slate-900 text-slate-400 sticky top-0 shadow-sm z-10">
                                                 <tr>
                                                     <th class="p-1.5"># Per.</th>
                                                     <th class="p-1.5">Pagamento</th>
@@ -3298,10 +3390,12 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="amort-table-body" class="divide-y divide-slate-800 text-slate-300">
-                                                <tr><td colspan="5" class="p-2 text-center text-slate-500">Clique em "Gerar Tabela Completa" para listar os períodos.</td></tr>
+                                                <tr><td colspan="5" class="p-2 text-center text-slate-500">Clique em "Gerar Tabela" para listar os períodos calculados.</td></tr>
                                             </tbody>
+                                            <tfoot id="amort-table-foot" class="hidden bg-slate-900 font-bold border-t-2 border-slate-700 text-slate-200 sticky bottom-0"></tfoot>
                                         </table>
                                     </div>
+                                    <div id="amort-notice" class="hidden mt-2 rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 text-[11px] text-amber-300 font-mono"></div>
                                 </div>
                             </div>
 
@@ -3411,20 +3505,58 @@
                                         </div>
                                         <button onclick="app.calcPercentChange()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded">Calcular % Variação</button>
                                     </div>
-                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                                        <h3 class="font-bold text-white">SUM — Estatística de Pares (x, y)</h3>
+                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="font-bold text-white">SUM — Estatística de Pares (x, y)</h3>
+                                            <span id="stat-count-label" class="text-[11px] font-bold text-amber-400 font-mono">Total de Pares: 0</span>
+                                        </div>
                                         <div>
-                                            <label class="text-slate-400 block">Inserir Ponto X : Y</label>
-                                            <div class="flex gap-2">
-                                                <input type="number" id="input-stat-x" placeholder="X" value="10" class="w-1/2 bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
-                                                <input type="number" id="input-stat-y" placeholder="Y" value="20" class="w-1/2 bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                            <label class="text-slate-400 block text-[11px]">Inserir Ponto X : Y</label>
+                                            <div class="flex gap-2 mt-1">
+                                                <input type="number" id="input-stat-x" placeholder="X" value="10" class="w-1/2 bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-mono">
+                                                <input type="number" id="input-stat-y" placeholder="Y" value="20" class="w-1/2 bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-mono">
                                             </div>
                                         </div>
                                         <div class="flex gap-2">
-                                            <button onclick="app.addStatPair()" class="w-1/2 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded font-bold">+ Inserir Par</button>
-                                            <button onclick="app.showStatMetric('MEAN')" class="w-1/2 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded font-bold">Média X</button>
+                                            <button onclick="app.addStatPair()" class="flex-1 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded font-bold text-xs">+ Inserir Par (Σ+)</button>
+                                            <button onclick="app.removeLastStatPair()" class="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded font-bold text-xs" title="Remover último par inserido">Σ-</button>
+                                            <button onclick="app.clearStatPairs()" class="py-1.5 px-2 bg-rose-950/60 hover:bg-rose-900/70 border border-rose-800 text-rose-300 rounded font-bold text-xs" title="Limpar todos os pares">CLΣ</button>
                                         </div>
-                                        <div id="stat-count-label" class="text-[11px] text-slate-400">Total de Pares: 0</div>
+
+                                        <!-- Lista de Pares Registrados -->
+                                        <div class="border border-slate-800 rounded-lg p-2 bg-slate-900/50">
+                                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Pares na memória:</div>
+                                            <div id="stat-pairs-list" class="flex flex-wrap gap-1 max-h-20 overflow-y-auto custom-scroll">
+                                                <span class="text-slate-500 text-[10px] italic">Nenhum par registrado. Insira pontos acima.</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Painel de Métricas Estatísticas -->
+                                        <div class="space-y-1.5 pt-1">
+                                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Médias e Desvios Padrão:</div>
+                                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                                                <button onclick="app.showStatMetric('MEAN_X')" class="py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] font-bold">Média X (x̄)</button>
+                                                <button onclick="app.showStatMetric('MEAN_Y')" class="py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] font-bold">Média Y (ȳ)</button>
+                                                <button onclick="app.showStatMetric('SX')" class="py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] font-bold">Desvio Sx</button>
+                                                <button onclick="app.showStatMetric('SY')" class="py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] font-bold">Desvio Sy</button>
+                                            </div>
+
+                                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider pt-1">Somatórios (Σ):</div>
+                                            <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
+                                                <button onclick="app.showStatMetric('SUM_X')" class="py-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 rounded text-[11px] font-bold">ΣX</button>
+                                                <button onclick="app.showStatMetric('SUM_Y')" class="py-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 rounded text-[11px] font-bold">ΣY</button>
+                                                <button onclick="app.showStatMetric('SUM_X2')" class="py-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 rounded text-[11px] font-bold">ΣX²</button>
+                                                <button onclick="app.showStatMetric('SUM_Y2')" class="py-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 rounded text-[11px] font-bold">ΣY²</button>
+                                                <button onclick="app.showStatMetric('SUM_XY')" class="py-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 rounded text-[11px] font-bold">ΣXY</button>
+                                            </div>
+
+                                            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider pt-1">Regressão Linear (y = mx + b):</div>
+                                            <div class="grid grid-cols-3 gap-1.5">
+                                                <button onclick="app.showStatMetric('CORR')" class="py-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-amber-300 rounded text-[11px] font-bold">Correlação (r)</button>
+                                                <button onclick="app.showStatMetric('SLOPE')" class="py-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-emerald-300 rounded text-[11px] font-bold">Inclinação (m)</button>
+                                                <button onclick="app.showStatMetric('INTERCEPT')" class="py-1 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-sky-300 rounded text-[11px] font-bold">Intercepto (b)</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -4047,13 +4179,38 @@
             init() {
                 this.initTheme();
                 this.setupStickyResultOffset();
-                this.selectFormula('coef_financiamento_carencia_premio');
+                const hadSavedState = this.loadWorkspaceState();
+                if (!hadSavedState) {
+                    this.selectFormula('coef_financiamento_carencia_premio');
+                    this.addTapeEntry('*** HP 17bII+ SILVER INICIADA ***');
+                } else {
+                    const formulaId = (this.solve && this.solve.activeFormulaId) ? this.solve.activeFormulaId : 'coef_financiamento_carencia_premio';
+                    this.selectFormula(formulaId, true);
+                    this.renderTape();
+                }
                 this.renderCatalog();
                 this.renderCashFlows();
-                this.addTapeEntry('*** HP 17bII+ SILVER INICIADA ***');
+                this.renderStatPairsList();
+                this.syncStateToInputs();
                 this.setupKeyboardListeners();
                 this.setMobileView('calculator', false);
                 this.updateModuleToolbar('SOLVE');
+
+                // Sincronizar indicadores visuais
+                const modeInd = document.getElementById('label-mode-indicator');
+                if (modeInd) modeInd.textContent = `MODO: ${this.mode}`;
+                const tvmInd = document.getElementById('label-tvm-indicator');
+                if (tvmInd) tvmInd.textContent = `TVM: ${this.tvm.isBegin ? 'BGN' : 'END'}`;
+                const btnAmort = document.getElementById('btn-amort-mode-label');
+                if (btnAmort) btnAmort.textContent = `Modo: ${this.tvm.isBegin ? 'BGN' : 'END'}`;
+                const indAmort = document.getElementById('amort-bgn-indicator');
+                if (indAmort) {
+                    indAmort.textContent = this.tvm.isBegin ? 'Modo: BGN (Antecipado)' : 'Modo: END (Postecipado)';
+                    indAmort.className = this.tvm.isBegin
+                        ? 'text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        : 'text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300';
+                }
+
                 const help = document.getElementById('shortcutsDock');
                 if (help) { help.hidden = true; help.classList.add('hidden'); help.setAttribute('aria-hidden', 'true'); }
                 this.updateLCD();
@@ -4063,8 +4220,8 @@
             },
 
             // Sanitização e Arredondamento Limpo de Números
-            cleanFloat(num, decimals = this.decimals) {
-                if (num === null || num === undefined || isNaN(num) || !isFinite(num)) return 0;
+            cleanFloat(num, decimals = this.decimals, fallback = null) {
+                if (num === null || num === undefined || isNaN(num) || !isFinite(num)) return fallback;
                 const d = (decimals !== null && decimals !== undefined) ? decimals : 2;
                 return Number(Number(num).toFixed(d));
             },
@@ -4079,14 +4236,14 @@
             },
 
             // Seleção de Fórmula no Catálogo
-            selectFormula(formulaId) {
+            selectFormula(formulaId, preserveVars = false) {
                 const form = this.formulas.find(f => f.id === formulaId);
                 if (!form) return;
 
-                // Ao mudar de fórmula, descarte o resultado da fórmula anterior.
+                // Ao mudar de fórmula, descarte o resultado da fórmula anterior se não estiver restaurando estado.
                 // Isso também invalida as ações de copiar/recalcular vinculadas ao resultado antigo.
                 const changingFormula = this.solve.activeFormulaId !== form.id;
-                if (changingFormula) {
+                if (changingFormula && !preserveVars) {
                     this.lastResult = null;
                     const resultPanel = document.getElementById('result-panel');
                     const resultTitle = document.getElementById('result-title');
@@ -4107,14 +4264,19 @@
 
                 this.solve.activeFormulaId = form.id;
                 this.solve.varNames = [...form.vars];
-                this.solve.vars = {};
-
-                // Os campos começam vazios para não confundir ausência de dado com zero.
-                form.vars.forEach(v => {
-                    this.solve.vars[v] = null;
-                });
-                // Não presumir a primeira variável como incógnita ao trocar de fórmula.
-                this.solve.targetVar = null;
+                if (!preserveVars) {
+                    this.solve.vars = {};
+                    // Os campos começam vazios para não confundir ausência de dado com zero.
+                    form.vars.forEach(v => {
+                        this.solve.vars[v] = null;
+                    });
+                    this.solve.targetVar = null;
+                } else {
+                    if (!this.solve.vars || typeof this.solve.vars !== 'object') this.solve.vars = {};
+                    form.vars.forEach(v => {
+                        if (this.solve.vars[v] === undefined) this.solve.vars[v] = null;
+                    });
+                }
                 this.solve.targetVarSource = 'none';
                 this.solve.message = form.isShortcut ? form.instruction : '';
                 this.solve.messageType = form.isShortcut ? 'warning' : '';
@@ -4138,6 +4300,7 @@
                 this.renderCatalog();
                 this.updateLCD();
                 this.switchTab('SOLVE');
+                this.saveWorkspaceState();
             },
 
             renderCatalog() {
@@ -4553,6 +4716,7 @@
                     status.className = 'hidden mb-3 rounded-lg border px-3 py-2 text-xs leading-relaxed';
                 }
                 this.syncSolveVariableVisuals();
+                this.saveWorkspaceState();
             },
 
             handleSolveSoftkey(varName) {
@@ -4709,55 +4873,108 @@
 
                 this.solve.errors = [];
                 this.renderSolveVariables();
-                let x0 = Number(this.solve.vars[targetVar] ?? 0);
-                if (x0 === 0) x0 = 10;
-                let x1 = x0 !== 0 ? x0 * 1.1 : 1.0;
 
-                let f0 = this.evaluateEquationResidual(targetVar, x0);
-                let f1 = this.evaluateEquationResidual(targetVar, x1);
+                // Busca por pontos iniciais válidos no domínio da equação
+                const currentVal = Number(this.solve.vars[targetVar] ?? 0);
+                const candidates = [
+                    currentVal !== 0 ? [currentVal, currentVal * 1.05] : null,
+                    [10, 11],
+                    [1, 1.1],
+                    [50, 55],
+                    [0.1, 0.2],
+                    [-10, -11]
+                ].filter(Boolean);
 
-                if (isNaN(f0) || isNaN(f1)) {
-                    x0 = 100;
-                    x1 = 110;
-                    f0 = this.evaluateEquationResidual(targetVar, x0);
-                    f1 = this.evaluateEquationResidual(targetVar, x1);
-                }
-
-                let solved = false;
-                for (let iter = 0; iter < 45; iter++) {
-                    if (isNaN(f0) || isNaN(f1)) break;
-                    if (Math.abs(f1) < 1e-9) {
-                        x0 = x1;
-                        solved = true;
-                        break;
-                    }
-                    const denom = f1 - f0;
-                    if (Math.abs(denom) < 1e-13) break;
-
-                    const xNext = x1 - f1 * (x1 - x0) / denom;
-                    x0 = x1;
-                    f0 = f1;
-                    x1 = xNext;
-                    f1 = this.evaluateEquationResidual(targetVar, x1);
-                    if (Math.abs(x1 - x0) < 1e-9) {
-                        x0 = x1;
-                        solved = true;
+                let x0 = 10, x1 = 11;
+                let f0 = NaN, f1 = NaN;
+                for (const pair of candidates) {
+                    const testF0 = this.evaluateEquationResidual(targetVar, pair[0]);
+                    const testF1 = this.evaluateEquationResidual(targetVar, pair[1]);
+                    if (Number.isFinite(testF0) && Number.isFinite(testF1) && (testF0 !== testF1 || Math.abs(testF0) < 1e-9)) {
+                        x0 = pair[0];
+                        x1 = pair[1];
+                        f0 = testF0;
+                        f1 = testF1;
                         break;
                     }
                 }
 
-                if (!solved && isNaN(this.evaluateEquationResidual(targetVar, x0))) {
+                if (!Number.isFinite(f0) || !Number.isFinite(f1)) {
                     const label = (this.solveVariableMeta[targetVar] || {}).label || targetVar;
                     this.solve.messageType = 'error';
-                    this.solve.message = `Não foi possível calcular ${label}. Verifique os denominadores e confirme se os valores informados permitem uma solução válida.`;
-                    this.solve.errors = [];
+                    this.solve.message = `Não foi possível calcular ${label}. Os valores informados geram divisões por zero ou indefinições matemáticas na equação.`;
+                    this.solve.errors = [targetVar];
                     this.renderSolveVariables();
                     document.getElementById('lcdLine1').textContent = `Erro no cálculo de ${targetVar}`;
                     this.updateLCD();
                     return;
                 }
 
-                const rawVal = isNaN(x0) || !isFinite(x0) ? 0 : x0;
+                let solved = false;
+                let bestX = Math.abs(f1) < Math.abs(f0) ? x1 : x0;
+                let bestRes = Math.min(Math.abs(f1), Math.abs(f0));
+
+                for (let iter = 0; iter < 50; iter++) {
+                    if (Math.abs(f1) < 1e-9) {
+                        bestX = x1;
+                        bestRes = Math.abs(f1);
+                        solved = true;
+                        break;
+                    }
+
+                    const denom = f1 - f0;
+                    if (Math.abs(denom) < 1e-14) break;
+
+                    let delta = f1 * (x1 - x0) / denom;
+                    // Limita o passo para evitar divergências violentas
+                    if (Math.abs(delta) > 1e6) {
+                        delta = delta > 0 ? 1e6 : -1e6;
+                    }
+
+                    const xNext = x1 - delta;
+                    const fNext = this.evaluateEquationResidual(targetVar, xNext);
+
+                    if (!Number.isFinite(fNext)) {
+                        // Se o passo saiu do domínio, tenta reduzir o passo pela metade (amortecimento)
+                        const dampedX = x1 - delta * 0.25;
+                        const dampedF = this.evaluateEquationResidual(targetVar, dampedX);
+                        if (!Number.isFinite(dampedF)) break;
+                        x0 = x1; f0 = f1;
+                        x1 = dampedX; f1 = dampedF;
+                    } else {
+                        x0 = x1; f0 = f1;
+                        x1 = xNext; f1 = fNext;
+                    }
+
+                    if (Number.isFinite(f1) && Math.abs(f1) < bestRes) {
+                        bestRes = Math.abs(f1);
+                        bestX = x1;
+                    }
+
+                    if (Math.abs(x1 - x0) < 1e-9 && Math.abs(f1) < 1e-4) {
+                        bestX = x1;
+                        bestRes = Math.abs(f1);
+                        solved = true;
+                        break;
+                    }
+                }
+
+                if (bestRes < 1e-4) {
+                    solved = true;
+                }
+
+                if (!solved || !Number.isFinite(bestX) || isNaN(bestX)) {
+                    const label = (this.solveVariableMeta[targetVar] || {}).label || targetVar;
+                    this.solve.messageType = 'error';
+                    this.solve.message = `Não foi possível encontrar uma solução para ${label}. Os valores informados não permitem uma solução válida no domínio da equação.`;
+                    this.solve.errors = [targetVar];
+                    this.renderSolveVariables();
+                    document.getElementById('lcdLine1').textContent = `Erro no cálculo de ${targetVar}`;
+                    this.updateLCD();
+                    return;
+                }
+
+                const rawVal = isNaN(bestX) || !isFinite(bestX) ? 0 : bestX;
                 const finalVal = this.cleanFloat(rawVal, this.decimals);
                 this.solve.vars[targetVar] = finalVal;
                 this.solve.targetVar = targetVar;
@@ -4858,10 +5075,35 @@
                 if (this.currentMenu === 'MATH') {
                     const x = this.getDisplayValue();
                     switch (index) {
-                        case 0: this.setResult(Math.log10(x), `LOG(${this.formatNum(x)})`); break;
-                        case 1: this.setResult(Math.log(x), `LN(${this.formatNum(x)})`); break;
-                        case 2: this.setResult(Math.exp(x), `EXP(${this.formatNum(x)})`); break;
-                        case 3: this.setResult(Math.sqrt(Math.max(0, x)), `SQRT(${this.formatNum(x)})`); break;
+                        case 0:
+                            if (x <= 0) {
+                                this.setError('Log de número ≤ 0', `LOG(${this.formatNum(x)})`);
+                            } else {
+                                this.setResult(Math.log10(x), `LOG(${this.formatNum(x)})`);
+                            }
+                            break;
+                        case 1:
+                            if (x <= 0) {
+                                this.setError('LN de número ≤ 0', `LN(${this.formatNum(x)})`);
+                            } else {
+                                this.setResult(Math.log(x), `LN(${this.formatNum(x)})`);
+                            }
+                            break;
+                        case 2:
+                            const expRes = Math.exp(x);
+                            if (!isFinite(expRes)) {
+                                this.setError('Overflow em EXP', `EXP(${this.formatNum(x)})`);
+                            } else {
+                                this.setResult(expRes, `EXP(${this.formatNum(x)})`);
+                            }
+                            break;
+                        case 3:
+                            if (x < 0) {
+                                this.setError('Raiz de número negativo', `SQRT(${this.formatNum(x)})`);
+                            } else {
+                                this.setResult(Math.sqrt(x), `SQRT(${this.formatNum(x)})`);
+                            }
+                            break;
                         case 4: this.setResult(Math.PI, 'PI'); break;
                         case 5: this.currentMenu = 'MAIN'; break;
                     }
@@ -4957,8 +5199,28 @@
                 return this.stack.x;
             },
 
+            setError(msg, description = '') {
+                this.entry.isEntering = false;
+                this.entry.buffer = '0';
+                this.entry.hasDot = false;
+                this.stack.lastX = this.stack.x;
+                this.stack.x = NaN;
+                const descText = description || msg;
+                document.getElementById('lcdLine1').textContent = msg;
+                this.addTapeEntry(`${descText} => Erro (${msg})`);
+                this.lastResult = {
+                    value: NaN,
+                    description: msg,
+                    unit: '',
+                    recalculate: null
+                };
+                this.renderResultPanel();
+                this.updateLCD();
+                this.saveWorkspaceState();
+            },
+
             setResult(val, description = '', recalculate = null, unit = '') {
-                val = this.cleanFloat(val, Math.max(this.decimals, 6));
+                val = this.cleanFloat(val, Math.max(this.decimals, 6), NaN);
                 this.stack.lastX = this.stack.x;
                 this.stack.x = val;
                 this.entry.isEntering = false;
@@ -4967,7 +5229,8 @@
 
                 if (description) {
                     document.getElementById('lcdLine1').textContent = description;
-                    this.addTapeEntry(`${description} => ${this.formatNum(val)}${unit ? ' ' + unit : ''}`);
+                    const formatted = this.formatNum(val);
+                    this.addTapeEntry(`${description} => ${formatted}${unit && formatted !== 'Erro' ? ' ' + unit : ''}`);
                 }
                 this.lastResult = {
                     value: val,
@@ -4977,6 +5240,7 @@
                 };
                 this.renderResultPanel();
                 this.updateLCD();
+                this.saveWorkspaceState();
             },
 
             renderResultPanel() {
@@ -4988,16 +5252,17 @@
                 const recalcBtn = document.getElementById('btn-result-recalculate');
                 const feedback = document.getElementById('result-feedback');
                 const formatted = this.formatNum(this.lastResult.value);
+                const isErr = formatted === 'Erro';
                 const eqIndex = this.lastResult.description.lastIndexOf(' = ');
                 const displayTitle = eqIndex > -1 ? this.lastResult.description.slice(0, eqIndex).trim() : this.lastResult.description;
                 if (title) title.textContent = displayTitle;
-                if (value) value.textContent = this.lastResult.unit === 'R$' ? `R$ ${formatted}` : formatted;
-                if (unit) unit.textContent = this.lastResult.unit && this.lastResult.unit !== 'R$' ? this.lastResult.unit : '';
-                if (recalcBtn) recalcBtn.classList.toggle('hidden', typeof this.lastResult.recalculate !== 'function');
+                if (value) value.textContent = isErr ? 'Erro' : (this.lastResult.unit === 'R$' ? `R$ ${formatted}` : formatted);
+                if (unit) unit.textContent = !isErr && this.lastResult.unit && this.lastResult.unit !== 'R$' ? this.lastResult.unit : '';
+                if (recalcBtn) recalcBtn.classList.toggle('hidden', isErr || typeof this.lastResult.recalculate !== 'function');
                 if (feedback) { feedback.textContent = ''; feedback.className = 'hidden border-t border-slate-800 bg-slate-900/80 px-4 py-2 text-xs text-slate-300'; }
                 panel.classList.remove('hidden');
                 this.lastResult.displayTitle = displayTitle;
-                this.lastResult.copyText = `${displayTitle}: ${this.lastResult.unit === 'R$' ? 'R$ ' : ''}${formatted}${this.lastResult.unit && this.lastResult.unit !== 'R$' ? ' ' + this.lastResult.unit : ''}`;
+                this.lastResult.copyText = `${displayTitle}: ${!isErr && this.lastResult.unit === 'R$' ? 'R$ ' : ''}${formatted}${!isErr && this.lastResult.unit && this.lastResult.unit !== 'R$' ? ' ' + this.lastResult.unit : ''}`;
             },
 
             showResultFeedback(message, isError = false) {
@@ -5122,21 +5387,68 @@
                 if (this.shiftActive) {
                     this.shiftActive = false;
                     const x = this.getDisplayValue();
-                    if (op === '/') { this.setResult(x !== 0 ? 1 / x : 0, `1/${this.formatNum(x)}`); return; }
-                    if (op === '*') { this.setResult(Math.pow(this.stack.y, x), `${this.formatNum(this.stack.y)} ^ ${this.formatNum(x)}`); return; }
-                    if (op === '-') { this.setResult(Math.sqrt(Math.max(0, x)), `√(${this.formatNum(x)})`); return; }
-                    if (op === '+') { this.setResult(x * x, `(${this.formatNum(x)})²`); return; }
+                    if (op === '/') {
+                        if (x === 0) {
+                            this.setError('Divisão por zero', '1/0');
+                            return;
+                        }
+                        this.setResult(1 / x, `1/${this.formatNum(x)}`);
+                        return;
+                    }
+                    if (op === '*') {
+                        const y = this.stack.y;
+                        if (y === 0 && x <= 0) {
+                            this.setError('Indeterminação matemática', `0 ^ ${this.formatNum(x)}`);
+                            return;
+                        }
+                        if (y < 0 && !Number.isInteger(x)) {
+                            this.setError('Expoente não inteiro', `${this.formatNum(y)} ^ ${this.formatNum(x)}`);
+                            return;
+                        }
+                        const res = Math.pow(y, x);
+                        if (!isFinite(res) || isNaN(res)) {
+                            this.setError('Indeterminação matemática', `${this.formatNum(y)} ^ ${this.formatNum(x)}`);
+                            return;
+                        }
+                        this.setResult(res, `${this.formatNum(y)} ^ ${this.formatNum(x)}`);
+                        return;
+                    }
+                    if (op === '-') {
+                        if (x < 0) {
+                            this.setError('Raiz de número negativo', `√(${this.formatNum(x)})`);
+                            return;
+                        }
+                        this.setResult(Math.sqrt(x), `√(${this.formatNum(x)})`);
+                        return;
+                    }
+                    if (op === '+') {
+                        const res = x * x;
+                        if (!isFinite(res)) {
+                            this.setError('Overflow', `(${this.formatNum(x)})²`);
+                            return;
+                        }
+                        this.setResult(res, `(${this.formatNum(x)})²`);
+                        return;
+                    }
                 }
 
                 if (this.mode === 'RPN') {
                     const x = this.getDisplayValue();
                     const y = this.stack.y;
+                    if (op === '/' && x === 0) {
+                        this.setError('Divisão por zero', `${this.formatNum(y)} / 0`);
+                        return;
+                    }
                     let res = 0;
                     switch (op) {
                         case '+': res = y + x; break;
                         case '-': res = y - x; break;
                         case '*': res = y * x; break;
-                        case '/': res = x !== 0 ? y / x : 0; break;
+                        case '/': res = y / x; break;
+                    }
+                    if (!isFinite(res) || isNaN(res)) {
+                        this.setError('Indeterminação matemática', `${this.formatNum(y)} ${op} ${this.formatNum(x)}`);
+                        return;
                     }
                     this.stack.x = res;
                     this.stack.y = this.stack.z;
@@ -5145,6 +5457,11 @@
                 } else {
                     const currentVal = this.getDisplayValue();
                     if (this.alg.pendingOp) {
+                        if (this.alg.pendingOp === '/' && currentVal === 0) {
+                            this.setError('Divisão por zero', `${this.formatNum(this.alg.operand1)} / 0`);
+                            this.alg.pendingOp = null;
+                            return;
+                        }
                         this.executeAlgOp(this.alg.pendingOp, this.alg.operand1, currentVal);
                     } else {
                         this.alg.operand1 = currentVal;
@@ -5157,12 +5474,22 @@
             },
 
             executeAlgOp(op, a, b) {
+                if (op === '/' && b === 0) {
+                    this.setError('Divisão por zero', `${this.formatNum(a)} / 0`);
+                    this.alg.pendingOp = null;
+                    return;
+                }
                 let res = 0;
                 switch (op) {
                     case '+': res = a + b; break;
                     case '-': res = a - b; break;
                     case '*': res = a * b; break;
-                    case '/': res = b !== 0 ? a / b : 0; break;
+                    case '/': res = a / b; break;
+                }
+                if (!isFinite(res) || isNaN(res)) {
+                    this.setError('Indeterminação matemática', `${this.formatNum(a)} ${op} ${this.formatNum(b)}`);
+                    this.alg.pendingOp = null;
+                    return;
                 }
                 this.alg.operand1 = res;
                 this.setResult(res, `${this.formatNum(a)} ${op} ${this.formatNum(b)}`);
@@ -5201,6 +5528,10 @@
                         const x = this.getDisplayValue();
                         const y = this.stack.y;
                         const pct = (y * x) / 100;
+                        if (!isFinite(pct) || isNaN(pct)) {
+                            this.setError('Erro de cálculo', `${x}% de ${this.formatNum(y)}`);
+                            return;
+                        }
                         this.setResult(pct, `${x}% de ${this.formatNum(y)}`);
                     }
                     this.updateLCD();
@@ -5212,6 +5543,10 @@
                     this.entry.isEntering = false;
                     this.entry.hasDot = false;
                     this.stack.x = 0;
+                    if (this.mode === 'ALG') {
+                        this.alg.pendingOp = null;
+                        this.alg.operand1 = 0;
+                    }
                     document.getElementById('lcdLine1').textContent = 'Visor Limpo (CLR)';
                     this.updateLCD();
                     return;
@@ -5297,11 +5632,13 @@
 
             setMode(newMode) {
                 this.mode = newMode;
-                document.getElementById('label-mode-indicator').textContent = `MODO: ${newMode}`;
+                const modeLbl = document.getElementById('label-mode-indicator');
+                if (modeLbl) modeLbl.textContent = `MODO: ${newMode}`;
                 const modeButton = document.getElementById('btn-mode-toggle');
                 if (modeButton) modeButton.setAttribute('aria-pressed', newMode === 'RPN' ? 'true' : 'false');
                 document.getElementById('lcdLine1').textContent = `Modo alterado para ${newMode}`;
                 this.updateLCD();
+                this.saveWorkspaceState();
             },
 
             toggleRpnMode() {
@@ -5314,6 +5651,7 @@
                 this.renderSolveVariables();
                 this.syncStateToInputs();
                 this.updateLCD();
+                this.saveWorkspaceState();
             },
 
             toggleBgnEnd() {
@@ -5321,10 +5659,19 @@
                 const lbl = this.tvm.isBegin ? 'BGN' : 'END';
                 const modeButton = document.getElementById('btn-tvm-toggle');
                 if (modeButton) modeButton.setAttribute('aria-pressed', this.tvm.isBegin ? 'true' : 'false');
-                document.getElementById('label-tvm-indicator').textContent = `TVM: ${lbl}`;
+                const tvmInd = document.getElementById('label-tvm-indicator');
+                if (tvmInd) tvmInd.textContent = `TVM: ${lbl}`;
                 const btnAmort = document.getElementById('btn-amort-mode-label');
                 if (btnAmort) btnAmort.textContent = `Modo: ${lbl}`;
+                const indAmort = document.getElementById('amort-bgn-indicator');
+                if (indAmort) {
+                    indAmort.textContent = this.tvm.isBegin ? 'Modo: BGN (Antecipado)' : 'Modo: END (Postecipado)';
+                    indAmort.className = this.tvm.isBegin
+                        ? 'text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        : 'text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300';
+                }
                 this.updateLCD();
+                this.saveWorkspaceState();
             },
 
             // Mensagens de validação do módulo TVM.
@@ -5335,14 +5682,137 @@
                 feedback.classList.toggle('hidden', !message);
             },
 
+            // Solucionador numérico da taxa periódica de juros (I%) no TVM
+            solveTVMRate(n, pv, pmt, fv, pyr, isBegin) {
+                const typeVal = isBegin ? 1 : 0;
+                const flows = [];
+                if (pv !== 0) flows.push(pv);
+                if (pmt !== 0) flows.push(pmt);
+                if (fv !== 0) flows.push(fv);
+
+                if (flows.length < 2) {
+                    return { error: 'São necessários pelo menos dois valores informados entre PV, PMT e FV para calcular a taxa.' };
+                }
+                const hasPos = flows.some(x => x > 0);
+                const hasNeg = flows.some(x => x < 0);
+                if (!hasPos || !hasNeg) {
+                    return { error: 'Não há solução real de juros: os valores de PV, PMT e FV devem conter sinais opostos (ao menos uma entrada e uma saída).' };
+                }
+
+                // Solução analítica quando não há parcelas intermediárias
+                if (pmt === 0) {
+                    const ratio = -fv / pv;
+                    if (ratio <= 0) {
+                        return { error: 'PV e FV devem ter sinais opostos quando a parcela PMT for zero.' };
+                    }
+                    const i = Math.pow(ratio, 1 / n) - 1;
+                    return { rate: i * pyr * 100 };
+                }
+
+                const f0 = pv + pmt * n + fv;
+                if (Math.abs(f0) < 1e-12) {
+                    return { rate: 0 };
+                }
+
+                const fAndDf = (rate) => {
+                    if (rate <= -0.999999) return [NaN, NaN];
+                    const u = Math.pow(1 + rate, n);
+                    const du = n * Math.pow(1 + rate, n - 1);
+                    let g, dg;
+                    if (Math.abs(rate) < 1e-9) {
+                        const term = n + (n * (n - 1) / 2) * rate;
+                        const dterm = (n * (n - 1) / 2);
+                        g = (1 + rate * typeVal) * term;
+                        dg = typeVal * term + (1 + rate * typeVal) * dterm;
+                    } else {
+                        const term = (u - 1) / rate;
+                        const dterm = (rate * du - (u - 1)) / (rate * rate);
+                        if (typeVal === 0) {
+                            g = term;
+                            dg = dterm;
+                        } else {
+                            g = (1 + rate) * term;
+                            dg = term + (1 + rate) * dterm;
+                        }
+                    }
+                    const val = pv * u + pmt * g + fv;
+                    const deriv = pv * du + pmt * dg;
+                    return [val, deriv];
+                };
+
+                let guess = 0.05 / pyr;
+                const [v0, d0] = fAndDf(0);
+                if (d0 !== 0 && Number.isFinite(d0)) {
+                    guess = -v0 / d0;
+                    if (guess <= -0.9 || guess > 5) guess = 0.01;
+                } else {
+                    guess = 0.01;
+                }
+
+                let i = guess;
+                let converged = false;
+                for (let iter = 0; iter < 60; iter++) {
+                    const [val, deriv] = fAndDf(i);
+                    if (!Number.isFinite(val) || !Number.isFinite(deriv)) break;
+                    if (Math.abs(val) < 1e-9) {
+                        converged = true;
+                        break;
+                    }
+                    if (Math.abs(deriv) < 1e-12) break;
+                    let step = val / deriv;
+                    if (Math.abs(step) > 0.5) step = step > 0 ? 0.5 : -0.5;
+                    let nextI = i - step;
+                    if (nextI <= -0.9999) nextI = (i - 0.9999) / 2;
+                    if (Math.abs(nextI - i) < 1e-11) {
+                        i = nextI;
+                        converged = true;
+                        break;
+                    }
+                    i = nextI;
+                }
+
+                // Fallback bisseção caso Newton-Raphson não tenha atingido convergência estrita
+                if (!converged) {
+                    let rLow = -0.99, rHigh = 5.0;
+                    let [vLow] = fAndDf(rLow);
+                    let [vHigh] = fAndDf(rHigh);
+                    if (Number.isFinite(vLow) && Number.isFinite(vHigh) && vLow * vHigh <= 0) {
+                        for (let b = 0; b < 80; b++) {
+                            const mid = (rLow + rHigh) / 2;
+                            const [vMid] = fAndDf(mid);
+                            if (Math.abs(vMid) < 1e-9 || (rHigh - rLow) < 1e-11) {
+                                i = mid;
+                                converged = true;
+                                break;
+                            }
+                            if (vLow * vMid <= 0) {
+                                rHigh = mid;
+                                vHigh = vMid;
+                            } else {
+                                rLow = mid;
+                                vLow = vMid;
+                            }
+                        }
+                    }
+                }
+
+                if (!converged) {
+                    const [chk] = fAndDf(i);
+                    if (Math.abs(chk) < 1e-4) converged = true;
+                }
+
+                if (!converged) {
+                    return { error: 'Não foi possível convergir para uma taxa de juros real com os dados fornecidos.' };
+                }
+
+                return { rate: i * pyr * 100 };
+            },
+
             // TVM Solver
             calculateTVM(target) {
-                if (target === 'I') {
-                    this.setTvmFeedback('O cálculo da taxa I% ainda não está implementado neste protótipo. Os demais cálculos TVM permanecem disponíveis.');
-                    return;
-                }
                 const requiredByTarget = {
                     N: ['I', 'PV', 'PMT', 'FV', 'PYR'],
+                    I: ['N', 'PV', 'PMT', 'FV', 'PYR'],
                     PMT: ['N', 'I', 'PV', 'FV', 'PYR'],
                     FV: ['N', 'I', 'PV', 'PMT', 'PYR'],
                     PV: ['N', 'I', 'PMT', 'FV', 'PYR']
@@ -5393,7 +5863,7 @@
                         const term = Math.pow(1 + i, n);
                         res = - (pv * term + fv) / (((term - 1) / i) * (1 + i * type));
                     }
-                    this.tvm.PMT = this.cleanFloat(res, 2);
+                    this.tvm.PMT = this.cleanFloat(res, 2, 0);
                 } else if (target === 'FV') {
                     if (i === 0) {
                         res = -(pv + pmt * n);
@@ -5401,7 +5871,7 @@
                         const term = Math.pow(1 + i, n);
                         res = - pv * term - pmt * (1 + i * type) * ((term - 1) / i);
                     }
-                    this.tvm.FV = this.cleanFloat(res, 2);
+                    this.tvm.FV = this.cleanFloat(res, 2, 0);
                 } else if (target === 'PV') {
                     if (i === 0) {
                         res = -(fv + pmt * n);
@@ -5409,27 +5879,42 @@
                         const term = Math.pow(1 + i, n);
                         res = - (fv + pmt * (1 + i * type) * ((term - 1) / i)) / term;
                     }
-                    this.tvm.PV = this.cleanFloat(res, 2);
+                    this.tvm.PV = this.cleanFloat(res, 2, 0);
                 } else if (target === 'N') {
                     if (i === 0) {
+                        if (pmt === 0) {
+                            this.setTvmFeedback('Para calcular N com taxa zero, a parcela PMT não pode ser zero.');
+                            return;
+                        }
                         res = -(pv + fv) / pmt;
                     } else {
                         const num = (pmt * (1 + i * type) - fv * i);
                         const den = (pv * i + pmt * (1 + i * type));
+                        if (den === 0 || (num / den) <= 0) {
+                            this.setTvmFeedback('Impossível calcular N: a parcela informada é insuficiente para amortizar o saldo com esta taxa.');
+                            return;
+                        }
                         res = Math.log(num / den) / Math.log(1 + i);
                     }
-                    this.tvm.N = this.cleanFloat(res, 2);
+                    this.tvm.N = this.cleanFloat(res, 2, 0);
+                } else if (target === 'I') {
+                    const sol = this.solveTVMRate(n, pv, pmt, fv, this.tvm.PYR, type === 1);
+                    if (sol.error) {
+                        this.setTvmFeedback(sol.error);
+                        return;
+                    }
+                    this.tvm.I = this.cleanFloat(sol.rate, Math.max(this.decimals, 4), 0);
                 }
 
                 this.syncStateToInputs();
-                const tvmUnit = target === 'N' ? 'períodos' : (target === 'I' ? '%' : 'R$');
-                this.setResult(this.tvm[target], `TVM ${target} = ${this.formatNum(this.tvm[target])}`, () => this.calculateTVM(target), tvmUnit);
+                const tvmUnit = target === 'N' ? 'períodos' : (target === 'I' ? '% a.a.' : 'R$');
+                this.setResult(this.tvm[target], `TVM ${target} = ${this.formatNum(this.tvm[target])}${target === 'I' ? '%' : ''}`, () => this.calculateTVM(target), tvmUnit);
             },
 
             syncStateToInputs() {
                 const setVal = (id, val) => {
                     const el = document.getElementById(id);
-                    if (el) el.value = this.cleanFloat(val, this.decimals).toFixed(this.decimals);
+                    if (el) el.value = this.cleanFloat(val, this.decimals, 0).toFixed(this.decimals);
                 };
                 setVal('input-tvm-N', this.tvm.N);
                 setVal('input-tvm-I', this.tvm.I);
@@ -5444,40 +5929,106 @@
                 const n = parseFloat(value);
                 if (module === 'tvm') {
                     this.tvm[key] = isNaN(n) ? 0 : n;
+                    this.saveWorkspaceState();
                 }
             },
 
             generateAmortizationTable() {
                 const tbody = document.getElementById('amort-table-body');
+                const tfoot = document.getElementById('amort-table-foot');
+                const notice = document.getElementById('amort-notice');
                 if (!tbody) return;
                 tbody.innerHTML = '';
+                if (tfoot) {
+                    tfoot.innerHTML = '';
+                    tfoot.classList.add('hidden');
+                }
+                if (notice) {
+                    notice.innerHTML = '';
+                    notice.classList.add('hidden');
+                }
 
                 let balance = Math.abs(this.tvm.PV);
-                const i = (this.tvm.I / 100) / this.tvm.PYR;
+                const pyr = this.tvm.PYR || 12;
+                const i = pyr !== 0 ? (this.tvm.I / 100) / pyr : 0;
                 const pmt = Math.abs(this.tvm.PMT);
-                const n = Math.min(Math.round(this.tvm.N), 60);
+                const totalN = Math.max(0, Math.round(this.tvm.N));
 
-                if (balance === 0 || pmt === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="p-2 text-center text-amber-400">Insira PV, I% e calcule o PMT antes de gerar.</td></tr>';
+                if (balance <= 0 || pmt <= 0 || totalN <= 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-2 text-center text-amber-400">Insira PV, I%, N e calcule o PMT antes de gerar a tabela.</td></tr>';
                     return;
                 }
 
-                for (let period = 1; period <= n; period++) {
-                    const interest = balance * i;
-                    const principal = pmt - interest;
-                    balance = Math.max(0, balance - principal);
+                const limitSelect = document.getElementById('amort-limit-select');
+                const limitVal = limitSelect ? limitSelect.value : '60';
+                const maxPeriods = limitVal === 'all' ? totalN : parseInt(limitVal, 10);
+                const displayN = Math.min(totalN, maxPeriods);
+
+                if (totalN > maxPeriods && notice) {
+                    notice.textContent = `Exibindo as primeiras ${displayN} de ${totalN} parcelas. Selecione "Todas as parcelas" no seletor para visualizar o cronograma completo.`;
+                    notice.classList.remove('hidden');
+                }
+
+                const isBegin = !!this.tvm.isBegin;
+                let totPmt = 0;
+                let totInt = 0;
+                let totPrin = 0;
+                let actualRows = 0;
+
+                for (let period = 1; period <= displayN; period++) {
+                    actualRows++;
+                    let interest = 0;
+                    let principal = 0;
+                    let actualPmt = pmt;
+
+                    if (isBegin && period === 1) {
+                        interest = 0;
+                        principal = Math.min(actualPmt, balance);
+                        balance = Math.max(0, balance - principal);
+                    } else {
+                        interest = balance * i;
+                        principal = actualPmt - interest;
+
+                        if (period === totalN || balance - principal < 1e-5) {
+                            principal = balance;
+                            actualPmt = interest + principal;
+                            balance = 0;
+                        } else {
+                            balance = Math.max(0, balance - principal);
+                        }
+                    }
+
+                    totPmt += actualPmt;
+                    totInt += interest;
+                    totPrin += principal;
 
                     const tr = document.createElement('tr');
                     tr.className = period % 2 === 0 ? 'bg-slate-900/60' : 'bg-transparent';
                     tr.innerHTML = `
-                        <td class="p-1.5 font-bold">${period}</td>
-                        <td class="p-1.5 text-white">${this.formatNum(pmt)}</td>
+                        <td class="p-1.5 font-bold">${period}${isBegin && period === 1 ? ' <span class="text-[9px] text-amber-400 font-normal">(Entrada)</span>' : ''}</td>
+                        <td class="p-1.5 text-white">${this.formatNum(actualPmt)}</td>
                         <td class="p-1.5 text-rose-300">${this.formatNum(interest)}</td>
                         <td class="p-1.5 text-emerald-300">${this.formatNum(principal)}</td>
                         <td class="p-1.5 text-right font-bold text-sky-300">${this.formatNum(balance)}</td>
                     `;
                     tbody.appendChild(tr);
-                    if (balance <= 0) break;
+
+                    if (balance <= 0 && period < displayN) {
+                        break;
+                    }
+                }
+
+                if (tfoot) {
+                    tfoot.innerHTML = `
+                        <tr>
+                            <td class="p-1.5 font-bold">TOTAL (${actualRows})</td>
+                            <td class="p-1.5 text-white">${this.formatNum(totPmt)}</td>
+                            <td class="p-1.5 text-rose-300">${this.formatNum(totInt)}</td>
+                            <td class="p-1.5 text-emerald-300">${this.formatNum(totPrin)}</td>
+                            <td class="p-1.5 text-right font-bold text-sky-300">${this.formatNum(balance)}</td>
+                        </tr>
+                    `;
+                    tfoot.classList.remove('hidden');
                 }
             },
 
@@ -5517,6 +6068,7 @@
                 }
                 this.cflo.push({ amount, count: 1 });
                 this.renderCashFlows();
+                this.saveWorkspaceState();
                 if (feedback) {
                     feedback.classList.remove('text-rose-400');
                     feedback.classList.add('text-emerald-400');
@@ -5532,6 +6084,7 @@
             removeCashFlow(idx) {
                 this.cflo.splice(idx, 1);
                 this.renderCashFlows();
+                this.saveWorkspaceState();
             },
 
             computeNPV() {
@@ -5574,27 +6127,108 @@
                     this.setModuleActionFeedback('A TIR exige ao menos um fluxo negativo e um positivo.', 'error');
                     return;
                 }
-                let r = 0.1;
-                for (let iter = 0; iter < 50; iter++) {
+                const stream = [];
+                this.cflo.forEach(cf => {
+                    for (let c = 0; c < cf.count; c++) {
+                        stream.push(cf.amount);
+                    }
+                });
+
+                const npvAndDnpv = (rate) => {
+                    if (rate <= -0.999999) return [NaN, NaN];
                     let npv = 0;
                     let dnpv = 0;
-                    let t = 0;
-                    this.cflo.forEach(cf => {
-                        for (let c = 0; c < cf.count; c++) {
-                            const disc = Math.pow(1 + r, t);
-                            npv += cf.amount / disc;
-                            if (t > 0) dnpv -= (t * cf.amount) / Math.pow(1 + r, t + 1);
-                            t++;
+                    const base = 1 + rate;
+                    for (let t = 0; t < stream.length; t++) {
+                        const amt = stream[t];
+                        if (amt === 0) continue;
+                        const disc = Math.pow(base, t);
+                        npv += amt / disc;
+                        if (t > 0) {
+                            dnpv -= (t * amt) / (disc * base);
                         }
-                    });
+                    }
+                    return [npv, dnpv];
+                };
 
-                    if (Math.abs(npv) < 1e-6) break;
-                    if (Math.abs(dnpv) < 1e-12) break;
-                    r = r - npv / dnpv;
+                const [f0] = npvAndDnpv(0);
+                if (Math.abs(f0) < 1e-9) {
+                    const irrPct = 0;
+                    this.setResult(irrPct, `CFLO: TIR = ${this.formatNum(irrPct)}%`, () => this.computeIRR(), '%');
+                    this.setModuleActionFeedback(`TIR calculada: ${this.formatNum(irrPct)}%`, 'success');
+                    return;
                 }
 
-                const irrPct = r * 100;
+                let r = 0.1;
+                let converged = false;
+                let bestR = r;
+                let bestNpv = Math.abs(f0);
+
+                for (let iter = 0; iter < 60; iter++) {
+                    const [val, deriv] = npvAndDnpv(r);
+                    if (!Number.isFinite(val) || !Number.isFinite(deriv)) break;
+                    if (Math.abs(val) < bestNpv) {
+                        bestNpv = Math.abs(val);
+                        bestR = r;
+                    }
+                    if (Math.abs(val) < 1e-7) {
+                        converged = true;
+                        bestR = r;
+                        break;
+                    }
+                    if (Math.abs(deriv) < 1e-12) break;
+
+                    let step = val / deriv;
+                    if (Math.abs(step) > 0.5) step = step > 0 ? 0.5 : -0.5;
+                    let nextR = r - step;
+                    if (nextR <= -0.999) nextR = (r - 0.999) / 2;
+                    if (Math.abs(nextR - r) < 1e-10 && Math.abs(val) < 1e-4) {
+                        converged = true;
+                        bestR = nextR;
+                        break;
+                    }
+                    r = nextR;
+                }
+
+                if (!converged) {
+                    const intervals = [[-0.99, 0.0], [0.0, 1.0], [1.0, 5.0], [5.0, 20.0]];
+                    for (const [low, high] of intervals) {
+                        const [vLow] = npvAndDnpv(low);
+                        const [vHigh] = npvAndDnpv(high);
+                        if (Number.isFinite(vLow) && Number.isFinite(vHigh) && vLow * vHigh <= 0) {
+                            let bLow = low, bHigh = high;
+                            for (let b = 0; b < 80; b++) {
+                                const mid = (bLow + bHigh) / 2;
+                                const [vMid] = npvAndDnpv(mid);
+                                if (Math.abs(vMid) < 1e-7 || (bHigh - bLow) < 1e-10) {
+                                    bestR = mid;
+                                    converged = true;
+                                    break;
+                                }
+                                if (vLow * vMid <= 0) {
+                                    bHigh = mid;
+                                } else {
+                                    bLow = mid;
+                                }
+                            }
+                            if (converged) break;
+                        }
+                    }
+                }
+
+                const [valFinal] = npvAndDnpv(bestR);
+                if (Math.abs(valFinal) < 1e-4) {
+                    converged = true;
+                }
+
+                if (!converged || !Number.isFinite(bestR)) {
+                    this.setModuleActionFeedback('Não foi possível convergir para uma Taxa Interna de Retorno (TIR) real única com estes fluxos.', 'error');
+                    return;
+                }
+
+                const irrPct = this.cleanFloat(bestR * 100, Math.max(this.decimals, 4));
                 this.setResult(irrPct, `CFLO: TIR = ${this.formatNum(irrPct)}%`, () => this.computeIRR(), '%');
+                this.setModuleActionFeedback(`TIR calculada: ${this.formatNum(irrPct)}%`, 'success');
             },
 
             // Ferramentas Financeiras
@@ -5656,17 +6290,173 @@
                     return;
                 }
                 this.stats.pairs.push({ x, y });
-                document.getElementById('stat-count-label').textContent = `Total de Pares: ${this.stats.pairs.length}`;
-                this.setModuleActionFeedback(`Par (${this.formatNum(x)}; ${this.formatNum(y)}) inserido.`, 'success');
-                this.setResult(this.stats.pairs.length, `SUM: Par (${x}; ${y}) inserido`);
+                this.renderStatPairsList();
+                this.setModuleActionFeedback(`Par #${this.stats.pairs.length} (${this.formatNum(x)}; ${this.formatNum(y)}) inserido (Σ+).`, 'success');
+                this.setResult(this.stats.pairs.length, `SUM: Par (${this.formatNum(x)}; ${this.formatNum(y)}) inserido`, null, 'pares');
+            },
+
+            removeLastStatPair() {
+                if (this.stats.pairs.length === 0) {
+                    this.setModuleActionFeedback('Nenhum par para remover.', 'error');
+                    return;
+                }
+                const removed = this.stats.pairs.pop();
+                this.renderStatPairsList();
+                this.setModuleActionFeedback(`Último par (${this.formatNum(removed.x)}; ${this.formatNum(removed.y)}) removido (Σ-).`, 'info');
+                this.setResult(this.stats.pairs.length, `SUM: Par removido`, null, 'pares');
+            },
+
+            removeStatPairAt(index) {
+                if (index >= 0 && index < this.stats.pairs.length) {
+                    const removed = this.stats.pairs.splice(index, 1)[0];
+                    this.renderStatPairsList();
+                    this.setModuleActionFeedback(`Par #${index + 1} (${this.formatNum(removed.x)}; ${this.formatNum(removed.y)}) removido.`, 'info');
+                    this.setResult(this.stats.pairs.length, `SUM: Par removido`, null, 'pares');
+                }
+            },
+
+            clearStatPairs() {
+                this.stats.pairs = [];
+                this.renderStatPairsList();
+                this.setModuleActionFeedback('Registros estatísticos limpos (CLΣ).', 'success');
+                const panel = document.getElementById('result-panel');
+                if (panel) panel.classList.add('hidden');
+                document.getElementById('lcdLine1').textContent = 'SUM: Registros limpos (CLΣ)';
+                this.updateLCD();
+                this.saveWorkspaceState();
+            },
+
+            renderStatPairsList() {
+                const list = document.getElementById('stat-pairs-list');
+                const countLbl = document.getElementById('stat-count-label');
+                if (countLbl) countLbl.textContent = `Total de Pares: ${this.stats.pairs.length}`;
+                if (!list) return;
+                if (this.stats.pairs.length === 0) {
+                    list.innerHTML = '<span class="text-slate-500 text-[10px] italic">Nenhum par registrado. Insira pontos acima.</span>';
+                    return;
+                }
+                list.innerHTML = this.stats.pairs.map((p, idx) => `
+                    <span class="inline-flex items-center gap-1 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded text-[10px] text-slate-300 font-mono shadow-xs">
+                        #${idx + 1}: (${this.formatNum(p.x)}; ${this.formatNum(p.y)})
+                        <button type="button" onclick="app.removeStatPairAt(${idx})" class="text-rose-400 hover:text-rose-300 font-bold ml-1" title="Remover par #${idx + 1}" aria-label="Remover par #${idx + 1}">×</button>
+                    </span>
+                `).join('');
+            },
+
+            computeStats() {
+                const pairs = this.stats.pairs;
+                const n = pairs.length;
+                if (n === 0) return null;
+
+                const sumX = pairs.reduce((acc, p) => acc + p.x, 0);
+                const sumY = pairs.reduce((acc, p) => acc + p.y, 0);
+                const sumX2 = pairs.reduce((acc, p) => acc + (p.x * p.x), 0);
+                const sumY2 = pairs.reduce((acc, p) => acc + (p.y * p.y), 0);
+                const sumXY = pairs.reduce((acc, p) => acc + (p.x * p.y), 0);
+
+                const meanX = sumX / n;
+                const meanY = sumY / n;
+
+                let sx = 0;
+                let sy = 0;
+                let r = NaN;
+                let slope = NaN;
+                let intercept = NaN;
+
+                if (n > 1) {
+                    const varX = (sumX2 - (sumX * sumX) / n) / (n - 1);
+                    const varY = (sumY2 - (sumY * sumY) / n) / (n - 1);
+                    sx = varX > 0 ? Math.sqrt(varX) : 0;
+                    sy = varY > 0 ? Math.sqrt(varY) : 0;
+
+                    const sxx = sumX2 - (sumX * sumX) / n;
+                    const syy = sumY2 - (sumY * sumY) / n;
+                    const sxy = sumXY - (sumX * sumY) / n;
+
+                    if (Math.abs(sxx) > 1e-12) {
+                        slope = sxy / sxx;
+                        intercept = meanY - slope * meanX;
+                    }
+                    if (sxx > 1e-12 && syy > 1e-12) {
+                        r = sxy / Math.sqrt(sxx * syy);
+                    }
+                }
+
+                return {
+                    n, sumX, sumY, sumX2, sumY2, sumXY,
+                    meanX, meanY, sx, sy, r, slope, intercept
+                };
             },
 
             showStatMetric(m) {
-                const n = this.stats.pairs.length;
-                if (n === 0) return;
-                const sumX = this.stats.pairs.reduce((acc, p) => acc + p.x, 0);
-                const meanX = sumX / n;
-                if (m === 'MEAN') this.setResult(meanX, `SUM: Média X = ${this.formatNum(meanX)}`, () => this.showStatMetric(m));
+                const s = this.computeStats();
+                if (!s) {
+                    this.setModuleActionFeedback('Insira ao menos um par (X, Y) antes de calcular.', 'error');
+                    return;
+                }
+
+                switch (m) {
+                    case 'N':
+                        this.setResult(s.n, `SUM: Total de pares (n) = ${s.n}`, () => this.showStatMetric(m), 'pares');
+                        break;
+                    case 'MEAN_X':
+                    case 'MEAN':
+                        this.setResult(s.meanX, `SUM: Média X (x̄) = ${this.formatNum(s.meanX)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'MEAN_Y':
+                        this.setResult(s.meanY, `SUM: Média Y (ȳ) = ${this.formatNum(s.meanY)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'SX':
+                        if (s.n < 2) {
+                            this.setModuleActionFeedback('São necessários ao menos 2 pares para calcular o desvio padrão amostral (Sx).', 'error');
+                            return;
+                        }
+                        this.setResult(s.sx, `SUM: Desvio Padrão Sx = ${this.formatNum(s.sx)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'SY':
+                        if (s.n < 2) {
+                            this.setModuleActionFeedback('São necessários ao menos 2 pares para calcular o desvio padrão amostral (Sy).', 'error');
+                            return;
+                        }
+                        this.setResult(s.sy, `SUM: Desvio Padrão Sy = ${this.formatNum(s.sy)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'SUM_X':
+                        this.setResult(s.sumX, `SUM: Somatório ΣX = ${this.formatNum(s.sumX)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'SUM_Y':
+                        this.setResult(s.sumY, `SUM: Somatório ΣY = ${this.formatNum(s.sumY)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'SUM_X2':
+                        this.setResult(s.sumX2, `SUM: Somatório ΣX² = ${this.formatNum(s.sumX2)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'SUM_Y2':
+                        this.setResult(s.sumY2, `SUM: Somatório ΣY² = ${this.formatNum(s.sumY2)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'SUM_XY':
+                        this.setResult(s.sumXY, `SUM: Somatório ΣXY = ${this.formatNum(s.sumXY)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'CORR':
+                        if (s.n < 2 || isNaN(s.r)) {
+                            this.setModuleActionFeedback('São necessários ao menos 2 pares com variação em X e Y para calcular a correlação.', 'error');
+                            return;
+                        }
+                        this.setResult(s.r, `SUM: Correlação Linear (r) = ${this.formatNum(s.r, 4)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'SLOPE':
+                        if (s.n < 2 || isNaN(s.slope)) {
+                            this.setModuleActionFeedback('São necessários ao menos 2 pares com variação em X para calcular a inclinação.', 'error');
+                            return;
+                        }
+                        this.setResult(s.slope, `SUM: Inclinação Linear (m) = ${this.formatNum(s.slope, 4)}`, () => this.showStatMetric(m));
+                        break;
+                    case 'INTERCEPT':
+                        if (s.n < 2 || isNaN(s.intercept)) {
+                            this.setModuleActionFeedback('São necessários ao menos 2 pares com variação em X para calcular o intercepto.', 'error');
+                            return;
+                        }
+                        this.setResult(s.intercept, `SUM: Intercepto Linear (b) = ${this.formatNum(s.intercept, 4)}`, () => this.showStatMetric(m));
+                        break;
+                }
             },
 
             // Fita e Histórico
@@ -5678,12 +6468,170 @@
                 if (container) {
                     container.innerHTML = this.tape.map(t => `<div class="border-b border-slate-900 pb-0.5">${t}</div>`).join('');
                 }
+                this.saveWorkspaceState();
+            },
+
+            renderTape() {
+                const container = document.getElementById('tape-content');
+                if (container) {
+                    container.innerHTML = this.tape.map(t => `<div class="border-b border-slate-900 pb-0.5">${t}</div>`).join('');
+                }
             },
 
             clearTape() {
                 this.tape = [];
                 const container = document.getElementById('tape-content');
                 if (container) container.innerHTML = '';
+                this.saveWorkspaceState();
+            },
+
+            // Persistência Completa de Estado no localStorage
+            saveWorkspaceState() {
+                try {
+                    const state = {
+                        version: 1,
+                        mode: this.mode,
+                        decimals: this.decimals,
+                        tvm: {
+                            N: this.tvm.N,
+                            I: this.tvm.I,
+                            PV: this.tvm.PV,
+                            PMT: this.tvm.PMT,
+                            FV: this.tvm.FV,
+                            PYR: this.tvm.PYR,
+                            isBegin: !!this.tvm.isBegin
+                        },
+                        cflo: Array.isArray(this.cflo) ? this.cflo : [],
+                        stats: {
+                            pairs: (this.stats && Array.isArray(this.stats.pairs)) ? this.stats.pairs : []
+                        },
+                        solve: {
+                            activeFormulaId: this.solve ? this.solve.activeFormulaId : null,
+                            vars: this.solve ? this.solve.vars : {},
+                            targetVar: this.solve ? this.solve.targetVar : null
+                        },
+                        tape: Array.isArray(this.tape) ? this.tape.slice(0, 50) : [],
+                        stack: {
+                            x: Number.isFinite(this.stack.x) ? this.stack.x : 0,
+                            y: Number.isFinite(this.stack.y) ? this.stack.y : 0,
+                            z: Number.isFinite(this.stack.z) ? this.stack.z : 0,
+                            t: Number.isFinite(this.stack.t) ? this.stack.t : 0,
+                            lastX: Number.isFinite(this.stack.lastX) ? this.stack.lastX : 0
+                        }
+                    };
+                    localStorage.setItem('hp17bii-workspace-state', JSON.stringify(state));
+                } catch (e) {
+                    console.warn('Não foi possível persistir o estado no localStorage:', e);
+                }
+            },
+
+            loadWorkspaceState() {
+                try {
+                    const raw = localStorage.getItem('hp17bii-workspace-state');
+                    if (!raw) return false;
+                    const state = JSON.parse(raw);
+                    if (!state || typeof state !== 'object') return false;
+
+                    if (state.mode === 'RPN' || state.mode === 'ALG') {
+                        this.mode = state.mode;
+                    }
+                    if (typeof state.decimals === 'number' && state.decimals >= 0 && state.decimals <= 11) {
+                        this.decimals = state.decimals;
+                    }
+                    if (state.tvm && typeof state.tvm === 'object') {
+                        Object.assign(this.tvm, {
+                            N: Number(state.tvm.N) || 0,
+                            I: Number(state.tvm.I) || 0,
+                            PV: Number(state.tvm.PV) || 0,
+                            PMT: Number(state.tvm.PMT) || 0,
+                            FV: Number(state.tvm.FV) || 0,
+                            PYR: Number(state.tvm.PYR) || 12,
+                            isBegin: !!state.tvm.isBegin
+                        });
+                    }
+                    if (Array.isArray(state.cflo)) {
+                        this.cflo = state.cflo.filter(cf => cf && typeof cf.amount === 'number');
+                    }
+                    if (state.stats && Array.isArray(state.stats.pairs)) {
+                        this.stats.pairs = state.stats.pairs.filter(p => p && typeof p.x === 'number' && typeof p.y === 'number');
+                    }
+                    if (state.stack && typeof state.stack === 'object') {
+                        ['x', 'y', 'z', 't', 'lastX'].forEach(reg => {
+                            if (typeof state.stack[reg] === 'number') this.stack[reg] = state.stack[reg];
+                        });
+                    }
+                    if (Array.isArray(state.tape)) {
+                        this.tape = state.tape;
+                    }
+                    if (state.solve && typeof state.solve === 'object') {
+                        if (state.solve.activeFormulaId) {
+                            const form = this.formulas.find(f => f.id === state.solve.activeFormulaId);
+                            if (form) this.solve.activeFormulaId = form.id;
+                        }
+                        if (state.solve.vars && typeof state.solve.vars === 'object') {
+                            this.solve.vars = Object.assign({}, state.solve.vars);
+                        }
+                        if (state.solve.targetVar) {
+                            this.solve.targetVar = state.solve.targetVar;
+                        }
+                    }
+                    return true;
+                } catch (e) {
+                    console.warn('Erro ao carregar estado do localStorage:', e);
+                    return false;
+                }
+            },
+
+            resetToFactoryDefaults(confirmPrompt = true) {
+                if (confirmPrompt && typeof window !== 'undefined' && typeof window.confirm === 'function') {
+                    const ok = window.confirm('Deseja restaurar todas as variáveis, cálculos e configurações para o padrão original de fábrica?');
+                    if (!ok) return;
+                }
+
+                this.mode = 'RPN';
+                this.decimals = 2;
+                this.shiftActive = false;
+                this.currentMenu = 'SOLVE';
+                this.stack = { x: 0, y: 0, z: 0, t: 0, lastX: 0 };
+                this.entry = { buffer: '0', isEntering: false, hasDot: false };
+                this.alg = { pendingOp: null, operand1: 0 };
+                this.tvm = { N: 12, I: 12, PV: -10000, PMT: 0, FV: 0, PYR: 12, isBegin: false };
+                this.cflo = [
+                    { amount: -50000, count: 1 },
+                    { amount: 15000, count: 2 },
+                    { amount: 20000, count: 2 }
+                ];
+                this.stats = { pairs: [] };
+                this.tape = ['*** PADRÃO DE FÁBRICA RESTAURADO ***'];
+                this.lastResult = null;
+
+                this.selectFormula('coef_financiamento_carencia_premio');
+                this.renderCatalog();
+                this.syncStateToInputs();
+                this.renderCashFlows();
+                this.renderStatPairsList();
+                this.renderTape();
+                const resultPanel = document.getElementById('result-panel');
+                if (resultPanel) resultPanel.classList.add('hidden');
+
+                const lbl = this.tvm.isBegin ? 'BGN' : 'END';
+                const tvmInd = document.getElementById('label-tvm-indicator');
+                if (tvmInd) tvmInd.textContent = `TVM: ${lbl}`;
+                const modeInd = document.getElementById('label-mode-indicator');
+                if (modeInd) modeInd.textContent = `MODO: ${this.mode}`;
+                const btnAmort = document.getElementById('btn-amort-mode-label');
+                if (btnAmort) btnAmort.textContent = `Modo: ${lbl}`;
+                const indAmort = document.getElementById('amort-bgn-indicator');
+                if (indAmort) {
+                    indAmort.textContent = 'Modo: END (Postecipado)';
+                    indAmort.className = 'text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300';
+                }
+
+                this.updateLCD();
+                try {
+                    localStorage.removeItem('hp17bii-workspace-state');
+                } catch (e) {}
+                this.setModuleActionFeedback('Calculadora reiniciada para os padrões de fábrica.', 'success');
             },
 
             // Tema claro/escuro com preferência persistida quando o navegador permitir.
@@ -5788,6 +6736,9 @@
                 const solveClearButton = document.getElementById('solve-clear-variables');
                 if (solveClearButton) solveClearButton.hidden = tabId !== 'SOLVE';
                 this.updateModuleToolbar(tabId);
+
+                // Expande o catálogo automaticamente na aba Fórmulas (SOLVE) e recolhe nas demais abas
+                this.toggleCatalog(tabId !== 'SOLVE');
             },
 
             // Alternância de visualização em tablets e celulares.
@@ -5848,6 +6799,9 @@
                 area.classList.toggle('catalog-collapsed', collapsed);
                 button.textContent = collapsed ? 'Mostrar catálogo' : 'Recolher catálogo';
                 button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+                if (typeof this.updateStickyOffsets === 'function') {
+                    this.updateStickyOffsets();
+                }
             },
 
             updateModuleToolbar(tabId) {
@@ -5915,11 +6869,11 @@
                     if (msg) msg.textContent = '';
                 } else if (module === 'BUS_SUM') {
                     this.stats.pairs = [];
-                    const count = document.getElementById('stat-count-label');
-                    if (count) count.textContent = 'Total de Pares: 0';
+                    this.renderStatPairsList();
                 }
                 const result = document.getElementById('result-panel');
                 if (result) result.classList.add('hidden');
+                this.saveWorkspaceState();
                 this.setModuleActionFeedback('Campos do módulo limpos.', 'info');
             },
 
@@ -5941,14 +6895,15 @@
                     setValues({ 'input-icnv-nom':12, 'input-icnv-pyr':12, 'input-depr-cost':50000, 'input-depr-salvage':5000, 'input-depr-life':5 });
                 } else if (module === 'BUS_SUM') {
                     setValues({ 'input-pchg-old':150, 'input-pchg-new':180, 'input-stat-x':10, 'input-stat-y':20 });
-                    this.stats.pairs = [];
-                    const count = document.getElementById('stat-count-label'); if (count) count.textContent = 'Total de Pares: 0';
+                    this.stats.pairs = [{ x: 10, y: 20 }, { x: 20, y: 40 }, { x: 30, y: 60 }];
+                    this.renderStatPairsList();
                 } else {
                     if (feedback) feedback.textContent = 'Este módulo não utiliza um conjunto de valores de exemplo predefinido.';
                     return;
                 }
                 const result = document.getElementById('result-panel');
                 if (result) result.classList.add('hidden');
+                this.saveWorkspaceState();
                 this.setModuleActionFeedback('Valores de exemplo restaurados.', 'success');
             },
 
