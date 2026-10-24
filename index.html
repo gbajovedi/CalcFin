@@ -2601,6 +2601,115 @@
             outline-offset: 3px;
         }
 
+        /* Alternância de som e feedback tátil das teclas no celular (toggle switch ao lado do tema) */
+        .sound-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            min-width: 88px;
+            min-height: 40px;
+            padding: 6px 8px;
+            border: 1px solid #475569;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.92);
+            cursor: pointer;
+            transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
+            touch-action: manipulation;
+        }
+        .sound-icon {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
+            transition: color .18s ease, opacity .18s ease, transform .18s ease;
+        }
+        .sound-icon-off { color: #64748b; }
+        .sound-icon-on { color: #fbbf24; }
+        .sound-switch-track {
+            width: 42px;
+            height: 26px;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            flex: 0 0 42px;
+            border-radius: 999px;
+            background: #334155;
+            border: 1px solid #64748b;
+            transition: background-color .18s ease, border-color .18s ease;
+        }
+        .sound-switch-knob {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            border-radius: 50%;
+            display: block;
+            background: #f8fafc;
+            box-shadow: 0 1px 3px rgba(0,0,0,.24);
+            transform: translateX(0);
+            transition: transform .18s ease, background-color .18s ease, color .18s ease;
+        }
+        /* Som ATIVADO (aria-checked="true") no modo escuro */
+        .sound-toggle[aria-checked="true"] .sound-switch-track {
+            background: #b45309;
+            border-color: #f59e0b;
+        }
+        .sound-toggle[aria-checked="true"] .sound-switch-knob {
+            transform: translateX(18px);
+            background: #fffaf0;
+        }
+        .sound-toggle[aria-checked="true"] .sound-icon-on { color: #fbbf24; }
+        .sound-toggle[aria-checked="true"] .sound-icon-off { color: #64748b; }
+
+        /* Som DESATIVADO (aria-checked="false") no modo escuro */
+        .sound-toggle[aria-checked="false"] .sound-switch-track {
+            background: #1e293b;
+            border-color: #475569;
+        }
+        .sound-toggle[aria-checked="false"] .sound-switch-knob {
+            transform: translateX(0);
+            background: #94a3b8;
+        }
+        .sound-toggle[aria-checked="false"] .sound-icon-on { color: #475569; }
+        .sound-toggle[aria-checked="false"] .sound-icon-off { color: #f87171; }
+
+        /* Modo CLARO (body.light-mode) */
+        body.light-mode .sound-toggle {
+            background: #ffffff;
+            border-color: #cbd5e1;
+        }
+        body.light-mode .sound-toggle[aria-checked="true"] .sound-switch-track {
+            background: #b7791f;
+            border-color: #9a5800;
+        }
+        body.light-mode .sound-toggle[aria-checked="true"] .sound-switch-knob {
+            transform: translateX(18px);
+            background: #fffaf0;
+        }
+        body.light-mode .sound-toggle[aria-checked="true"] .sound-icon-on { color: #b7791f; }
+        body.light-mode .sound-toggle[aria-checked="true"] .sound-icon-off { color: #94a3b8; }
+
+        body.light-mode .sound-toggle[aria-checked="false"] .sound-switch-track {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+        body.light-mode .sound-toggle[aria-checked="false"] .sound-switch-knob {
+            transform: translateX(0);
+            background: #cbd5e1;
+        }
+        body.light-mode .sound-toggle[aria-checked="false"] .sound-icon-on { color: #cbd5e1; }
+        body.light-mode .sound-toggle[aria-checked="false"] .sound-icon-off { color: #dc2626; }
+
+        .sound-toggle:hover {
+            border-color: #64748b;
+        }
+        body.light-mode .sound-toggle:hover {
+            border-color: #94a3b8;
+        }
+        .sound-toggle:focus-visible {
+            outline: 3px solid #fbbf24;
+            outline-offset: 3px;
+        }
+
         /* Paleta clara: fundo frio e discreto, superfícies brancas, texto azul-ardósia,
            âmbar para a identidade da HP, azul para funções e verde para resultados positivos. */
         body.light-mode {
@@ -2876,6 +2985,7 @@
             justify-self: end;
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
         .header-controls {
             grid-column: 1 / -1;
@@ -2906,11 +3016,23 @@
             }
         }
         @media (max-width: 540px) {
-            .theme-toggle { min-width: 76px; min-height: 36px; gap: 4px; padding: 4px 6px; }
-            .theme-icon { width: 14px; height: 14px; flex-basis: 14px; }
-            .theme-switch-track { width: 36px; flex-basis: 36px; height: 22px; }
-            .theme-switch-knob { width: 14px; height: 14px; flex-basis: 14px; }
+            .header-theme { gap: 0.375rem; }
+            .theme-toggle, .sound-toggle { min-width: 72px; min-height: 36px; gap: 4px; padding: 4px 6px; }
+            .theme-icon, .sound-icon { width: 14px; height: 14px; flex-basis: 14px; }
+            .theme-switch-track, .sound-switch-track { width: 36px; flex-basis: 36px; height: 22px; }
+            .theme-switch-knob, .sound-switch-knob { width: 14px; height: 14px; flex-basis: 14px; }
             body.light-mode .theme-switch-knob { transform: translateX(16px); }
+            .sound-toggle[aria-checked="true"] .sound-switch-knob { transform: translateX(16px); }
+            body.light-mode .sound-toggle[aria-checked="true"] .sound-switch-knob { transform: translateX(16px); }
+        }
+        @media (max-width: 380px) {
+            .header-theme { gap: 0.25rem; }
+            .theme-toggle, .sound-toggle { min-width: 64px; padding: 3px 4px; gap: 3px; }
+            .theme-switch-track, .sound-switch-track { width: 30px; flex-basis: 30px; height: 20px; }
+            .theme-switch-knob, .sound-switch-knob { width: 12px; height: 12px; flex-basis: 12px; }
+            body.light-mode .theme-switch-knob { transform: translateX(12px); }
+            .sound-toggle[aria-checked="true"] .sound-switch-knob { transform: translateX(12px); }
+            body.light-mode .sound-toggle[aria-checked="true"] .sound-switch-knob { transform: translateX(12px); }
         }
 
 
@@ -3336,8 +3458,29 @@
                 </div>
             </div>
 
-            <!-- Botão de Alternância de Tema Claro/Escuro (topo direito imediato no celular) -->
-            <div class="header-theme shrink-0">
+            <!-- Controles de Som (celular) e Alternância de Tema Claro/Escuro -->
+            <div class="header-theme shrink-0 flex items-center gap-1.5 sm:gap-2">
+                <!-- Botão Toggle Switch de Som e Feedback Tátil no Celular -->
+                <button id="sound-toggle" type="button" role="switch" aria-checked="true"
+                    aria-label="Som e vibração no celular: ativado" title="Som e vibração no celular (Ativado)"
+                    onclick="app.toggleMobileFeedback()" class="sound-toggle" aria-describedby="sound-toggle-description">
+                    <svg class="sound-icon sound-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <line x1="23" y1="9" x2="17" y2="15"></line>
+                        <line x1="17" y1="9" x2="23" y2="15"></line>
+                    </svg>
+                    <span id="sound-switch-track" class="sound-switch-track" aria-hidden="true">
+                        <span id="sound-switch-knob" class="sound-switch-knob"></span>
+                    </span>
+                    <svg class="sound-icon sound-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                    </svg>
+                    <span id="sound-toggle-description" class="sr-only">Alto-falante mudo à esquerda e com som à direita. Liga e desliga o clique sonoro e a vibração das teclas no celular.</span>
+                </button>
+
+                <!-- Botão de Alternância de Tema Claro/Escuro -->
                 <button id="theme-toggle" type="button" role="switch" aria-checked="true"
                     aria-label="Ativar modo escuro" title="Alternar para modo escuro"
                     onclick="app.toggleTheme()" class="theme-toggle" aria-describedby="theme-toggle-description">
@@ -3374,7 +3517,7 @@
         </div>
 
         <!-- Alternância persistente para tablets e celulares: evita rolar até o fim para acessar a calculadora. -->
-        <nav id="mobileViewSwitcher" aria-label="Alternar entre calculadora e ferramentas" class="xl:hidden max-w-[1720px] mx-auto mt-2 grid grid-cols-[1fr_1fr_auto] gap-2 items-stretch">
+        <nav id="mobileViewSwitcher" aria-label="Alternar entre calculadora e ferramentas" class="xl:hidden max-w-[1720px] mx-auto mt-2 grid grid-cols-2 gap-2 items-stretch">
             <button id="mobile-view-calc-btn" type="button" onclick="app.setMobileView('calculator')" aria-pressed="true"
                 class="rounded-xl border border-amber-400 bg-amber-500 px-3 py-2.5 text-sm font-bold text-slate-950 shadow-md transition">
                 <span aria-hidden="true">⌨</span> Calculadora
@@ -3382,12 +3525,6 @@
             <button id="mobile-view-tools-btn" type="button" onclick="app.setMobileView('tools')" aria-pressed="false"
                 class="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-slate-800">
                 <span aria-hidden="true">☷</span> Ferramentas
-            </button>
-            <button id="mobile-feedback-toggle-btn" type="button" onclick="app.toggleMobileFeedback()" aria-pressed="true"
-                title="Som e feedback tátil das teclas no celular (Ativado)" aria-label="Som e feedback tátil das teclas no celular: ativado"
-                class="rounded-xl border border-amber-400/80 bg-slate-900 px-3 py-2.5 text-sm font-bold text-amber-400 transition hover:bg-slate-800 flex items-center justify-center gap-1.5 shadow-sm">
-                <span id="mobile-feedback-icon" aria-hidden="true">🔔</span>
-                <span id="mobile-feedback-label" class="text-xs">Som</span>
             </button>
         </nav>
     </header>
@@ -7889,30 +8026,34 @@
                 const isMob = this.isMobileMode();
                 const status = this.mobileFeedbackEnabled ? 'ON' : 'OFF';
                 document.getElementById('lcdLine1').textContent = isMob ? `Som/Tátil: ${status}` : `Som/Tátil: ${status} (só celular)`;
-                if (isMob && this.mobileFeedbackEnabled) {
+                if (this.mobileFeedbackEnabled) {
                     this.playKeyClick();
-                    this.triggerHaptic();
+                    if (isMob) {
+                        this.triggerHaptic();
+                    }
                 }
                 this.updateLCD();
             },
 
-            // Atualização visual do botão no alternador de visualização móvel
+            // Atualização visual do toggle switch de som e vibração no celular
             updateFeedbackToggleUI() {
-                const btn = document.getElementById('mobile-feedback-toggle-btn');
-                const icon = document.getElementById('mobile-feedback-icon');
-                const label = document.getElementById('mobile-feedback-label');
-                if (!btn) return;
+                const btn = document.getElementById('sound-toggle');
+                if (btn) {
+                    const active = !!this.mobileFeedbackEnabled;
+                    btn.setAttribute('aria-checked', active ? 'true' : 'false');
+                    btn.setAttribute('aria-label', active ? 'Som e vibração no celular: ativado' : 'Som e vibração no celular: desativado');
+                    btn.title = active ? 'Som e vibração no celular (Ativado)' : 'Som e vibração no celular (Desativado)';
+                }
 
-                const active = this.mobileFeedbackEnabled;
-                btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-                btn.title = active ? 'Som e feedback tátil das teclas no celular (Ativado)' : 'Som e feedback tátil das teclas no celular (Desativado)';
-                if (icon) icon.textContent = active ? '🔔' : '🔕';
-                if (label) label.textContent = active ? 'Som' : 'Mudo';
-
-                if (active) {
-                    btn.className = 'rounded-xl border border-amber-400/80 bg-slate-900 px-3 py-2.5 text-sm font-bold text-amber-400 transition hover:bg-slate-800 flex items-center justify-center gap-1.5 shadow-sm';
-                } else {
-                    btn.className = 'rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm font-bold text-slate-400 transition hover:bg-slate-800 flex items-center justify-center gap-1.5 opacity-70';
+                // Compatibilidade caso algum elemento legado ainda esteja no DOM
+                const legacyBtn = document.getElementById('mobile-feedback-toggle-btn');
+                if (legacyBtn) {
+                    const active = !!this.mobileFeedbackEnabled;
+                    legacyBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+                    const icon = document.getElementById('mobile-feedback-icon');
+                    const label = document.getElementById('mobile-feedback-label');
+                    if (icon) icon.textContent = active ? '🔔' : '🔕';
+                    if (label) label.textContent = active ? 'Som' : 'Mudo';
                 }
             },
 
