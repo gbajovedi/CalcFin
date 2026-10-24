@@ -3147,19 +3147,44 @@
         }
         #moduleExampleToolbar {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 0.65rem;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid rgba(100, 116, 139, .35);
+            border-radius: 0.75rem;
+            background: rgba(15, 23, 42, .45);
+        }
+        .module-guide-header {
+            display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: .65rem;
-            margin-bottom: .8rem;
-            padding: .65rem .75rem;
-            border: 1px solid rgba(100, 116, 139, .35);
-            border-radius: .85rem;
-            background: rgba(15, 23, 42, .38);
+            gap: 0.5rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid rgba(100, 116, 139, 0.2);
         }
-        #moduleExampleToolbar .toolbar-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
-        #moduleExampleToolbar button { min-height: 2.5rem; }
-        #module-action-feedback { flex-basis: 100%; }
+        #module-example-description { width: 100%; }
+        details.module-guide-details summary {
+            list-style: none;
+            outline: none;
+        }
+        details.module-guide-details summary::-webkit-details-marker {
+            display: none;
+        }
+        body.light-mode details.module-guide-details summary {
+            color: #b45309 !important;
+        }
+        body.light-mode details.module-guide-details summary:hover {
+            color: #925400 !important;
+        }
+        .module-example-box {
+            background: rgba(2, 6, 23, 0.65);
+            border: 1px solid rgba(51, 65, 85, 0.7);
+            border-radius: 0.5rem;
+            padding: 0.45rem 0.6rem;
+            margin-top: 0.35rem;
+        }
+        #module-action-feedback { width: 100%; }
         #workstation-menus.catalog-collapsed #catalog-card-container { display: none !important; }
         #workstation-menus.catalog-collapsed #centralPanelCard { grid-column: 1 / -1 !important; }
 
@@ -3313,6 +3338,9 @@
             background: #f8fafc !important;
             border-color: #cbd5e1 !important;
         }
+        body.light-mode #moduleExampleToolbar .module-guide-header {
+            border-bottom-color: #e2e8f0 !important;
+        }
         body.light-mode #moduleExampleToolbar #module-example-title {
             color: #b45309 !important;
         }
@@ -3324,7 +3352,7 @@
         }
         body.light-mode #moduleExampleToolbar .module-example-box {
             background: #ffffff !important;
-            border-color: #e2e8f0 !important;
+            border-color: #cbd5e1 !important;
             color: #1e293b !important;
         }
         body.light-mode #catalog-toggle {
@@ -3341,9 +3369,32 @@
             #shortcutsDock { padding: .625rem; }
             #shortcutsDialog { max-height: 88dvh; }
             #shortcutsContent .grid { grid-template-columns: minmax(0, 1fr); }
-            #moduleExampleToolbar { align-items: stretch; }
-            #moduleExampleToolbar .toolbar-actions { width: 100%; }
-            #moduleExampleToolbar .toolbar-actions button { flex: 1; }
+            #moduleExampleToolbar {
+                padding: 0.45rem 0.55rem;
+                margin-bottom: 0.5rem;
+                border-radius: 0.625rem;
+                gap: 0.2rem;
+            }
+            #module-example-title { font-size: 0.6875rem; }
+            #moduleExampleToolbar .module-guide-header button {
+                padding: 0.2rem 0.45rem;
+                font-size: 0.6875rem;
+                min-height: auto;
+            }
+            #module-example-description {
+                font-size: 0.6875rem;
+                line-height: 1.35;
+            }
+            #module-example-description .grid {
+                gap: 0.2rem 0.5rem;
+                margin-top: 0.25rem;
+                margin-bottom: 0.25rem;
+            }
+            .module-example-box {
+                padding: 0.35rem 0.45rem;
+                font-size: 0.6875rem;
+                line-height: 1.35;
+            }
         }
         @media (max-height: 620px) {
             #shortcutsDock { align-items: flex-start; padding-top: .5rem; padding-bottom: .5rem; }
@@ -3628,24 +3679,20 @@
                             </button>
                             <button id="solve-clear-variables" type="button" onclick="app.clearSolveVariables()" class="utility-control" aria-label="Limpar variáveis da fórmula atual">Limpar variáveis</button>
                         </div>
-                        <div id="moduleExampleToolbar" hidden aria-label="Guia explicativo e ações do módulo" class="module-explanatory-card">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-start gap-2.5 min-w-0 flex-1">
-                                    <span aria-hidden="true" class="text-amber-400 text-base mt-0.5 shrink-0">💡</span>
-                                    <div class="min-w-0 flex-1">
-                                        <h3 class="text-xs font-bold text-amber-300 font-mono tracking-wide" id="module-example-title">Guia explicativo do módulo</h3>
-                                        <div class="text-xs text-slate-300 mt-1 leading-relaxed" id="module-example-description">
-                                            <!-- Preenchido dinamicamente com explicações detalhadas e exemplos práticos -->
-                                        </div>
-                                    </div>
+                        <div id="moduleExampleToolbar" hidden aria-label="Guia prático e ações do módulo" class="module-explanatory-card">
+                            <div class="module-guide-header">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span aria-hidden="true" class="text-amber-400 text-xs shrink-0">💡</span>
+                                    <h3 class="text-xs font-bold text-amber-300 font-mono tracking-wide truncate" id="module-example-title">Guia Prático</h3>
                                 </div>
-                                <div class="toolbar-actions shrink-0">
-                                    <button type="button" onclick="app.clearActiveModuleFields()" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/90 text-slate-200 text-xs font-bold hover:bg-slate-700 hover:border-slate-600 transition flex items-center gap-1.5 shadow-sm">
-                                        <span aria-hidden="true">✕</span> Limpar campos
-                                    </button>
-                                </div>
+                                <button type="button" onclick="app.clearActiveModuleFields()" class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800/90 text-slate-300 hover:text-white text-[11px] font-bold hover:bg-slate-700 transition flex items-center gap-1 shrink-0 shadow-sm" title="Limpar todos os campos deste módulo">
+                                    <span aria-hidden="true">✕</span> Limpar campos
+                                </button>
                             </div>
-                            <div id="module-action-feedback" class="text-xs text-slate-400 mt-1.5 empty:hidden" role="status" aria-live="polite"></div>
+                            <div class="text-xs text-slate-300 leading-relaxed" id="module-example-description">
+                                <!-- Preenchido dinamicamente com orientações concisas e exemplos práticos -->
+                            </div>
+                            <div id="module-action-feedback" class="text-xs text-slate-400 mt-1 empty:hidden" role="status" aria-live="polite"></div>
                         </div>
                         <div id="centralPanelScrollable" class="min-w-0 custom-scroll">
 
@@ -8127,85 +8174,106 @@
                 const feedback = document.getElementById('module-action-feedback');
                 if (!toolbar) return;
 
+                const isMobile = this.isMobileMode() || (typeof window !== 'undefined' && window.innerWidth < 1024);
+                const openAttr = isMobile ? '' : ' open';
+
                 const guides = {
                     TVM: {
-                        title: 'Guia Prático · Matemática Financeira (TVM)',
+                        title: 'Guia · Matemática Financeira (TVM)',
                         html: `
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Calcule variáveis de financiamentos, empréstimos e investimentos com juros compostos. Preencha os campos conhecidos e clique em <strong>Calcular</strong> na variável que deseja descobrir:
+                            <p class="text-[11px] sm:text-xs text-slate-300 leading-tight">
+                                Preencha os dados conhecidos e clique em <strong>Calcular</strong>:
                             </p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2 text-[11px] text-slate-300">
-                                <div><strong class="font-mono text-sky-400">N:</strong> Total de períodos/meses (ex.: <em>12</em> para 1 ano).</div>
-                                <div><strong class="font-mono text-sky-400">I%YR:</strong> Taxa de juros anual (ex.: <em>18</em> para 18% a.a.).</div>
-                                <div><strong class="font-mono text-sky-400">PV:</strong> Valor presente / financiado (<span class="text-rose-400 font-semibold">saídas negativas</span>, <span class="text-emerald-400 font-semibold">entradas positivas</span>).</div>
-                                <div><strong class="font-mono text-sky-400">PMT:</strong> Valor da prestação ou parcela periódica.</div>
-                                <div><strong class="font-mono text-sky-400">FV:</strong> Valor futuro ou saldo residual final.</div>
-                                <div><strong class="font-mono text-sky-400">P/YR:</strong> Pagamentos/ano (<em>12</em> para mensal, <em>1</em> anual).</div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-2 gap-y-1 my-1 text-[11px] text-slate-300 leading-tight">
+                                <div><strong class="font-mono text-sky-400">N:</strong> Períodos</div>
+                                <div><strong class="font-mono text-sky-400">I%YR:</strong> Taxa anual</div>
+                                <div><strong class="font-mono text-sky-400">PV:</strong> Financiado</div>
+                                <div><strong class="font-mono text-sky-400">PMT:</strong> Parcela</div>
+                                <div><strong class="font-mono text-sky-400">FV:</strong> Saldo final</div>
+                                <div><strong class="font-mono text-sky-400">P/YR:</strong> Pagtos/ano (12)</div>
                             </div>
-                            <div class="mt-2.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-relaxed text-slate-300 module-example-box">
-                                <span class="text-amber-400 font-bold block mb-1">💡 Exemplo prático de Financiamento:</span>
-                                Empréstimo de R$ 10.000 em 12 parcelas mensais a 18% a.a. com saldo final zero:<br/>
-                                Preencha <strong>N: 12</strong>, <strong>I%YR: 18</strong>, <strong>PV: 10000</strong>, <strong>FV: 0</strong>, <strong>P/YR: 12</strong> e clique no botão <strong>Calcular PMT</strong> → Resultado: <em class="text-emerald-400 font-bold font-mono">-916,80</em> (prestação mensal a pagar).
-                            </div>
+                            <details class="module-guide-details mt-1 group"${openAttr}>
+                                <summary class="cursor-pointer text-[11px] font-semibold text-amber-400 hover:text-amber-300 inline-flex items-center gap-1 select-none py-0.5">
+                                    <span class="group-open:rotate-90 transition-transform text-[9px]">▶</span>
+                                    <span>Exemplo prático de Financiamento</span>
+                                </summary>
+                                <div class="mt-1 p-2 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-snug text-slate-300 module-example-box">
+                                    Empréstimo R$ 10.000 em 12x a 18% a.a. (FV: 0, P/YR: 12):<br/>
+                                    Preencha <strong>N: 12</strong>, <strong>I%YR: 18</strong>, <strong>PV: 10000</strong>, <strong>FV: 0</strong> → Clique em <strong>Calcular PMT</strong>: <span class="text-emerald-400 font-mono font-bold">-916,80</span>/mês.
+                                </div>
+                            </details>
                         `
                     },
                     CFLO: {
-                        title: 'Guia Prático · Fluxo de Caixa Descontado (CFLO)',
+                        title: 'Guia · Fluxo de Caixa (CFLO)',
                         html: `
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Avalie a viabilidade de investimentos calculando o <strong>VPL</strong> (Valor Presente Líquido) e a <strong>TIR</strong> (Taxa Interna de Retorno):
+                            <p class="text-[11px] sm:text-xs text-slate-300 leading-tight">
+                                Análise de viabilidade via <strong>VPL</strong> e taxa de retorno (<strong>TIR</strong>):
                             </p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2 text-[11px] text-slate-300">
-                                <div><strong class="font-mono text-amber-400">CF0:</strong> Investimento inicial (<span class="text-rose-400 font-semibold">sinal negativo</span> por ser saída de caixa).</div>
-                                <div><strong class="font-mono text-amber-400">CF1, CF2...:</strong> Entradas líquidas esperadas em cada período.</div>
-                                <div><strong class="font-mono text-amber-400">Taxa I%:</strong> Taxa de desconto anual (custo de capital / TMA).</div>
-                                <div><strong class="font-mono text-sky-400">Critério:</strong> Se <em>VPL &gt; 0</em> ou <em>TIR &gt; Taxa</em>, o projeto cria valor!</div>
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 my-1 text-[11px] text-slate-300 leading-tight">
+                                <div><strong class="font-mono text-amber-400">CF0:</strong> Aporte inicial (-)</div>
+                                <div><strong class="font-mono text-amber-400">CF1..n:</strong> Entradas periódicas</div>
+                                <div><strong class="font-mono text-amber-400">Taxa I%:</strong> Custo de capital</div>
+                                <div><strong class="font-mono text-sky-400">Critério:</strong> <em>VPL &gt; 0</em> viável</div>
                             </div>
-                            <div class="mt-2.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-relaxed text-slate-300 module-example-box">
-                                <span class="text-amber-400 font-bold block mb-1">💡 Exemplo prático de Projeto:</span>
-                                Aporte inicial de R$ 50.000 que gera retornos de R$ 15.000 no ano 1, R$ 20.000 no ano 2 e R$ 30.000 no ano 3 a uma taxa de 10% a.a.:<br/>
-                                1. Digite <strong>-50000</strong> no campo abaixo e clique em <strong>+ Adicionar fluxo</strong> (CF0).<br/>
-                                2. Digite <strong>15000</strong> e adicione (CF1), depois <strong>20000</strong> (CF2) e <strong>30000</strong> (CF3).<br/>
-                                3. Informe Taxa <strong>10</strong> e clique em <strong>Calcular VPL</strong> (<em class="text-emerald-400 font-mono font-bold">+3.418,48</em>) ou <strong>Calcular TIR</strong> (<em class="text-sky-400 font-mono font-bold">13,4% a.a.</em>).
-                            </div>
+                            <details class="module-guide-details mt-1 group"${openAttr}>
+                                <summary class="cursor-pointer text-[11px] font-semibold text-amber-400 hover:text-amber-300 inline-flex items-center gap-1 select-none py-0.5">
+                                    <span class="group-open:rotate-90 transition-transform text-[9px]">▶</span>
+                                    <span>Exemplo prático de Projeto</span>
+                                </summary>
+                                <div class="mt-1 p-2 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-snug text-slate-300 module-example-box">
+                                    Adicione <strong>-50000</strong> (CF0), <strong>15000</strong> (CF1), <strong>20000</strong> (CF2), <strong>30000</strong> (CF3) e Taxa <strong>10%</strong>:<br/>
+                                    • <strong>Calcular VPL</strong> → <span class="text-emerald-400 font-mono font-bold">+3.418,48</span> | <strong>Calcular TIR</strong> → <span class="text-sky-400 font-mono font-bold">13,4% a.a.</span>
+                                </div>
+                            </details>
                         `
                     },
                     FIN_TOOLS: {
-                        title: 'Guia Prático · Taxas e Depreciação (ICNV e DEPR)',
+                        title: 'Guia · Taxas & Depreciação (ICNV/DEPR)',
                         html: `
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Converta taxas nominais em efetivas e calcule cotas de depreciação de ativos por método linear:
+                            <p class="text-[11px] sm:text-xs text-slate-300 leading-tight">
+                                Conversão de taxas (ICNV) e depreciação linear de bens (DEPR):
                             </p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2 text-[11px] text-slate-300">
-                                <div><strong class="font-mono text-amber-400">Taxa Nominal:</strong> Taxa contratual expressa (ex.: <em>12% a.a.</em>).</div>
-                                <div><strong class="font-mono text-amber-400">P/YR:</strong> Capitalizações por ano (<em>12</em> mensal, <em>4</em> trimestral).</div>
-                                <div><strong class="font-mono text-sky-400">Custo Inicial:</strong> Valor pago pelo bem / ativo na aquisição.</div>
-                                <div><strong class="font-mono text-sky-400">Residual & Vida:</strong> Valor residual no descarte e anos úteis.</div>
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 my-1 text-[11px] text-slate-300 leading-tight">
+                                <div><strong class="font-mono text-amber-400">Nominal:</strong> Taxa a.a.</div>
+                                <div><strong class="font-mono text-amber-400">P/YR:</strong> Capitalizações/ano</div>
+                                <div><strong class="font-mono text-sky-400">Custo:</strong> Valor do bem</div>
+                                <div><strong class="font-mono text-sky-400">Residual/Vida:</strong> Sucata e anos</div>
                             </div>
-                            <div class="mt-2.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-relaxed text-slate-300 module-example-box">
-                                <span class="text-amber-400 font-bold block mb-1">💡 Exemplos práticos:</span>
-                                • <strong>Conversão de Taxa:</strong> Empréstimo a 12% a.a. capitalizado mensalmente: preencha <strong>Nominal: 12</strong> e <strong>P/YR: 12</strong> → <strong>Calcular Taxa Efetiva</strong> resulta em <em class="text-amber-400 font-mono font-bold">12,68% a.a.</em><br/>
-                                • <strong>Depreciação:</strong> Máquina de R$ 50.000 com valor residual de R$ 5.000 após 5 anos: preencha <strong>Custo: 50000</strong>, <strong>Residual: 5000</strong> e <strong>Vida: 5</strong> → <strong>Calcular Depreciação</strong> resulta em <em class="text-sky-400 font-mono font-bold">R$ 9.000,00/ano</em>.
-                            </div>
+                            <details class="module-guide-details mt-1 group"${openAttr}>
+                                <summary class="cursor-pointer text-[11px] font-semibold text-amber-400 hover:text-amber-300 inline-flex items-center gap-1 select-none py-0.5">
+                                    <span class="group-open:rotate-90 transition-transform text-[9px]">▶</span>
+                                    <span>Exemplos de Taxas e Depreciação</span>
+                                </summary>
+                                <div class="mt-1 p-2 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-snug text-slate-300 module-example-box">
+                                    • <strong>ICNV:</strong> Nominal <strong>12</strong> e P/YR <strong>12</strong> → <strong>Efetiva:</strong> <span class="text-amber-400 font-mono font-bold">12,68% a.a.</span><br/>
+                                    • <strong>DEPR:</strong> Custo <strong>50000</strong>, Residual <strong>5000</strong>, Vida <strong>5</strong> → <strong>Cota:</strong> <span class="text-sky-400 font-mono font-bold">R$ 9.000/ano</span>
+                                </div>
+                            </details>
                         `
                     },
                     BUS_SUM: {
-                        title: 'Guia Prático · Varejo e Estatística (%CHG e SUM)',
+                        title: 'Guia · Varejo & Estatística (%CHG/SUM)',
                         html: `
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Calcule reajustes percentuais comerciais e processe estatísticas e projeções de regressão com pares (x, y):
+                            <p class="text-[11px] sm:text-xs text-slate-300 leading-tight">
+                                Reajustes percentuais (%CHG) e estatística bivariada (SUM):
                             </p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2 text-[11px] text-slate-300">
-                                <div><strong class="font-mono text-amber-400">%CHG:</strong> Compara o valor anterior (<strong>Old</strong>) com o novo (<strong>New</strong>).</div>
-                                <div><strong class="font-mono text-sky-400">SUM (Pares x, y):</strong> Dados correlacionados (ex.: Investimento X vs. Venda Y).</div>
-                                <div><strong class="font-mono text-sky-400">Σ+:</strong> Adiciona o par digitado à memória estatística.</div>
-                                <div><strong class="font-mono text-sky-400">Σ- / CLΣ:</strong> Exclui o último par inserido ou limpa todos os pares.</div>
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 my-1 text-[11px] text-slate-300 leading-tight">
+                                <div><strong class="font-mono text-amber-400">%CHG:</strong> Old → New</div>
+                                <div><strong class="font-mono text-sky-400">Σ+:</strong> Salva par (x, y)</div>
+                                <div><strong class="font-mono text-sky-400">Σ-:</strong> Remove último par</div>
+                                <div><strong class="font-mono text-sky-400">CLΣ:</strong> Limpa estatística</div>
                             </div>
-                            <div class="mt-2.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-relaxed text-slate-300 module-example-box">
-                                <span class="text-amber-400 font-bold block mb-1">💡 Exemplos práticos:</span>
-                                • <strong>Variação %:</strong> Produto passou de R$ 150 para R$ 180: informe <strong>Old: 150</strong> e <strong>New: 180</strong> → <strong>Calcular % Variação</strong> resulta em <em class="text-amber-400 font-mono font-bold">+20,00%</em>.<br/>
-                                • <strong>Estatística:</strong> Digite <strong>X: 10</strong> e <strong>Y: 20</strong> e clique em <strong>+ Inserir Par (Σ+)</strong>; repita para <strong>X: 20, Y: 40</strong> e <strong>X: 30, Y: 60</strong> para calcular médias, desvios e projeções lineares na calculadora.
-                            </div>
+                            <details class="module-guide-details mt-1 group"${openAttr}>
+                                <summary class="cursor-pointer text-[11px] font-semibold text-amber-400 hover:text-amber-300 inline-flex items-center gap-1 select-none py-0.5">
+                                    <span class="group-open:rotate-90 transition-transform text-[9px]">▶</span>
+                                    <span>Exemplos de Varejo e Estatística</span>
+                                </summary>
+                                <div class="mt-1 p-2 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-snug text-slate-300 module-example-box">
+                                    • <strong>%CHG:</strong> Old <strong>150</strong> e New <strong>180</strong> → <strong>Variação:</strong> <span class="text-amber-400 font-mono font-bold">+20,00%</span><br/>
+                                    • <strong>SUM:</strong> Digite <strong>X: 10, Y: 20</strong> e clique em <strong>Σ+</strong> para incluir dados e gerar médias e regressão.
+                                </div>
+                            </details>
                         `
                     }
                 };
