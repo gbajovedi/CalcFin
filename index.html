@@ -6978,17 +6978,21 @@
                     this.tvm.I = this.cleanFloat(sol.rate, Math.max(this.decimals, 4), 0);
                 }
 
-                this.syncStateToInputs();
+                this.syncStateToInputs(true);
+                this.updateTvmLcdHeader();
                 const tvmUnit = target === 'N' ? 'períodos' : (target === 'I' ? '% a.a.' : 'R$');
                 this.setResult(this.tvm[target], `TVM ${target} = ${this.formatNum(this.tvm[target])}${target === 'I' ? '%' : ''}`, () => this.calculateTVM(target), tvmUnit);
             },
 
-            syncStateToInputs() {
+            syncStateToInputs(force = false) {
                 const setVal = (id, val) => {
                     const el = document.getElementById(id);
                     if (!el) return;
+                    if (!force && document.activeElement === el) return;
                     if (val === null || val === undefined || isNaN(val)) {
                         el.value = '';
+                    } else if (id === 'input-tvm-N') {
+                        el.value = Number.isInteger(val) ? String(val) : this.cleanFloat(val, this.decimals, 0).toFixed(this.decimals);
                     } else {
                         el.value = this.cleanFloat(val, this.decimals, 0).toFixed(this.decimals);
                     }
@@ -6999,7 +7003,22 @@
                 setVal('input-tvm-PMT', this.tvm.PMT);
                 setVal('input-tvm-FV', this.tvm.FV);
                 const pyrEl = document.getElementById('input-tvm-PYR');
-                if (pyrEl) pyrEl.value = this.tvm.PYR || 12;
+                if (pyrEl && (force || document.activeElement !== pyrEl)) {
+                    pyrEl.value = (this.tvm.PYR !== null && this.tvm.PYR !== undefined) ? this.tvm.PYR : 12;
+                }
+            },
+
+            updateTvmLcdHeader() {
+                const lcdLine1 = document.getElementById('lcdLine1');
+                if (lcdLine1 && this.currentMenu === 'TVM') {
+                    const fmt = (val, dec = null) => (val !== null && val !== undefined && !isNaN(val) && isFinite(val)) ? this.formatNum(val, dec) : '-';
+                    const nStr = fmt(this.tvm.N, 0);
+                    const iStr = fmt(this.tvm.I);
+                    const pvStr = fmt(this.tvm.PV);
+                    const pmtStr = fmt(this.tvm.PMT);
+                    const fvStr = fmt(this.tvm.FV);
+                    lcdLine1.textContent = `TVM: N=${nStr} | I%=${iStr} | PV=${pvStr} | PMT=${pmtStr} | FV=${fvStr}`;
+                }
             },
 
             syncInputToState(module, key, value) {
@@ -7009,7 +7028,7 @@
                     this.tvm[key] = (raw === '' || n === null || isNaN(n)) ? null : n;
                     this.saveWorkspaceState();
                     if (this.currentMenu === 'TVM') {
-                        this.syncModuleToCalculator('TVM');
+                        this.updateTvmLcdHeader();
                     }
                 }
             },
@@ -7049,15 +7068,8 @@
                 const lcdLine1 = document.getElementById('lcdLine1');
 
                 if (tabId === 'TVM') {
-                    this.syncStateToInputs();
-                    if (lcdLine1) {
-                        const nStr = this.formatNum(this.tvm.N, 0);
-                        const iStr = this.formatNum(this.tvm.I);
-                        const pvStr = this.formatNum(this.tvm.PV);
-                        const pmtStr = this.formatNum(this.tvm.PMT);
-                        const fvStr = this.formatNum(this.tvm.FV);
-                        lcdLine1.textContent = `TVM: N=${nStr} | I%=${iStr} | PV=${pvStr} | PMT=${pmtStr} | FV=${fvStr}`;
-                    }
+                    this.syncStateToInputs(false);
+                    this.updateTvmLcdHeader();
                 } else if (tabId === 'CFLO') {
                     const rateEl = document.getElementById('input-cflo-rate');
                     const rate = rateEl ? parseFloat(rateEl.value) || 10 : 10;
