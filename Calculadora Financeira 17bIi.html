@@ -3511,9 +3511,9 @@
 
             <!-- Controles de Som (celular) e Alternância de Tema Claro/Escuro -->
             <div class="header-theme shrink-0 flex items-center gap-1.5 sm:gap-2">
-                <!-- Botão Toggle Switch de Som e Feedback Tátil no Celular -->
+                <!-- Botão Toggle Switch de Som das Teclas e Feedback Tátil -->
                 <button id="sound-toggle" type="button" role="switch" aria-checked="true"
-                    aria-label="Som e vibração no celular: ativado" title="Som e vibração no celular (Ativado)"
+                    aria-label="Som e clique das teclas: ativado" title="Som e clique das teclas (Ativado)"
                     onclick="app.toggleMobileFeedback()" class="sound-toggle" aria-describedby="sound-toggle-description">
                     <svg class="sound-icon sound-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -3528,7 +3528,7 @@
                         <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                         <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
                     </svg>
-                    <span id="sound-toggle-description" class="sr-only">Alto-falante mudo à esquerda e com som à direita. Liga e desliga o clique sonoro e a vibração das teclas no celular.</span>
+                    <span id="sound-toggle-description" class="sr-only">Alto-falante mudo à esquerda e com som à direita. Liga e desliga o som mecânico e a vibração das teclas ao clicar ou digitar.</span>
                 </button>
 
                 <!-- Botão de Alternância de Tema Claro/Escuro -->
@@ -7950,10 +7950,9 @@
                 return isMobileUA || (hasTouch && isNarrow) || (isCoarse && isNarrow);
             },
 
-            // Som e feedback tátil só disparam se estiver em modo celular e habilitado
+            // Som das teclas ativo se habilitado pelo toggle switch (tanto desktop quanto celular)
             isMobileFeedbackActive() {
-                if (!this.mobileFeedbackEnabled) return false;
-                return this.isMobileMode();
+                return !!this.mobileFeedbackEnabled;
             },
 
             // Emite clique mecânico realista via Web Audio API (sub-milissegundo de latência, offline)
@@ -7999,7 +7998,7 @@
                 }
             },
 
-            // Emite feedback tátil (vibração háptica) em celulares compatíveis
+            // Emite feedback tátil (vibração háptica) exclusivamente em celulares compatíveis quando um botão é acionado
             triggerHaptic() {
                 if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
                     try {
@@ -8010,19 +8009,16 @@
                 }
             },
 
-            // Disparo conjunto de áudio e tátil com proteção anti-duplo clique
+            // Disparo de áudio (desktop e celular) e feedback tátil (apenas celular) EXCLUSIVAMENTE quando o botão é clicado/digitado
             triggerKeyFeedback() {
-                if (!this.isMobileFeedbackActive()) return;
-                const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
-                if (this._lastFeedbackTime && (now - this._lastFeedbackTime < 120)) {
-                    return; // Já executado pelo evento pointerdown anterior
-                }
-                this._lastFeedbackTime = now;
+                if (!this.mobileFeedbackEnabled) return;
                 this.playKeyClick();
-                this.triggerHaptic();
+                if (this.isMobileMode()) {
+                    this.triggerHaptic();
+                }
             },
 
-            // Inicialização do feedback móvel e desbloqueio pró-ativo de áudio
+            // Inicialização do feedback de áudio/tátil e desbloqueio pró-ativo de áudio
             initMobileFeedback() {
                 try {
                     const saved = localStorage.getItem('calcfin_mobile_feedback');
@@ -8031,7 +8027,7 @@
                     }
                 } catch (e) {}
 
-                // Desbloqueia o AudioContext no primeiro toque em mobile
+                // Desbloqueia o AudioContext na primeira interação do usuário (clique, toque ou tecla digitada)
                 const unlockAudio = () => {
                     try {
                         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -8043,26 +8039,17 @@
                         }
                     } catch (e) {}
                     window.removeEventListener('pointerdown', unlockAudio, true);
+                    window.removeEventListener('keydown', unlockAudio, true);
                     window.removeEventListener('touchstart', unlockAudio, true);
                 };
                 window.addEventListener('pointerdown', unlockAudio, { capture: true, passive: true });
+                window.addEventListener('keydown', unlockAudio, { capture: true, passive: true });
                 window.addEventListener('touchstart', unlockAudio, { capture: true, passive: true });
-
-                // Escuta delegada de pointerdown no chassi para latência instantânea (0ms)
-                const chassis = document.getElementById('hp-calculator-chassis');
-                if (chassis) {
-                    chassis.addEventListener('pointerdown', (e) => {
-                        const btn = e.target.closest('.hp-key, .hp-softkey, .lcd-tab-btn');
-                        if (btn) {
-                            this.triggerKeyFeedback();
-                        }
-                    }, { passive: true });
-                }
 
                 this.updateFeedbackToggleUI();
             },
 
-            // Alternância manual de som e vibração no modo celular
+            // Alternância manual de som (desktop e celular) e vibração (celular)
             toggleMobileFeedback() {
                 this.mobileFeedbackEnabled = !this.mobileFeedbackEnabled;
                 try {
@@ -8072,7 +8059,7 @@
 
                 const isMob = this.isMobileMode();
                 const status = this.mobileFeedbackEnabled ? 'ON' : 'OFF';
-                document.getElementById('lcdLine1').textContent = isMob ? `Som/Tátil: ${status}` : `Som/Tátil: ${status} (só celular)`;
+                document.getElementById('lcdLine1').textContent = isMob ? `Som/Tátil: ${status}` : `Som: ${status}`;
                 if (this.mobileFeedbackEnabled) {
                     this.playKeyClick();
                     if (isMob) {
@@ -8082,14 +8069,14 @@
                 this.updateLCD();
             },
 
-            // Atualização visual do toggle switch de som e vibração no celular
+            // Atualização visual do toggle switch de som das teclas
             updateFeedbackToggleUI() {
                 const btn = document.getElementById('sound-toggle');
                 if (btn) {
                     const active = !!this.mobileFeedbackEnabled;
                     btn.setAttribute('aria-checked', active ? 'true' : 'false');
-                    btn.setAttribute('aria-label', active ? 'Som e vibração no celular: ativado' : 'Som e vibração no celular: desativado');
-                    btn.title = active ? 'Som e vibração no celular (Ativado)' : 'Som e vibração no celular (Desativado)';
+                    btn.setAttribute('aria-label', active ? 'Som e clique das teclas: ativado' : 'Som e clique das teclas: desativado');
+                    btn.title = active ? 'Som e clique das teclas (Ativado)' : 'Som e clique das teclas (Desativado)';
                 }
 
                 // Compatibilidade caso algum elemento legado ainda esteja no DOM
