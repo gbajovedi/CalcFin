@@ -6087,6 +6087,7 @@
                         const typed = parseFloat(this.entry.buffer.replace(',', '.'));
                         const val = isNaN(typed) ? 0 : this.cleanFloat(typed, this.decimals);
                         this.tvm[key] = val;
+                        this.clearTvmCalculatedCard(key);
                         this.syncStateToInputs();
                         this.entry.isEntering = false;
                         this.entry.buffer = '0';
@@ -7077,43 +7078,79 @@
 
             // TVM Solver
             calculateTVM(target) {
-                const requiredByTarget = {
-                    N: ['I', 'PV', 'PMT', 'FV', 'PYR'],
-                    I: ['N', 'PV', 'PMT', 'FV', 'PYR'],
-                    PMT: ['N', 'I', 'PV', 'FV', 'PYR'],
-                    FV: ['N', 'I', 'PV', 'PMT', 'PYR'],
-                    PV: ['N', 'I', 'PMT', 'FV', 'PYR']
-                };
-                const required = requiredByTarget[target] || [];
-                const empty = required.filter(key => {
-                    const field = document.getElementById(`input-tvm-${key}`);
-                    return !field || field.value.trim() === '';
-                });
-                if (empty.length) {
-                    this.setTvmFeedback(`Preencha os campos necessários antes de calcular: ${empty.join(', ')}.`);
-                    const first = document.getElementById(`input-tvm-${empty[0]}`);
-                    if (first) first.focus();
-                    return;
-                }
-                for (const key of required) {
-                    const field = document.getElementById(`input-tvm-${key}`);
-                    const value = field ? this.parseNumericValue(field.value) : null;
-                    if (value === null || !Number.isFinite(value)) {
-                        this.setTvmFeedback(`Confira o valor informado no campo ${key}.`);
-                        if (field) field.focus();
+                const cfKeys = ['PV', 'PMT', 'FV'];
+
+                // 1. Ler e validar P/YR
+                const pyrField = document.getElementById('input-tvm-PYR');
+                let pyr = pyrField ? this.parseNumericValue(pyrField.value) : 12;
+                if (!pyr || pyr <= 0) pyr = 12;
+                this.tvm.PYR = pyr;
+                if (pyrField && pyrField.value !== String(pyr)) pyrField.value = String(pyr);
+
+                // 2. Se o alvo não for N, N é obrigatório e deve ser > 0
+                if (target !== 'N') {
+                    const nField = document.getElementById('input-tvm-N');
+                    const nVal = nField ? this.parseNumericValue(nField.value) : null;
+                    if (nVal === null || !Number.isFinite(nVal) || nVal <= 0) {
+                        this.setTvmFeedback('O número de períodos N deve ser informado e maior que zero.');
+                        if (nField) nField.focus();
                         return;
                     }
-                    this.tvm[key] = value;
+                    this.tvm.N = nVal;
                 }
-                if (this.tvm.PYR <= 0 || (target !== 'N' && this.tvm.N <= 0)) {
-                    this.setTvmFeedback('P/YR e o número de períodos N devem ser maiores que zero.');
-                    return;
+
+                // 3. Se o alvo não for I, I é obrigatório
+                if (target !== 'I') {
+                    const iField = document.getElementById('input-tvm-I');
+                    const iVal = iField ? this.parseNumericValue(iField.value) : null;
+                    if (iVal === null || !Number.isFinite(iVal)) {
+                        this.setTvmFeedback('A taxa de juros I%YR deve ser informada.');
+                        if (iField) iField.focus();
+                        return;
+                    }
+                    this.tvm.I = iVal;
                 }
-                if (target === 'N' && this.tvm.PMT === 0) {
-                    this.setTvmFeedback('Para calcular N, a parcela PMT não pode ser zero.');
-                    const pmtField = document.getElementById('input-tvm-PMT'); if (pmtField) pmtField.focus();
-                    return;
+
+                // 4. Tratar fluxos de caixa (PV, PMT, FV)
+                const requiredCFs = cfKeys.filter(k => k !== target);
+                for (const key of requiredCFs) {
+                    const field = document.getElementById(`input-tvm-${key}`);
+                    let val = field ? this.parseNumericValue(field.value) : null;
+                    if (val === null || !Number.isFinite(val)) {
+                        // Defaults inteligentes: se deixado em branco, assume 0
+                        val = 0;
+                        if (field) field.value = '0';
+                    }
+                    this.tvm[key] = val;
                 }
+
+                // Validação de suficiência de fluxos
+                if (target === 'PMT') {
+                    if (this.tvm.PV === 0 && this.tvm.FV === 0) {
+                        this.setTvmFeedback('Informe ao menos PV (Valor Presente) ou FV (Valor Futuro) para calcular PMT.');
+                        const pvField = document.getElementById('input-tvm-PV'); if (pvField) pvField.focus();
+                        return;
+                    }
+                } else if (target === 'FV') {
+                    if (this.tvm.PV === 0 && this.tvm.PMT === 0) {
+                        this.setTvmFeedback('Informe ao menos PV (Valor Presente) ou PMT (Parcela) para calcular FV.');
+                        const pvField = document.getElementById('input-tvm-PV'); if (pvField) pvField.focus();
+                        return;
+                    }
+                } else if (target === 'PV') {
+                    if (this.tvm.PMT === 0 && this.tvm.FV === 0) {
+                        this.setTvmFeedback('Informe ao menos PMT (Parcela) ou FV (Valor Futuro) para calcular PV.');
+                        const pmtField = document.getElementById('input-tvm-PMT'); if (pmtField) pmtField.focus();
+                        return;
+                    }
+                } else if (target === 'N') {
+                    const nonZero = [this.tvm.PV, this.tvm.PMT, this.tvm.FV].filter(x => x !== 0);
+                    if (nonZero.length < 2) {
+                        this.setTvmFeedback('Informe ao menos dois fluxos (entre PV, PMT e FV) para calcular o número de períodos N.');
+                        return;
+                    }
+                }
+
                 this.setTvmFeedback('');
                 const i = (this.tvm.I / 100) / this.tvm.PYR;
                 const n = this.tvm.N;
@@ -7158,7 +7195,7 @@
                         const num = (pmt * (1 + i * type) - fv * i);
                         const den = (pv * i + pmt * (1 + i * type));
                         if (den === 0 || (num / den) <= 0) {
-                            this.setTvmFeedback('Impossível calcular N: a parcela informada é insuficiente para amortizar o saldo com esta taxa.');
+                            this.setTvmFeedback('Impossível calcular N: verifique se os fluxos têm sinais opostos ou se a parcela cobre os juros da dívida.');
                             return;
                         }
                         res = Math.log(num / den) / Math.log(1 + i);
@@ -7376,11 +7413,20 @@
                     notice.classList.add('hidden');
                 }
 
-                let balance = Math.abs(this.tvm.PV);
+                const pvField = document.getElementById('input-tvm-PV');
+                const pmtField = document.getElementById('input-tvm-PMT');
+                const nField = document.getElementById('input-tvm-N');
+                const iField = document.getElementById('input-tvm-I');
+                const fvField = document.getElementById('input-tvm-FV');
+
+                let balance = Math.abs(this.tvm.PV !== null ? this.tvm.PV : (pvField ? this.parseNumericValue(pvField.value) || 0 : 0));
                 const pyr = this.tvm.PYR || 12;
-                const i = pyr !== 0 ? (this.tvm.I / 100) / pyr : 0;
-                const pmt = Math.abs(this.tvm.PMT);
-                const totalN = Math.max(0, Math.round(this.tvm.N));
+                const iRate = this.tvm.I !== null ? this.tvm.I : (iField ? this.parseNumericValue(iField.value) || 0 : 0);
+                const i = pyr !== 0 ? (iRate / 100) / pyr : 0;
+                const pmt = Math.abs(this.tvm.PMT !== null ? this.tvm.PMT : (pmtField ? this.parseNumericValue(pmtField.value) || 0 : 0));
+                const nVal = this.tvm.N !== null ? this.tvm.N : (nField ? this.parseNumericValue(nField.value) || 0 : 0);
+                const totalN = Math.max(0, Math.round(nVal));
+                const residualFV = Math.abs(this.tvm.FV !== null ? this.tvm.FV : (fvField ? this.parseNumericValue(fvField.value) || 0 : 0));
 
                 if (balance <= 0 || pmt <= 0 || totalN <= 0) {
                     tbody.innerHTML = '<tr><td colspan="5" class="p-2 text-center text-amber-400">Insira PV, I%, N e calcule o PMT antes de gerar a tabela.</td></tr>';
@@ -7392,8 +7438,15 @@
                 const maxPeriods = limitVal === 'all' ? totalN : parseInt(limitVal, 10);
                 const displayN = Math.min(totalN, maxPeriods);
 
-                if (totalN > maxPeriods && notice) {
-                    notice.textContent = `Exibindo as primeiras ${displayN} de ${totalN} parcelas. Selecione "Todas as parcelas" no seletor para visualizar o cronograma completo.`;
+                const notices = [];
+                if (totalN > maxPeriods) {
+                    notices.push(`Exibindo as primeiras ${displayN} de ${totalN} parcelas. Selecione "Todas as parcelas" no seletor para visualizar o cronograma completo.`);
+                }
+                if (residualFV > 0) {
+                    notices.push(`Empréstimo com valor residual final (Balão / FV) de ${this.formatNum(residualFV)}.`);
+                }
+                if (notices.length && notice) {
+                    notice.textContent = notices.join(' ');
                     notice.classList.remove('hidden');
                 }
 
@@ -7417,12 +7470,22 @@
                         interest = balance * i;
                         principal = actualPmt - interest;
 
-                        if (period === totalN || balance - principal < 1e-5) {
+                        if (period === totalN) {
+                            if (residualFV > 0) {
+                                principal = Math.max(0, balance - residualFV);
+                                actualPmt = interest + principal;
+                                balance = residualFV;
+                            } else {
+                                principal = balance;
+                                actualPmt = interest + principal;
+                                balance = 0;
+                            }
+                        } else if (residualFV === 0 && (balance - principal < 1e-5)) {
                             principal = balance;
                             actualPmt = interest + principal;
                             balance = 0;
                         } else {
-                            balance = Math.max(0, balance - principal);
+                            balance = Math.max(residualFV, balance - principal);
                         }
                     }
 
@@ -7441,7 +7504,7 @@
                     `;
                     tbody.appendChild(tr);
 
-                    if (balance <= 0 && period < displayN) {
+                    if (balance <= residualFV && period < displayN && residualFV === 0) {
                         break;
                     }
                 }
