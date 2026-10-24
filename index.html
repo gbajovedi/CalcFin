@@ -2271,30 +2271,46 @@
         #result-panel .result-copy-label-short {
             display: none;
         }
-        /* Garante que o controle permaneça oculto enquanto a classe hidden estiver ativa. */
-        #btn-result-recalculate.hidden {
+        /* Garante que qualquer elemento com a classe hidden permaneça oculto independentemente de classes utilitárias flex/inline-flex */
+        .hidden,
+        [hidden] {
             display: none !important;
         }
 
-        /* Destaque Inline para o Resultado Calculado (Opção 3) */
-        .solve-variable-card.is-result {
+        body.light-mode .calc-card-result.is-result label {
+            color: #065f46 !important;
+            font-weight: 700 !important;
+        }
+        body.light-mode .calc-card-result.is-result span[id^="role-"] {
+            color: #047857 !important;
+            font-weight: 700 !important;
+        }
+
+        /* Destaque Inline para o Resultado Calculado (Opção 3 & Todas as Abas) */
+        .solve-variable-card.is-result,
+        .calc-card-result.is-result {
             border-color: rgba(16, 185, 129, 0.75) !important;
             background-color: rgba(6, 78, 59, 0.22) !important;
             box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2) !important;
         }
-        body.light-mode .solve-variable-card.is-result {
+        body.light-mode .solve-variable-card.is-result,
+        body.light-mode .calc-card-result.is-result {
             border-color: #059669 !important;
             background-color: #f0fdf4 !important;
             box-shadow: 0 1px 4px rgba(5, 150, 105, 0.15) !important;
         }
-        #workstation-left-wrapper .solve-variable-card.is-result input {
+        #workstation-left-wrapper .solve-variable-card.is-result input,
+        #workstation-left-wrapper .calc-card-result.is-result input,
+        #workstation-left-wrapper input.is-result-field {
             border-color: rgba(16, 185, 129, 0.85) !important;
             background-color: rgba(2, 44, 34, 0.75) !important;
             color: #34d399 !important;
             font-weight: 700 !important;
             font-size: 1.05rem !important;
         }
-        body.light-mode #workstation-left-wrapper .solve-variable-card.is-result input {
+        body.light-mode #workstation-left-wrapper .solve-variable-card.is-result input,
+        body.light-mode #workstation-left-wrapper .calc-card-result.is-result input,
+        body.light-mode #workstation-left-wrapper input.is-result-field {
             border-color: #059669 !important;
             background-color: #ffffff !important;
             color: #064e3b !important;
@@ -3765,37 +3781,90 @@
                                     <span class="text-xs text-slate-400 font-mono">Softkeys F1–F5</span>
                                 </div>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                        <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">N (Períodos / F1)</label>
-                                        <input type="text" inputmode="decimal" maxlength="10" autocomplete="off" spellcheck="false" id="input-tvm-N" placeholder="Ex.: 12" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:true, maxLength:10}); app.syncInputToState('tvm', 'N', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
-                                        <button onclick="app.calculateTVM('N')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular N</button>
+                                    <div id="card-tvm-N" class="calc-card-result bg-slate-950 p-2.5 rounded-xl border border-slate-800 transition-all flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-tvm-N" class="text-[11px] font-mono text-sky-400 font-bold block">N (Períodos / F1)</label>
+                                                <span id="role-tvm-N" class="text-[10px] font-semibold text-slate-500">Dado TVM</span>
+                                            </div>
+                                            <input type="text" inputmode="decimal" maxlength="10" autocomplete="off" spellcheck="false" id="input-tvm-N" placeholder="Ex.: 12" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:true, maxLength:10}); app.syncInputToState('tvm', 'N', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-1.5 mt-2" id="actions-tvm-N">
+                                            <button id="btn-tvm-N" onclick="app.calculateTVM('N')" class="w-full py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold transition">Calcular N</button>
+                                            <button id="copy-tvm-N" type="button" onclick="app.copyFieldValue('input-tvm-N', this)" class="hidden w-full py-1 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                <span aria-hidden="true">⧉</span> Copiar
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                        <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">I%YR (Taxa / F2)</label>
-                                        <input type="text" inputmode="decimal" maxlength="10" autocomplete="off" spellcheck="false" id="input-tvm-I" placeholder="Ex.: 18" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:10}); app.syncInputToState('tvm', 'I', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
-                                        <button onclick="app.calculateTVM('I')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular I%</button>
+                                    <div id="card-tvm-I" class="calc-card-result bg-slate-950 p-2.5 rounded-xl border border-slate-800 transition-all flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-tvm-I" class="text-[11px] font-mono text-sky-400 font-bold block">I%YR (Taxa / F2)</label>
+                                                <span id="role-tvm-I" class="text-[10px] font-semibold text-slate-500">Dado TVM</span>
+                                            </div>
+                                            <input type="text" inputmode="decimal" maxlength="10" autocomplete="off" spellcheck="false" id="input-tvm-I" placeholder="Ex.: 18" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:10}); app.syncInputToState('tvm', 'I', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-1.5 mt-2" id="actions-tvm-I">
+                                            <button id="btn-tvm-I" onclick="app.calculateTVM('I')" class="w-full py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold transition">Calcular I%</button>
+                                            <button id="copy-tvm-I" type="button" onclick="app.copyFieldValue('input-tvm-I', this)" class="hidden w-full py-1 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                <span aria-hidden="true">⧉</span> Copiar
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                        <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">PV (Valor Pres. / F3)</label>
-                                        <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-tvm-PV" placeholder="Ex.: 10000" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncInputToState('tvm', 'PV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
-                                        <button onclick="app.calculateTVM('PV')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular PV</button>
+                                    <div id="card-tvm-PV" class="calc-card-result bg-slate-950 p-2.5 rounded-xl border border-slate-800 transition-all flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-tvm-PV" class="text-[11px] font-mono text-sky-400 font-bold block">PV (Valor Pres. / F3)</label>
+                                                <span id="role-tvm-PV" class="text-[10px] font-semibold text-slate-500">Dado TVM</span>
+                                            </div>
+                                            <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-tvm-PV" placeholder="Ex.: 10000" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncInputToState('tvm', 'PV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-1.5 mt-2" id="actions-tvm-PV">
+                                            <button id="btn-tvm-PV" onclick="app.calculateTVM('PV')" class="w-full py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold transition">Calcular PV</button>
+                                            <button id="copy-tvm-PV" type="button" onclick="app.copyFieldValue('input-tvm-PV', this)" class="hidden w-full py-1 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                <span aria-hidden="true">⧉</span> Copiar
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                        <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">PMT (Parcela / F4)</label>
-                                        <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-tvm-PMT" placeholder="Ex.: -950" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncInputToState('tvm', 'PMT', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
-                                        <button onclick="app.calculateTVM('PMT')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular PMT</button>
+                                    <div id="card-tvm-PMT" class="calc-card-result bg-slate-950 p-2.5 rounded-xl border border-slate-800 transition-all flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-tvm-PMT" class="text-[11px] font-mono text-sky-400 font-bold block">PMT (Parcela / F4)</label>
+                                                <span id="role-tvm-PMT" class="text-[10px] font-semibold text-slate-500">Dado TVM</span>
+                                            </div>
+                                            <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-tvm-PMT" placeholder="Ex.: -950" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncInputToState('tvm', 'PMT', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-1.5 mt-2" id="actions-tvm-PMT">
+                                            <button id="btn-tvm-PMT" onclick="app.calculateTVM('PMT')" class="w-full py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold transition">Calcular PMT</button>
+                                            <button id="copy-tvm-PMT" type="button" onclick="app.copyFieldValue('input-tvm-PMT', this)" class="hidden w-full py-1 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                <span aria-hidden="true">⧉</span> Copiar
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                        <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">FV (Valor Futuro / F5)</label>
-                                        <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-tvm-FV" placeholder="Ex.: 0" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncInputToState('tvm', 'FV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
-                                        <button onclick="app.calculateTVM('FV')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular FV</button>
+                                    <div id="card-tvm-FV" class="calc-card-result bg-slate-950 p-2.5 rounded-xl border border-slate-800 transition-all flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-tvm-FV" class="text-[11px] font-mono text-sky-400 font-bold block">FV (Valor Futuro / F5)</label>
+                                                <span id="role-tvm-FV" class="text-[10px] font-semibold text-slate-500">Dado TVM</span>
+                                            </div>
+                                            <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-tvm-FV" placeholder="Ex.: 0" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncInputToState('tvm', 'FV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-1.5 mt-2" id="actions-tvm-FV">
+                                            <button id="btn-tvm-FV" onclick="app.calculateTVM('FV')" class="w-full py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold transition">Calcular FV</button>
+                                            <button id="copy-tvm-FV" type="button" onclick="app.copyFieldValue('input-tvm-FV', this)" class="hidden w-full py-1 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                <span aria-hidden="true">⧉</span> Copiar
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex flex-col justify-between">
                                         <div>
-                                            <label class="text-[11px] font-mono text-slate-300 font-bold block mb-1">P/YR (Períodos/Ano)</label>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-tvm-PYR" class="text-[11px] font-mono text-slate-300 font-bold block">P/YR (Períodos/Ano)</label>
+                                                <span class="text-[10px] font-semibold text-slate-500">Config.</span>
+                                            </div>
                                             <input type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" id="input-tvm-PYR" placeholder="12" value="12" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:false, maxLength:3}); app.syncInputToState('tvm', 'PYR', this.value)" onblur="if(!this.value||parseInt(this.value,10)<1){this.value='12';app.syncInputToState('tvm','PYR','12');}" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
                                         </div>
-                                        <button onclick="app.toggleBgnEnd()" class="w-full mt-1 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded text-xs font-mono font-bold" id="btn-amort-mode-label">Modo: END</button>
+                                        <button onclick="app.toggleBgnEnd()" class="w-full mt-2 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded text-xs font-mono font-bold" id="btn-amort-mode-label">Modo: END</button>
                                     </div>
                                 </div>
                                 <div id="tvm-feedback" role="status" aria-live="polite" class="hidden rounded-lg border border-rose-500/30 bg-rose-950/20 px-3 py-2 text-xs text-rose-300"></div>
@@ -3851,15 +3920,45 @@
                                     <span class="text-xs text-slate-400 font-mono">Análise de investimento</span>
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                        <label class="text-[11px] font-mono text-slate-400 block mb-1">Taxa de Desconto I% (Ano)</label>
-                                        <input type="text" inputmode="decimal" maxlength="10" autocomplete="off" spellcheck="false" id="input-cflo-rate" placeholder="Ex.: 10" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:10}); app.syncCfloRate(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-cflo-rate" class="text-[11px] font-mono text-slate-400 block font-bold">Taxa Desconto I% (Ano)</label>
+                                                <span class="text-[10px] font-semibold text-slate-500">Dado CFLO</span>
+                                            </div>
+                                            <input type="text" inputmode="decimal" maxlength="10" autocomplete="off" spellcheck="false" id="input-cflo-rate" placeholder="Ex.: 10" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:10}); app.syncCfloRate(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                        </div>
+                                        <p class="text-[10px] text-slate-500 mt-2">Usada para calcular o VPL do fluxo.</p>
                                     </div>
-                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-end">
-                                        <button onclick="app.computeNPV()" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs font-mono">Calcular VPL (NPV)</button>
+                                    <div id="card-cflo-npv" class="calc-card-result bg-slate-950 p-2.5 rounded-xl border border-slate-800 transition-all flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-cflo-npv" class="text-[11px] font-mono text-amber-400 font-bold block">VPL (NPV) · Valor Presente</label>
+                                                <span id="role-cflo-npv" class="text-[10px] font-semibold text-slate-500">Métrica CFLO</span>
+                                            </div>
+                                            <input type="text" readonly id="input-cflo-npv" placeholder="Aguardando cálculo..." class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-1.5 mt-2">
+                                            <button id="btn-cflo-npv" onclick="app.computeNPV()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs font-mono transition">Calcular VPL (NPV)</button>
+                                            <button id="copy-cflo-npv" type="button" onclick="app.copyFieldValue('input-cflo-npv', this)" class="hidden w-full py-1.5 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                <span aria-hidden="true">⧉</span> Copiar
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-end">
-                                        <button onclick="app.computeIRR()" class="w-full py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded text-xs font-mono">Calcular TIR (IRR)</button>
+                                    <div id="card-cflo-irr" class="calc-card-result bg-slate-950 p-2.5 rounded-xl border border-slate-800 transition-all flex flex-col justify-between">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-cflo-irr" class="text-[11px] font-mono text-sky-400 font-bold block">TIR (IRR) · Taxa Retorno</label>
+                                                <span id="role-cflo-irr" class="text-[10px] font-semibold text-slate-500">Métrica CFLO</span>
+                                            </div>
+                                            <input type="text" readonly id="input-cflo-irr" placeholder="Aguardando cálculo..." class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-1.5 mt-2">
+                                            <button id="btn-cflo-irr" onclick="app.computeIRR()" class="w-full py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded text-xs font-mono transition">Calcular TIR (IRR)</button>
+                                            <button id="copy-cflo-irr" type="button" onclick="app.copyFieldValue('input-cflo-irr', this)" class="hidden w-full py-1.5 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                <span aria-hidden="true">⧉</span> Copiar
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
@@ -3893,36 +3992,64 @@
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                                        <h3 class="text-xs font-bold text-white mb-2 font-mono">Conversão Nominal / Efetiva</h3>
-                                        <div class="space-y-2 text-xs font-mono">
-                                            <div>
-                                                <label class="text-slate-400 block">Taxa Nominal (% a.a.)</label>
-                                                <input type="text" inputmode="decimal" maxlength="10" autocomplete="off" spellcheck="false" id="input-icnv-nom" placeholder="Ex.: 12" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:10}); app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col space-y-3">
+                                        <div>
+                                            <h3 class="text-xs font-bold text-white mb-2 font-mono">Conversão Nominal / Efetiva</h3>
+                                            <div class="space-y-2 text-xs font-mono">
+                                                <div>
+                                                    <label for="input-icnv-nom" class="text-slate-400 block">Taxa Nominal (% a.a.)</label>
+                                                    <input type="text" inputmode="decimal" maxlength="10" autocomplete="off" spellcheck="false" id="input-icnv-nom" placeholder="Ex.: 12" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:10}); app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                                </div>
+                                                <div>
+                                                    <label for="input-icnv-pyr" class="text-slate-400 block">Períodos por Ano (P/YR)</label>
+                                                    <input type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" id="input-icnv-pyr" placeholder="12" value="12" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:false, maxLength:3}); app.syncFinTools()" onblur="if(!this.value||parseInt(this.value,10)<1){this.value='12';app.syncFinTools();}" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label class="text-slate-400 block">Períodos por Ano (P/YR)</label>
-                                                <input type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" id="input-icnv-pyr" placeholder="12" value="12" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:false, maxLength:3}); app.syncFinTools()" onblur="if(!this.value||parseInt(this.value,10)<1){this.value='12';app.syncFinTools();}" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                        </div>
+                                        <div id="card-icnv-result" class="calc-card-result bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 transition-all">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-icnv-eff" class="text-[11px] font-mono text-amber-400 font-bold">Taxa Efetiva Calculada (EFF%)</label>
+                                                <span id="role-icnv-eff" class="text-[10px] font-semibold text-slate-500">Métrica</span>
                                             </div>
-                                            <button onclick="app.calcEffRate()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded">Calcular Taxa Efetiva</button>
+                                            <input type="text" readonly id="input-icnv-eff" placeholder="Aguardando cálculo..." class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2">
+                                                <button id="btn-icnv-calc" onclick="app.calcEffRate()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition">Calcular Taxa Efetiva</button>
+                                                <button id="copy-icnv-result" type="button" onclick="app.copyFieldValue('input-icnv-eff', this)" class="hidden w-full py-1.5 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                    <span aria-hidden="true">⧉</span> Copiar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                                        <h3 class="text-xs font-bold text-white mb-2 font-mono">Depreciação Linear (SL)</h3>
-                                        <div class="space-y-2 text-xs font-mono">
-                                            <div>
-                                                <label class="text-slate-400 block">Custo Inicial (R$)</label>
-                                                <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-depr-cost" placeholder="Ex.: 50000" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:true, maxLength:18}); app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col space-y-3">
+                                        <div>
+                                            <h3 class="text-xs font-bold text-white mb-2 font-mono">Depreciação Linear (SL)</h3>
+                                            <div class="space-y-2 text-xs font-mono">
+                                                <div>
+                                                    <label for="input-depr-cost" class="text-slate-400 block">Custo Inicial (R$)</label>
+                                                    <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-depr-cost" placeholder="Ex.: 50000" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:true, maxLength:18}); app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                                </div>
+                                                <div>
+                                                    <label for="input-depr-salvage" class="text-slate-400 block">Valor Residual (R$)</label>
+                                                    <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-depr-salvage" placeholder="Ex.: 5000" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:true, maxLength:18}); app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                                </div>
+                                                <div>
+                                                    <label for="input-depr-life" class="text-slate-400 block">Vida Útil (Anos)</label>
+                                                    <input type="text" inputmode="decimal" maxlength="6" autocomplete="off" spellcheck="false" id="input-depr-life" placeholder="Ex.: 5" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:true, maxLength:6}); app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label class="text-slate-400 block">Valor Residual (R$)</label>
-                                                <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-depr-salvage" placeholder="Ex.: 5000" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:true, maxLength:18}); app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                        </div>
+                                        <div id="card-depr-result" class="calc-card-result bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 transition-all">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-depr-result" class="text-[11px] font-mono text-sky-400 font-bold">Depreciação Anual (SL)</label>
+                                                <span id="role-depr-result" class="text-[10px] font-semibold text-slate-500">Métrica</span>
                                             </div>
-                                            <div>
-                                                <label class="text-slate-400 block">Vida Útil (Anos)</label>
-                                                <input type="text" inputmode="decimal" maxlength="6" autocomplete="off" spellcheck="false" id="input-depr-life" placeholder="Ex.: 5" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:true, maxLength:6}); app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                            <input type="text" readonly id="input-depr-result" placeholder="Aguardando cálculo..." class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2">
+                                                <button id="btn-depr-calc" onclick="app.calcDepreciationSL()" class="w-full py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded text-xs transition">Calcular Depreciação / Ano</button>
+                                                <button id="copy-depr-result" type="button" onclick="app.copyFieldValue('input-depr-result', this)" class="hidden w-full py-1.5 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                    <span aria-hidden="true">⧉</span> Copiar
+                                                </button>
                                             </div>
-                                            <button onclick="app.calcDepreciationSL()" class="w-full py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded">Calcular Depreciação / Ano</button>
                                         </div>
                                     </div>
                                 </div>
@@ -3937,17 +4064,31 @@
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                                        <h3 class="font-bold text-white">%CHG — Variação Percentual</h3>
-                                        <div>
-                                            <label class="text-slate-400 block">Valor Anterior (Old)</label>
-                                            <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-pchg-old" placeholder="Ex.: 150" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col space-y-3">
+                                        <div class="space-y-2">
+                                            <h3 class="font-bold text-white">%CHG — Variação Percentual</h3>
+                                            <div>
+                                                <label for="input-pchg-old" class="text-slate-400 block">Valor Anterior (Old)</label>
+                                                <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-pchg-old" placeholder="Ex.: 150" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                            </div>
+                                            <div>
+                                                <label for="input-pchg-new" class="text-slate-400 block">Novo Valor (New)</label>
+                                                <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-pchg-new" placeholder="Ex.: 180" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label class="text-slate-400 block">Novo Valor (New)</label>
-                                            <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-pchg-new" placeholder="Ex.: 180" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                        <div id="card-pchg-result" class="calc-card-result bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 transition-all">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label for="input-pchg-result" class="text-[11px] font-mono text-amber-400 font-bold">% Variação Calculada</label>
+                                                <span id="role-pchg-result" class="text-[10px] font-semibold text-slate-500">Métrica</span>
+                                            </div>
+                                            <input type="text" readonly id="input-pchg-result" placeholder="Aguardando cálculo..." class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2">
+                                                <button id="btn-pchg-calc" onclick="app.calcPercentChange()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition">Calcular % Variação</button>
+                                                <button id="copy-pchg-result" type="button" onclick="app.copyFieldValue('input-pchg-result', this)" class="hidden w-full py-1.5 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                    <span aria-hidden="true">⧉</span> Copiar
+                                                </button>
+                                            </div>
                                         </div>
-                                        <button onclick="app.calcPercentChange()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded">Calcular % Variação</button>
                                     </div>
                                     <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5">
                                         <div class="flex items-center justify-between">
@@ -3975,7 +4116,21 @@
                                             </div>
                                         </div>
 
-                                        <!-- Painel de Métricas Estatísticas -->
+                                        <!-- Card de Resultado Integrado SUM -->
+                                        <div id="card-stat-result" class="calc-card-result bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 transition-all">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <span id="stat-result-title" class="text-[11px] font-mono text-sky-400 font-bold">Métrica Selecionada</span>
+                                                <span id="role-stat-result" class="text-[10px] font-semibold text-slate-500">Métrica</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <input type="text" readonly id="input-stat-result" placeholder="Clique em uma métrica abaixo..." class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                                <button id="copy-stat-result" type="button" onclick="app.copyFieldValue('input-stat-result', this)" class="hidden shrink-0 h-9 px-3 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded transition shadow-sm">
+                                                    <span aria-hidden="true">⧉</span> Copiar
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Painel de Botões de Métricas Estatísticas -->
                                         <div class="space-y-1.5 pt-1">
                                             <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Médias e Desvios Padrão:</div>
                                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
@@ -5348,6 +5503,44 @@
                 this.fitSolveInputToWidth(input);
             },
 
+            async copyFieldValue(fieldId, buttonEl) {
+                const el = document.getElementById(fieldId);
+                if (!el) return;
+                const text = el.value || el.textContent || '';
+                if (!text.trim()) return;
+                let copied = false;
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(text.trim());
+                        copied = true;
+                    }
+                } catch (_) {}
+                if (!copied) {
+                    try {
+                        const temp = document.createElement('textarea');
+                        temp.value = text.trim();
+                        temp.setAttribute('readonly', '');
+                        temp.style.position = 'absolute';
+                        temp.style.left = '-9999px';
+                        document.body.appendChild(temp);
+                        temp.select();
+                        copied = document.execCommand('copy');
+                        document.body.removeChild(temp);
+                    } catch (_) {}
+                }
+                if (buttonEl) {
+                    const originalHtml = buttonEl.innerHTML;
+                    buttonEl.innerHTML = '<span aria-hidden="true">✓</span> Copiado!';
+                    buttonEl.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
+                    buttonEl.classList.add('bg-emerald-500', 'text-slate-950');
+                    setTimeout(() => {
+                        buttonEl.innerHTML = originalHtml;
+                        buttonEl.classList.remove('bg-emerald-500', 'text-slate-950');
+                        buttonEl.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+                    }, 1600);
+                }
+            },
+
             async copySolveVarResult(varName, buttonEl) {
                 const val = this.solve.vars[varName];
                 if (val === null || val === undefined) return;
@@ -6308,9 +6501,11 @@
                 const panel = document.getElementById('result-panel');
                 if (!panel || !this.lastResult) return;
 
-                // Na aba Fórmulas (HP SOLVE), o resultado é destacado inline no próprio card da variável calculada (Opção 3)
-                const isSolveTab = document.getElementById('tab-SOLVE')?.getAttribute('aria-current') === 'page' || this.currentMenu === 'SOLVE';
-                if (isSolveTab && this.solve && this.solve.targetVarSource === 'result') {
+                // Nas abas com resultado integrado no próprio card (SOLVE, TVM, CFLO, FIN_TOOLS, BUS_SUM),
+                // oculta o painel flutuante superior para manter o foco 100% na célula integrada.
+                const currentTab = document.querySelector('.nav-tab[aria-current="page"]')?.id?.replace('tab-', '') || this.currentMenu;
+                const tabsWithInlineResults = ['SOLVE', 'TVM', 'CFLO', 'FIN_TOOLS', 'BUS_SUM'];
+                if (tabsWithInlineResults.includes(currentTab)) {
                     panel.classList.add('hidden');
                     return;
                 }
@@ -6981,7 +7176,67 @@
                 this.syncStateToInputs(true);
                 this.updateTvmLcdHeader();
                 const tvmUnit = target === 'N' ? 'períodos' : (target === 'I' ? '% a.a.' : 'R$');
+                this.setTvmCalculatedCard(target);
                 this.setResult(this.tvm[target], `TVM ${target} = ${this.formatNum(this.tvm[target])}${target === 'I' ? '%' : ''}`, () => this.calculateTVM(target), tvmUnit);
+            },
+
+            setTvmCalculatedCard(target) {
+                const keys = ['N', 'I', 'PV', 'PMT', 'FV'];
+                keys.forEach(k => {
+                    const card = document.getElementById(`card-tvm-${k}`);
+                    const input = document.getElementById(`input-tvm-${k}`);
+                    const role = document.getElementById(`role-tvm-${k}`);
+                    const btn = document.getElementById(`btn-tvm-${k}`);
+                    const copyBtn = document.getElementById(`copy-tvm-${k}`);
+                    const defaultBtnText = k === 'I' ? 'Calcular I%' : `Calcular ${k}`;
+
+                    if (k === target) {
+                        if (card) card.classList.add('is-result');
+                        if (input) input.classList.add('is-result-field');
+                        if (role) {
+                            role.textContent = '✓ Resultado calculado';
+                            role.className = 'text-[10px] font-bold text-emerald-400';
+                        }
+                        if (btn) {
+                            btn.textContent = '↻ Recalcular';
+                            btn.className = 'w-full py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded text-xs font-bold transition';
+                        }
+                        if (copyBtn) copyBtn.classList.remove('hidden');
+                    } else {
+                        if (card) card.classList.remove('is-result');
+                        if (input) input.classList.remove('is-result-field');
+                        if (role) {
+                            role.textContent = 'Dado TVM';
+                            role.className = 'text-[10px] font-semibold text-slate-500';
+                        }
+                        if (btn) {
+                            btn.textContent = defaultBtnText;
+                            btn.className = 'w-full py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold transition';
+                        }
+                        if (copyBtn) copyBtn.classList.add('hidden');
+                    }
+                });
+            },
+
+            clearTvmCalculatedCard(key) {
+                const card = document.getElementById(`card-tvm-${key}`);
+                const input = document.getElementById(`input-tvm-${key}`);
+                const role = document.getElementById(`role-tvm-${key}`);
+                const btn = document.getElementById(`btn-tvm-${key}`);
+                const copyBtn = document.getElementById(`copy-tvm-${key}`);
+                const defaultBtnText = key === 'I' ? 'Calcular I%' : `Calcular ${key}`;
+
+                if (card) card.classList.remove('is-result');
+                if (input) input.classList.remove('is-result-field');
+                if (role) {
+                    role.textContent = 'Dado TVM';
+                    role.className = 'text-[10px] font-semibold text-slate-500';
+                }
+                if (btn) {
+                    btn.textContent = defaultBtnText;
+                    btn.className = 'w-full py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold transition';
+                }
+                if (copyBtn) copyBtn.classList.add('hidden');
             },
 
             syncStateToInputs(force = false) {
@@ -7023,6 +7278,7 @@
 
             syncInputToState(module, key, value) {
                 if (module === 'tvm') {
+                    this.clearTvmCalculatedCard(key);
                     const raw = String(value || '').trim();
                     const n = this.parseNumericValue(raw);
                     this.tvm[key] = (raw === '' || n === null || isNaN(n)) ? null : n;
@@ -7291,7 +7547,72 @@
                     }
                 });
 
+                this.setCfloNpvCalculated(npv);
                 this.setResult(npv, `CFLO: VPL @ ${(rate * 100).toFixed(2)}% = ${this.formatNum(npv)}`, () => this.computeNPV(), 'R$');
+            },
+
+            setCfloNpvCalculated(npv) {
+                const card = document.getElementById('card-cflo-npv');
+                const input = document.getElementById('input-cflo-npv');
+                const role = document.getElementById('role-cflo-npv');
+                const btn = document.getElementById('btn-cflo-npv');
+                const copyBtn = document.getElementById('copy-cflo-npv');
+                if (input) input.value = `R$ ${this.formatNum(npv)}`;
+                if (card) card.classList.add('is-result');
+                if (input) input.classList.add('is-result-field');
+                if (role) {
+                    role.textContent = '✓ Resultado calculado';
+                    role.className = 'text-[10px] font-bold text-emerald-400';
+                }
+                if (btn) {
+                    btn.textContent = '↻ Recalcular VPL';
+                    btn.className = 'w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded text-xs font-mono font-bold transition';
+                }
+                if (copyBtn) copyBtn.classList.remove('hidden');
+            },
+
+            setCfloIrrCalculated(irrPct) {
+                const card = document.getElementById('card-cflo-irr');
+                const input = document.getElementById('input-cflo-irr');
+                const role = document.getElementById('role-cflo-irr');
+                const btn = document.getElementById('btn-cflo-irr');
+                const copyBtn = document.getElementById('copy-cflo-irr');
+                if (input) input.value = `${this.formatNum(irrPct)}%`;
+                if (card) card.classList.add('is-result');
+                if (input) input.classList.add('is-result-field');
+                if (role) {
+                    role.textContent = '✓ Resultado calculado';
+                    role.className = 'text-[10px] font-bold text-emerald-400';
+                }
+                if (btn) {
+                    btn.textContent = '↻ Recalcular TIR';
+                    btn.className = 'w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded text-xs font-mono font-bold transition';
+                }
+                if (copyBtn) copyBtn.classList.remove('hidden');
+            },
+
+            clearCfloResults() {
+                ['npv', 'irr'].forEach(type => {
+                    const card = document.getElementById(`card-cflo-${type}`);
+                    const input = document.getElementById(`input-cflo-${type}`);
+                    const role = document.getElementById(`role-cflo-${type}`);
+                    const btn = document.getElementById(`btn-cflo-${type}`);
+                    const copyBtn = document.getElementById(`copy-cflo-${type}`);
+                    if (card) card.classList.remove('is-result');
+                    if (input) {
+                        input.classList.remove('is-result-field');
+                        input.value = '';
+                    }
+                    if (role) {
+                        role.textContent = 'Métrica CFLO';
+                        role.className = 'text-[10px] font-semibold text-slate-500';
+                    }
+                    if (btn) {
+                        btn.textContent = type === 'npv' ? 'Calcular VPL (NPV)' : 'Calcular TIR (IRR)';
+                        btn.className = `w-full py-1.5 ${type === 'npv' ? 'bg-amber-500 hover:bg-amber-400' : 'bg-sky-500 hover:bg-sky-400'} text-slate-950 font-bold rounded text-xs font-mono transition`;
+                    }
+                    if (copyBtn) copyBtn.classList.add('hidden');
+                });
             },
 
             computeIRR() {
@@ -7332,6 +7653,7 @@
                 const [f0] = npvAndDnpv(0);
                 if (Math.abs(f0) < 1e-9) {
                     const irrPct = 0;
+                    this.setCfloIrrCalculated(irrPct);
                     this.setResult(irrPct, `CFLO: TIR = ${this.formatNum(irrPct)}%`, () => this.computeIRR(), '%');
                     this.setModuleActionFeedback(`TIR calculada: ${this.formatNum(irrPct)}%`, 'success');
                     return;
@@ -7405,6 +7727,7 @@
                 }
 
                 const irrPct = this.cleanFloat(bestR * 100, Math.max(this.decimals, 4));
+                this.setCfloIrrCalculated(irrPct);
                 this.setResult(irrPct, `CFLO: TIR = ${this.formatNum(irrPct)}%`, () => this.computeIRR(), '%');
                 this.setModuleActionFeedback(`TIR calculada: ${this.formatNum(irrPct)}%`, 'success');
             },
@@ -7422,7 +7745,28 @@
                 }
                 const nom = nomPct / 100;
                 const eff = (Math.pow(1 + nom / pyr, pyr) - 1) * 100;
+                this.setIcnvEffCalculated(eff);
                 this.setResult(eff, `ICNV: Taxa Efetiva = ${this.formatNum(eff)}%`, () => this.calcEffRate(), '%');
+            },
+
+            setIcnvEffCalculated(eff) {
+                const card = document.getElementById('card-icnv-result');
+                const input = document.getElementById('input-icnv-eff');
+                const role = document.getElementById('role-icnv-eff');
+                const btn = document.getElementById('btn-icnv-calc');
+                const copyBtn = document.getElementById('copy-icnv-result');
+                if (input) input.value = `${this.formatNum(eff)}% a.a.`;
+                if (card) card.classList.add('is-result');
+                if (input) input.classList.add('is-result-field');
+                if (role) {
+                    role.textContent = '✓ Resultado calculado';
+                    role.className = 'text-[10px] font-bold text-emerald-400';
+                }
+                if (btn) {
+                    btn.textContent = '↻ Recalcular';
+                    btn.className = 'w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded text-xs transition';
+                }
+                if (copyBtn) copyBtn.classList.remove('hidden');
             },
 
             calcDepreciationSL() {
@@ -7438,7 +7782,52 @@
                     return;
                 }
                 const depr = (cost - salvage) / life;
+                this.setDeprResultCalculated(depr);
                 this.setResult(depr, `DEPR SL: Depreciação Anual = ${this.formatNum(depr)}`, () => this.calcDepreciationSL(), 'R$/ano');
+            },
+
+            setDeprResultCalculated(depr) {
+                const card = document.getElementById('card-depr-result');
+                const input = document.getElementById('input-depr-result');
+                const role = document.getElementById('role-depr-result');
+                const btn = document.getElementById('btn-depr-calc');
+                const copyBtn = document.getElementById('copy-depr-result');
+                if (input) input.value = `R$ ${this.formatNum(depr)} / ano`;
+                if (card) card.classList.add('is-result');
+                if (input) input.classList.add('is-result-field');
+                if (role) {
+                    role.textContent = '✓ Resultado calculado';
+                    role.className = 'text-[10px] font-bold text-emerald-400';
+                }
+                if (btn) {
+                    btn.textContent = '↻ Recalcular';
+                    btn.className = 'w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded text-xs transition';
+                }
+                if (copyBtn) copyBtn.classList.remove('hidden');
+            },
+
+            clearFinToolsResults() {
+                const icnvCard = document.getElementById('card-icnv-result');
+                const icnvInput = document.getElementById('input-icnv-eff');
+                const icnvRole = document.getElementById('role-icnv-eff');
+                const icnvBtn = document.getElementById('btn-icnv-calc');
+                const icnvCopy = document.getElementById('copy-icnv-result');
+                if (icnvCard) icnvCard.classList.remove('is-result');
+                if (icnvInput) { icnvInput.classList.remove('is-result-field'); icnvInput.value = ''; }
+                if (icnvRole) { icnvRole.textContent = 'Métrica'; icnvRole.className = 'text-[10px] font-semibold text-slate-500'; }
+                if (icnvBtn) { icnvBtn.textContent = 'Calcular Taxa Efetiva'; icnvBtn.className = 'w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition'; }
+                if (icnvCopy) icnvCopy.classList.add('hidden');
+
+                const deprCard = document.getElementById('card-depr-result');
+                const deprInput = document.getElementById('input-depr-result');
+                const deprRole = document.getElementById('role-depr-result');
+                const deprBtn = document.getElementById('btn-depr-calc');
+                const deprCopy = document.getElementById('copy-depr-result');
+                if (deprCard) deprCard.classList.remove('is-result');
+                if (deprInput) { deprInput.classList.remove('is-result-field'); deprInput.value = ''; }
+                if (deprRole) { deprRole.textContent = 'Métrica'; deprRole.className = 'text-[10px] font-semibold text-slate-500'; }
+                if (deprBtn) { deprBtn.textContent = 'Calcular Depreciação / Ano'; deprBtn.className = 'w-full py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded text-xs transition'; }
+                if (deprCopy) deprCopy.classList.add('hidden');
             },
 
             calcPercentChange() {
@@ -7452,7 +7841,71 @@
                     return;
                 }
                 const pchg = ((newVal - oldVal) / Math.abs(oldVal)) * 100;
+                this.setPchgResultCalculated(pchg);
                 this.setResult(pchg, `%CHG: Variação = ${this.formatNum(pchg)}%`, () => this.calcPercentChange(), '%');
+            },
+
+            setPchgResultCalculated(pchg) {
+                const card = document.getElementById('card-pchg-result');
+                const input = document.getElementById('input-pchg-result');
+                const role = document.getElementById('role-pchg-result');
+                const btn = document.getElementById('btn-pchg-calc');
+                const copyBtn = document.getElementById('copy-pchg-result');
+                const sign = pchg > 0 ? '+' : '';
+                if (input) input.value = `${sign}${this.formatNum(pchg)}%`;
+                if (card) card.classList.add('is-result');
+                if (input) input.classList.add('is-result-field');
+                if (role) {
+                    role.textContent = '✓ Resultado calculado';
+                    role.className = 'text-[10px] font-bold text-emerald-400';
+                }
+                if (btn) {
+                    btn.textContent = '↻ Recalcular';
+                    btn.className = 'w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold rounded text-xs transition';
+                }
+                if (copyBtn) copyBtn.classList.remove('hidden');
+            },
+
+            setStatMetricResult(label, value, unit = '', digits = null) {
+                const card = document.getElementById('card-stat-result');
+                const titleEl = document.getElementById('stat-result-title');
+                const input = document.getElementById('input-stat-result');
+                const role = document.getElementById('role-stat-result');
+                const copyBtn = document.getElementById('copy-stat-result');
+                const fmt = typeof value === 'number' ? this.formatNum(value, digits) : value;
+                if (titleEl) titleEl.textContent = label;
+                if (input) input.value = unit ? `${fmt} ${unit}` : fmt;
+                if (card) card.classList.add('is-result');
+                if (input) input.classList.add('is-result-field');
+                if (role) {
+                    role.textContent = '✓ Métrica calculada';
+                    role.className = 'text-[10px] font-bold text-emerald-400';
+                }
+                if (copyBtn) copyBtn.classList.remove('hidden');
+            },
+
+            clearBusSumResults() {
+                const pchgCard = document.getElementById('card-pchg-result');
+                const pchgInput = document.getElementById('input-pchg-result');
+                const pchgRole = document.getElementById('role-pchg-result');
+                const pchgBtn = document.getElementById('btn-pchg-calc');
+                const pchgCopy = document.getElementById('copy-pchg-result');
+                if (pchgCard) pchgCard.classList.remove('is-result');
+                if (pchgInput) { pchgInput.classList.remove('is-result-field'); pchgInput.value = ''; }
+                if (pchgRole) { pchgRole.textContent = 'Métrica'; pchgRole.className = 'text-[10px] font-semibold text-slate-500'; }
+                if (pchgBtn) { pchgBtn.textContent = 'Calcular % Variação'; pchgBtn.className = 'w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition'; }
+                if (pchgCopy) pchgCopy.classList.add('hidden');
+
+                const statCard = document.getElementById('card-stat-result');
+                const statTitle = document.getElementById('stat-result-title');
+                const statInput = document.getElementById('input-stat-result');
+                const statRole = document.getElementById('role-stat-result');
+                const statCopy = document.getElementById('copy-stat-result');
+                if (statCard) statCard.classList.remove('is-result');
+                if (statTitle) statTitle.textContent = 'Métrica Selecionada';
+                if (statInput) { statInput.classList.remove('is-result-field'); statInput.value = ''; }
+                if (statRole) { statRole.textContent = 'Métrica'; statRole.className = 'text-[10px] font-semibold text-slate-500'; }
+                if (statCopy) statCopy.classList.add('hidden');
             },
 
             addStatPair() {
@@ -7497,6 +7950,7 @@
             clearStatPairs() {
                 this.stats.pairs = [];
                 this.renderStatPairsList();
+                this.clearBusSumResults();
                 this.setModuleActionFeedback('Registros estatísticos limpos (CLΣ).', 'success');
                 const panel = document.getElementById('result-panel');
                 if (panel) panel.classList.add('hidden');
@@ -7576,13 +8030,16 @@
 
                 switch (m) {
                     case 'N':
+                        this.setStatMetricResult('Total de pares (n)', s.n, 'pares');
                         this.setResult(s.n, `SUM: Total de pares (n) = ${s.n}`, () => this.showStatMetric(m), 'pares');
                         break;
                     case 'MEAN_X':
                     case 'MEAN':
+                        this.setStatMetricResult('Média X (x̄)', s.meanX);
                         this.setResult(s.meanX, `SUM: Média X (x̄) = ${this.formatNum(s.meanX)}`, () => this.showStatMetric(m));
                         break;
                     case 'MEAN_Y':
+                        this.setStatMetricResult('Média Y (ȳ)', s.meanY);
                         this.setResult(s.meanY, `SUM: Média Y (ȳ) = ${this.formatNum(s.meanY)}`, () => this.showStatMetric(m));
                         break;
                     case 'SX':
@@ -7590,6 +8047,7 @@
                             this.setModuleActionFeedback('São necessários ao menos 2 pares para calcular o desvio padrão amostral (Sx).', 'error');
                             return;
                         }
+                        this.setStatMetricResult('Desvio Padrão Sx', s.sx);
                         this.setResult(s.sx, `SUM: Desvio Padrão Sx = ${this.formatNum(s.sx)}`, () => this.showStatMetric(m));
                         break;
                     case 'SY':
@@ -7597,21 +8055,27 @@
                             this.setModuleActionFeedback('São necessários ao menos 2 pares para calcular o desvio padrão amostral (Sy).', 'error');
                             return;
                         }
+                        this.setStatMetricResult('Desvio Padrão Sy', s.sy);
                         this.setResult(s.sy, `SUM: Desvio Padrão Sy = ${this.formatNum(s.sy)}`, () => this.showStatMetric(m));
                         break;
                     case 'SUM_X':
+                        this.setStatMetricResult('Somatório ΣX', s.sumX);
                         this.setResult(s.sumX, `SUM: Somatório ΣX = ${this.formatNum(s.sumX)}`, () => this.showStatMetric(m));
                         break;
                     case 'SUM_Y':
+                        this.setStatMetricResult('Somatório ΣY', s.sumY);
                         this.setResult(s.sumY, `SUM: Somatório ΣY = ${this.formatNum(s.sumY)}`, () => this.showStatMetric(m));
                         break;
                     case 'SUM_X2':
+                        this.setStatMetricResult('Somatório ΣX²', s.sumX2);
                         this.setResult(s.sumX2, `SUM: Somatório ΣX² = ${this.formatNum(s.sumX2)}`, () => this.showStatMetric(m));
                         break;
                     case 'SUM_Y2':
+                        this.setStatMetricResult('Somatório ΣY²', s.sumY2);
                         this.setResult(s.sumY2, `SUM: Somatório ΣY² = ${this.formatNum(s.sumY2)}`, () => this.showStatMetric(m));
                         break;
                     case 'SUM_XY':
+                        this.setStatMetricResult('Somatório ΣXY', s.sumXY);
                         this.setResult(s.sumXY, `SUM: Somatório ΣXY = ${this.formatNum(s.sumXY)}`, () => this.showStatMetric(m));
                         break;
                     case 'CORR':
@@ -7619,6 +8083,7 @@
                             this.setModuleActionFeedback('São necessários ao menos 2 pares com variação em X e Y para calcular a correlação.', 'error');
                             return;
                         }
+                        this.setStatMetricResult('Correlação Linear (r)', s.r, '', 4);
                         this.setResult(s.r, `SUM: Correlação Linear (r) = ${this.formatNum(s.r, 4)}`, () => this.showStatMetric(m));
                         break;
                     case 'SLOPE':
@@ -7626,6 +8091,7 @@
                             this.setModuleActionFeedback('São necessários ao menos 2 pares com variação em X para calcular a inclinação.', 'error');
                             return;
                         }
+                        this.setStatMetricResult('Inclinação Linear (m)', s.slope, '', 4);
                         this.setResult(s.slope, `SUM: Inclinação Linear (m) = ${this.formatNum(s.slope, 4)}`, () => this.showStatMetric(m));
                         break;
                     case 'INTERCEPT':
@@ -7633,6 +8099,7 @@
                             this.setModuleActionFeedback('São necessários ao menos 2 pares com variação em X para calcular o intercepto.', 'error');
                             return;
                         }
+                        this.setStatMetricResult('Intercepto Linear (b)', s.intercept, '', 4);
                         this.setResult(s.intercept, `SUM: Intercepto Linear (b) = ${this.formatNum(s.intercept, 4)}`, () => this.showStatMetric(m));
                         break;
                 }
@@ -8321,7 +8788,10 @@
                 };
                 (ids[module] || []).forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
                 if (module === 'TVM') {
-                    ['N','I','PV','PMT','FV'].forEach(k => { this.tvm[k] = null; });
+                    ['N','I','PV','PMT','FV'].forEach(k => {
+                        this.tvm[k] = null;
+                        this.clearTvmCalculatedCard(k);
+                    });
                     this.tvm.PYR = 12;
                     const pyr = document.getElementById('input-tvm-PYR'); if (pyr) pyr.value = '12';
                     const feedback = document.getElementById('tvm-feedback'); if (feedback) feedback.classList.add('hidden');
@@ -8332,13 +8802,16 @@
                 } else if (module === 'CFLO') {
                     this.cflo = [];
                     this.renderCashFlows();
+                    this.clearCfloResults();
                     const msg = document.getElementById('cflo-add-feedback');
                     if (msg) msg.textContent = '';
                 } else if (module === 'FIN_TOOLS') {
+                    this.clearFinToolsResults();
                     const pyr = document.getElementById('input-icnv-pyr'); if (pyr) pyr.value = '12';
                 } else if (module === 'BUS_SUM') {
                     this.stats.pairs = [];
                     this.renderStatPairsList();
+                    this.clearBusSumResults();
                 }
                 const result = document.getElementById('result-panel');
                 if (result) result.classList.add('hidden');
