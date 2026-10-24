@@ -2073,6 +2073,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap');
 
         /* Scrollbars elegantes */
+        .custom-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(245, 158, 11, 0.45) rgba(15, 23, 42, 0.6);
+        }
+        body.light-mode .custom-scroll {
+            scrollbar-color: #94a3b8 #e2e8f0;
+        }
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -2174,10 +2181,66 @@
             color: #ffcc00;
         }
 
+        /* Botão de Estrela de Favorito nas Fórmulas */
+        .favorite-star-btn {
+            background: transparent;
+            border: none;
+            padding: 0.25rem 0.35rem;
+            cursor: pointer;
+            line-height: 1;
+            font-size: 1.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+        .favorite-star-btn:hover {
+            transform: scale(1.22);
+        }
+        .favorite-star-btn.is-fav {
+            color: #f59e0b !important;
+        }
+        body.light-mode .favorite-star-btn.is-fav {
+            color: #d97706 !important;
+        }
+        body.light-mode .favorite-star-btn:not(.is-fav) {
+            color: #94a3b8 !important;
+        }
+        body.light-mode .favorite-star-btn:not(.is-fav):hover {
+            color: #d97706 !important;
+        }
+
+        /* Botão de Filtro Rápido de Favoritas */
+        #catalog-favorites-toggle.active {
+            background-color: #f59e0b !important;
+            border-color: #d97706 !important;
+            color: #0f172a !important;
+            box-shadow: 0 1px 4px rgba(217, 119, 6, 0.3) !important;
+        }
+        #catalog-favorites-toggle.active #catalog-favorites-badge {
+            background-color: rgba(15, 23, 42, 0.25) !important;
+            color: #0f172a !important;
+            font-weight: 800 !important;
+        }
+        body.light-mode #catalog-favorites-toggle:not(.active) {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #334155 !important;
+        }
+        body.light-mode #catalog-favorites-toggle:not(.active):hover {
+            border-color: #d97706 !important;
+            color: #925400 !important;
+        }
+
         /* O resultado fica logo abaixo do cabeçalho fixo, cuja altura varia por tela. */
         #result-panel {
             top: var(--result-sticky-top, 80px);
             scroll-margin-top: calc(var(--result-sticky-top, 80px) + 12px);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+        }
+        body.light-mode #result-panel {
+            box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
         }
 
         /* Em telas grandes, a calculadora acompanha a rolagem da área de trabalho. */
@@ -2195,6 +2258,33 @@
         /* Garante que o controle permaneça oculto enquanto a classe hidden estiver ativa. */
         #btn-result-recalculate.hidden {
             display: none !important;
+        }
+
+        /* Destaque Inline para o Resultado Calculado (Opção 3) */
+        .solve-variable-card.is-result {
+            border-color: rgba(16, 185, 129, 0.75) !important;
+            background-color: rgba(6, 78, 59, 0.22) !important;
+            box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2) !important;
+        }
+        body.light-mode .solve-variable-card.is-result {
+            border-color: #059669 !important;
+            background-color: #f0fdf4 !important;
+            box-shadow: 0 1px 4px rgba(5, 150, 105, 0.15) !important;
+        }
+        #workstation-left-wrapper .solve-variable-card.is-result input {
+            border-color: rgba(16, 185, 129, 0.85) !important;
+            background-color: rgba(2, 44, 34, 0.75) !important;
+            color: #34d399 !important;
+            font-weight: 700 !important;
+            font-size: 1.05rem !important;
+        }
+        body.light-mode #workstation-left-wrapper .solve-variable-card.is-result input {
+            border-color: #059669 !important;
+            background-color: #ffffff !important;
+            color: #064e3b !important;
+            font-weight: 800 !important;
+            font-size: 1.05rem !important;
+            box-shadow: inset 0 1px 2px rgba(5, 150, 105, 0.08) !important;
         }
 
         /* O resultado compacto ocupa menos altura, evitando esconder campos durante a rolagem. */
@@ -2935,6 +3025,69 @@
         #workstation-menus.catalog-collapsed #catalog-card-container { display: none !important; }
         #workstation-menus.catalog-collapsed #centralPanelCard { grid-column: 1 / -1 !important; }
 
+        /* Rolagem independente no Catálogo e no Painel Central em telas desktop */
+        @media (min-width: 1024px) {
+            #workstation-menus {
+                align-items: stretch;
+            }
+            #catalog-card-container {
+                height: calc(100vh - 165px);
+                max-height: calc(100vh - 165px);
+                min-height: 520px;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+            #catalog-card-container > div:first-child,
+            #catalog-card-container > div:nth-child(2) {
+                flex-shrink: 0;
+            }
+            #solve-library-list {
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                padding-right: 0.35rem;
+            }
+            #solve-library-empty {
+                flex-shrink: 0;
+            }
+            #centralPanelCard {
+                height: calc(100vh - 165px);
+                max-height: calc(100vh - 165px);
+                min-height: 520px;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+            #central-utility-bar {
+                flex-shrink: 0;
+            }
+            #moduleExampleToolbar {
+                flex-shrink: 0;
+            }
+            #centralPanelScrollable {
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                padding-right: 0.35rem;
+            }
+            #result-panel {
+                top: 0 !important;
+                scroll-margin-top: 8px;
+            }
+        }
+
+        /* Em telas desktop amplas, o wrapper da workstation e a calculadora permanecem fixos */
+        @media (min-width: 1280px) {
+            #workstation-left-wrapper {
+                position: sticky;
+                top: 4.5rem;
+                align-self: start;
+            }
+        }
+
         /* Em monitores amplos, equilibra catálogo e painel de cálculo em 50/50.
            Em notebooks, mantém a proporção 5/7 para preservar a área dos campos. */
         @media (min-width: 1536px) {
@@ -3262,20 +3415,29 @@
                                     oninput="app.filterCatalog()"
                                     class="w-full rounded-xl border border-slate-700 bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500" />
                             </label>
-                            <label class="block catalog-category-wrap">
-                                <span class="sr-only">Filtrar por categoria</span>
-                                <select id="solve-library-category" aria-label="Filtrar fórmulas por categoria" onchange="app.filterCatalog()"
-                                    class="catalog-category-select w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500">
-                                    <option value="">Todas as categorias</option>
-                                </select>
-                                <svg aria-hidden="true" class="catalog-category-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"></path>
-                                </svg>
-                            </label>
+                            <div class="flex items-center gap-2">
+                                <label class="block catalog-category-wrap flex-1 min-w-0">
+                                    <span class="sr-only">Filtrar por categoria</span>
+                                    <select id="solve-library-category" aria-label="Filtrar fórmulas por categoria" onchange="app.filterCatalog()"
+                                        class="catalog-category-select w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500">
+                                        <option value="">Todas as categorias</option>
+                                    </select>
+                                    <svg aria-hidden="true" class="catalog-category-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+                                </label>
+                                <button type="button" id="catalog-favorites-toggle" onclick="app.toggleFavoritesFilter()" aria-pressed="false"
+                                    title="Filtrar apenas fórmulas favoritas"
+                                    class="shrink-0 h-10 px-3 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 hover:text-amber-300 hover:border-amber-500/50 text-xs font-bold transition flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                                    <span class="text-amber-400 text-sm leading-none" aria-hidden="true">★</span>
+                                    <span>Favoritas</span>
+                                    <span id="catalog-favorites-badge" class="ml-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400">0</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Lista participa da rolagem normal da página; equações não são truncadas -->
-                        <div id="solve-library-list" class="space-y-2.5 pr-1.5">
+                        <!-- Lista com rolagem independente no desktop -->
+                        <div id="solve-library-list" class="space-y-2.5 pr-1.5 custom-scroll">
                             <!-- Preenchido via JS -->
                         </div>
                         <div id="solve-library-empty" class="hidden rounded-xl border border-dashed border-slate-700 bg-slate-950/50 px-4 py-6 text-center" role="status">
@@ -3307,10 +3469,10 @@
                             </div>
                             <div id="module-action-feedback" class="text-xs text-slate-400" role="status" aria-live="polite"></div>
                         </div>
-                        <div id="centralPanelScrollable" class="min-w-0">
+                        <div id="centralPanelScrollable" class="min-w-0 custom-scroll">
 
                             <!-- PAINEL DE RESULTADO REUTILIZÁVEL -->
-                            <section id="result-panel" aria-live="polite" aria-atomic="true" class="hidden sticky z-30 mb-4 overflow-hidden rounded-2xl border border-emerald-500/40 bg-slate-950/95 shadow-xl shadow-black/30 backdrop-blur">
+                            <section id="result-panel" aria-live="polite" aria-atomic="true" class="hidden sticky z-30 mb-4 overflow-hidden rounded-2xl border border-emerald-500/40 bg-slate-950/95 shadow-sm backdrop-blur">
                                 <div class="result-panel-content grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 p-4">
                                     <div class="result-panel-main min-w-0">
                                         <div class="result-label-row flex items-center gap-2 mb-1.5">
@@ -3480,14 +3642,16 @@
                                         <span class="text-xs font-mono text-slate-300">Fluxos inseridos (CF0, CF1...)</span>
                                         <span class="text-[11px] text-slate-400">Valores negativos representam saídas/investimentos.</span>
                                     </div>
-                                    <form id="cflo-add-form" onsubmit="app.addCashFlowFromForm(event)" class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-2 mb-3">
+                                    <form id="cflo-add-form" onsubmit="app.addCashFlowFromForm(event)" class="mb-3 flex flex-col gap-1.5">
                                         <div>
                                             <label for="cflo-new-amount" class="block text-xs font-semibold text-slate-300 mb-1">Valor do novo fluxo (R$)</label>
-                                            <input id="cflo-new-amount" type="number" step="any" required inputmode="decimal" value="10000" aria-describedby="cflo-add-help cflo-add-feedback" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-mono text-white" placeholder="Ex.: -50000" />
+                                            <div class="flex items-center gap-2">
+                                                <input id="cflo-new-amount" type="number" step="any" required inputmode="decimal" value="10000" aria-describedby="cflo-add-help cflo-add-feedback" class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50" placeholder="Ex.: -50000" />
+                                                <button type="submit" class="shrink-0 h-10 px-4 py-2 rounded-lg bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400 transition whitespace-nowrap shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 flex items-center justify-center">+ Adicionar fluxo</button>
+                                            </div>
                                             <p id="cflo-add-help" class="mt-1 text-[11px] text-slate-400">Use sinal negativo para investimento/saída e positivo para entrada.</p>
                                         </div>
-                                        <button type="submit" class="self-end min-h-10 px-4 py-2 rounded-lg bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400">+ Adicionar fluxo</button>
-                                        <div id="cflo-add-feedback" class="sm:col-span-2 text-xs text-rose-400" role="status" aria-live="polite"></div>
+                                        <div id="cflo-add-feedback" class="text-xs text-rose-400" role="status" aria-live="polite"></div>
                                     </form>
                                     <div id="cflo-list" class="space-y-1.5 max-h-52 overflow-y-auto custom-scroll text-xs font-mono" aria-live="polite">
                                         <!-- Preenchido via JS -->
@@ -3967,6 +4131,10 @@
             // Último resultado apresentado no painel de resultados
             lastResult: null,
 
+            // Sistema de Fórmulas Favoritas
+            favoriteFormulas: new Set(['coef_financiamento_carencia_premio', 'converter_taxas_equivalentes', 'taxa_pro_rata_die']),
+            favoritesOnlyFilter: false,
+
             // Catálogo de fórmulas financeiras e comerciais; os itens prioritários ficam no início da lista.
             formulas: [
                 {
@@ -3984,13 +4152,18 @@
                     vars: ['TXA', 'TMA', 'TMB', 'TXB']
                 },
                 {
-                    id: 'taxa_pro_rata_die_atalho',
-                    title: 'Atalho para Cálculo de Taxa Pro Rata Die na Calculadora',
-                    category: 'Atalhos da Calculadora',
-                    equation: 'TAXA DIA S/ FÓRMULA NA CALCULADORA: 1,025 ENTER 30^/ ^*15DIAS^*',
-                    vars: [],
-                    isShortcut: true,
-                    instruction: 'Este item é um atalho de operação, não uma equação para resolver. Use a sequência de teclas exibida acima diretamente na calculadora.'
+                    id: 'taxa_pro_rata_die',
+                    title: 'Taxa Pro Rata Die (Juros Compostos Proporcionais)',
+                    category: 'Matemática Financeira',
+                    equation: 'PRO.RATA: TXPER = (((1 + (TAXA / 100)) ^ (DIAS / BASE)) - 1) * 100',
+                    vars: ['TXPER', 'TAXA', 'DIAS', 'BASE'],
+                    desc: 'Cálculo de taxa equivalente pro rata die por juros compostos. Permite calcular a taxa do período (TXPER), taxa base (TAXA), prazo em dias (DIAS) ou base anual/mensal (BASE: 30, 360 ou 252). Atalho original: 1,025 ENTER 30 ^/ ^* 15DIAS ^*.',
+                    varMeta: {
+                        TXPER: { label: 'Taxa do período proporcional', unit: '%', example: 'Ex.: 1,2423' },
+                        TAXA: { label: 'Taxa periódica de referência', unit: '%', example: 'Ex.: 2,5 (ao mês)' },
+                        DIAS: { label: 'Prazo da operação em dias', unit: 'dias', example: 'Ex.: 15' },
+                        BASE: { label: 'Base de dias da taxa original', unit: 'dias', example: 'Ex.: 30 (mês) ou 360/252 (ano)' }
+                    }
                 },
                 {
                     id: 'markup_divisor',
@@ -4197,7 +4370,7 @@
                 UNIDADES_RECEBIDAS: { label: 'Unidades recebidas no lote analisado', unit: 'unidades', example: 'Ex.: 100' },
                 GMROI: { label: 'Margem bruta gerada por real médio investido em estoque', unit: 'x', example: 'Ex.: 2,1' },
                 LUCRO_BRUTO: { label: 'Margem bruta em reais no mesmo período', unit: 'R$', example: 'Ex.: 260000' },
-                COEF: { label: 'Coeficiente de financiamento calculado', unit: 'coeficiente', example: 'Informe ou calcule o coeficiente' },
+                COEF: { label: 'Coeficiente de financiamento', unit: 'coeficiente', example: 'Informe ou calcule o coeficiente' },
                 TAXA: { label: 'Taxa utilizada na fórmula de financiamento', unit: '%', example: 'Ex.: 2,5' },
                 PLANO: { label: 'Quantidade de parcelas/períodos do plano', unit: 'parcelas', example: 'Ex.: 24' },
                 CAR: { label: 'Carência em dias', unit: 'dias', example: 'Ex.: 10' },
@@ -4205,7 +4378,23 @@
                 TXA: { label: 'Taxa de origem', unit: '%', example: 'Ex.: 12' },
                 TMA: { label: 'Prazo/períodos correspondentes à taxa de origem', unit: 'períodos', example: 'Ex.: 12' },
                 TMB: { label: 'Prazo/períodos da taxa equivalente desejada', unit: 'períodos', example: 'Ex.: 1' },
-                TXB: { label: 'Taxa equivalente calculada', unit: '%', example: 'Informe ou calcule a taxa equivalente' }
+                TXB: { label: 'Taxa equivalente', unit: '%', example: 'Informe ou calcule a taxa equivalente' },
+                TXPER: { label: 'Taxa do período proporcional', unit: '%', example: 'Ex.: 1,2423' },
+                BASE: { label: 'Base de dias da taxa original', unit: 'dias', example: 'Ex.: 30 (mês) ou 360/252 (ano)' }
+            },
+
+            // Retorna os metadados da variável contextualizados pela fórmula ativa
+            getVarMeta(vName, formulaId = null) {
+                const targetFormId = formulaId || (this.solve && this.solve.activeFormulaId);
+                const form = targetFormId ? this.formulas.find(f => f.id === targetFormId) : null;
+                if (form && form.varMeta && form.varMeta[vName]) {
+                    return form.varMeta[vName];
+                }
+                return this.solveVariableMeta[vName] || {
+                    label: vName.replaceAll('_', ' ').toLowerCase(),
+                    unit: 'valor',
+                    example: 'Informe o valor'
+                };
             },
 
             // Mantém o painel de resultado abaixo do cabeçalho sticky em qualquer largura.
@@ -4233,6 +4422,7 @@
             // Inicialização
             init() {
                 this.initTheme();
+                this.loadFavoriteFormulas();
                 this.setupStickyResultOffset();
                 const hadSavedState = this.loadWorkspaceState();
                 if (!hadSavedState) {
@@ -4292,6 +4482,7 @@
 
             // Seleção de Fórmula no Catálogo
             selectFormula(formulaId, preserveVars = false) {
+                if (formulaId === 'taxa_pro_rata_die_atalho') formulaId = 'taxa_pro_rata_die';
                 const form = this.formulas.find(f => f.id === formulaId);
                 if (!form) return;
 
@@ -4358,6 +4549,71 @@
                 this.saveWorkspaceState();
             },
 
+            loadFavoriteFormulas() {
+                const defaultFavorites = ['coef_financiamento_carencia_premio', 'converter_taxas_equivalentes', 'taxa_pro_rata_die'];
+                try {
+                    const raw = localStorage.getItem('hp17bii-favorites');
+                    if (raw !== null) {
+                        const arr = JSON.parse(raw);
+                        if (Array.isArray(arr)) {
+                            const isOldDefault = arr.length === 2 && arr.includes('taxa_pro_rata_die') && arr.includes('coef_financiamento_carencia_premio');
+                            if (isOldDefault) {
+                                this.favoriteFormulas = new Set(defaultFavorites);
+                                this.saveFavoriteFormulas();
+                            } else {
+                                this.favoriteFormulas = new Set(arr);
+                            }
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Erro ao carregar favoritos do localStorage:', e);
+                }
+                // Fórmulas favoritas sugeridas na primeira utilização (3 primeiras fórmulas)
+                this.favoriteFormulas = new Set(defaultFavorites);
+            },
+
+            saveFavoriteFormulas() {
+                try {
+                    const arr = this.favoriteFormulas ? [...this.favoriteFormulas] : [];
+                    localStorage.setItem('hp17bii-favorites', JSON.stringify(arr));
+                } catch (e) {
+                    console.warn('Não foi possível salvar favoritos no localStorage:', e);
+                }
+            },
+
+            toggleFavorite(formulaId, event) {
+                if (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+                if (!this.favoriteFormulas) this.favoriteFormulas = new Set();
+                if (this.favoriteFormulas.has(formulaId)) {
+                    this.favoriteFormulas.delete(formulaId);
+                } else {
+                    this.favoriteFormulas.add(formulaId);
+                }
+                this.saveFavoriteFormulas();
+                this.saveWorkspaceState();
+                this.renderCatalog();
+            },
+
+            toggleFavoritesFilter() {
+                this.favoritesOnlyFilter = !this.favoritesOnlyFilter;
+                const btn = document.getElementById('catalog-favorites-toggle');
+                if (btn) {
+                    btn.setAttribute('aria-pressed', this.favoritesOnlyFilter ? 'true' : 'false');
+                    btn.classList.toggle('active', this.favoritesOnlyFilter);
+                    btn.classList.toggle('bg-amber-500', this.favoritesOnlyFilter);
+                    btn.classList.toggle('text-slate-950', this.favoritesOnlyFilter);
+                    btn.classList.toggle('border-amber-500', this.favoritesOnlyFilter);
+                    btn.classList.toggle('bg-slate-950', !this.favoritesOnlyFilter);
+                    btn.classList.toggle('text-slate-300', !this.favoritesOnlyFilter);
+                    btn.classList.toggle('border-slate-700', !this.favoritesOnlyFilter);
+                }
+                this.filterCatalog();
+            },
+
             renderCatalog() {
                 const container = document.getElementById('solve-library-list');
                 const categorySelect = document.getElementById('solve-library-category');
@@ -4375,33 +4631,69 @@
                     });
                 }
 
+                // As fórmulas favoritas sobem na exibição, mantendo a ordem relativa original entre si e entre as não favoritadas.
+                const orderedFormulas = [...this.formulas].sort((a, b) => {
+                    const aFav = this.favoriteFormulas && this.favoriteFormulas.has(a.id) ? 1 : 0;
+                    const bFav = this.favoriteFormulas && this.favoriteFormulas.has(b.id) ? 1 : 0;
+                    return bFav - aFav;
+                });
+
                 container.innerHTML = '';
-                this.formulas.forEach(f => {
+                orderedFormulas.forEach(f => {
                     const isActive = f.id === this.solve.activeFormulaId;
-                    const item = document.createElement('button');
-                    item.type = 'button';
+                    const isFav = this.favoriteFormulas && this.favoriteFormulas.has(f.id);
+                    const item = document.createElement('div');
+                    item.role = 'button';
+                    item.tabIndex = 0;
                     item.dataset.formulaId = f.id;
                     item.dataset.category = f.category;
-                    item.dataset.search = [f.title, f.category, f.equation, ...(f.vars || [])]
+                    item.dataset.search = [f.title, f.category, f.equation, ...(f.vars || []), f.desc || '']
                         .join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
                     item.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-                    item.setAttribute('aria-label', `Selecionar fórmula: ${f.title}${isActive ? ', fórmula ativa' : ''}`);
-                    item.className = `formula-card group block w-full rounded-xl border border-l-4 p-3 transition-colors focus:outline-none ${isActive
+                    item.setAttribute('aria-label', `Selecionar fórmula: ${f.title}${isActive ? ', fórmula ativa' : ''}${isFav ? ', favorita' : ''}`);
+                    item.className = `formula-card group block w-full rounded-xl border border-l-4 p-3 transition-colors cursor-pointer focus:outline-none ${isActive
                         ? 'border-amber-500 border-l-amber-400 bg-amber-950/35 shadow-md shadow-amber-500/10'
                         : 'border-slate-800 border-l-slate-700 bg-slate-950/60 hover:border-slate-600 hover:border-l-amber-500/70 hover:bg-slate-800/50'}`;
-                    item.addEventListener('click', () => this.selectFormula(f.id));
+                    item.addEventListener('click', (e) => {
+                        if (e.target.closest('.favorite-star-btn')) return;
+                        this.selectFormula(f.id);
+                    });
+                    item.addEventListener('keydown', (e) => {
+                        if (e.target.closest('.favorite-star-btn')) return;
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this.selectFormula(f.id);
+                        }
+                    });
 
                     const top = document.createElement('div');
-                    top.className = 'flex items-start justify-between gap-2 mb-1.5';
+                    top.className = 'flex items-center justify-between gap-2 mb-1.5';
+                    
+                    const leftTop = document.createElement('div');
+                    leftTop.className = 'flex items-center gap-2 min-w-0';
                     const category = document.createElement('span');
-                    category.className = 'text-[11px] font-mono font-bold leading-snug text-amber-400/95';
+                    category.className = 'text-[11px] font-mono font-bold leading-snug text-amber-400/95 truncate';
                     category.textContent = f.category;
                     const badge = document.createElement('span');
                     badge.className = isActive
                         ? 'shrink-0 rounded-md bg-amber-400 px-1.5 py-0.5 text-[9px] font-black tracking-wide text-slate-950'
                         : 'hidden';
                     badge.textContent = 'ATIVA';
-                    top.append(category, badge);
+                    leftTop.append(category, badge);
+
+                    const starBtn = document.createElement('button');
+                    starBtn.type = 'button';
+                    starBtn.className = `favorite-star-btn p-1 -m-1 ${isFav ? 'is-fav text-amber-400' : 'text-slate-500 hover:text-amber-300'}`;
+                    starBtn.setAttribute('aria-label', isFav ? `Remover ${f.title} dos favoritos` : `Favoritar ${f.title}`);
+                    starBtn.setAttribute('title', isFav ? 'Remover dos favoritos' : 'Favoritar fórmula');
+                    starBtn.innerHTML = `<span class="text-xl leading-none" aria-hidden="true">${isFav ? '★' : '☆'}</span>`;
+                    starBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        this.toggleFavorite(f.id, e);
+                    });
+
+                    top.append(leftTop, starBtn);
 
                     const title = document.createElement('span');
                     title.className = 'block text-sm font-bold leading-snug text-white';
@@ -4428,24 +4720,51 @@
                 const categoryEl = document.getElementById('solve-library-category');
                 const countEl = document.getElementById('solve-library-count');
                 const emptyEl = document.getElementById('solve-library-empty');
+                const badgeEl = document.getElementById('catalog-favorites-badge');
                 const term = (searchEl?.value || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
                 const category = categoryEl?.value || '';
                 let visible = 0;
 
+                const favCount = this.favoriteFormulas ? this.favoriteFormulas.size : 0;
+                if (badgeEl) badgeEl.textContent = favCount;
+
                 container.querySelectorAll('.formula-card').forEach(item => {
+                    const fId = item.dataset.formulaId;
+                    const isFav = this.favoriteFormulas && this.favoriteFormulas.has(fId);
                     const matchesText = !term || (item.dataset.search || '').includes(term);
                     const matchesCategory = !category || item.dataset.category === category;
-                    const show = matchesText && matchesCategory;
+                    const matchesFavorites = !this.favoritesOnlyFilter || isFav;
+                    const show = matchesText && matchesCategory && matchesFavorites;
                     item.classList.toggle('hidden', !show);
                     if (show) visible++;
                 });
 
                 if (countEl) {
-                    countEl.textContent = visible === this.formulas.length
-                        ? `${visible} fórmulas`
-                        : `${visible} de ${this.formulas.length}`;
+                    if (this.favoritesOnlyFilter) {
+                        countEl.textContent = `${visible} favorita${visible === 1 ? '' : 's'}`;
+                    } else {
+                        countEl.textContent = visible === this.formulas.length
+                            ? `${visible} fórmulas`
+                            : `${visible} de ${this.formulas.length}`;
+                    }
                 }
-                if (emptyEl) emptyEl.classList.toggle('hidden', visible !== 0);
+                if (emptyEl) {
+                    emptyEl.classList.toggle('hidden', visible !== 0);
+                    const emptyTitle = emptyEl.querySelector('.text-sm');
+                    const emptyDesc = emptyEl.querySelector('p');
+                    if (emptyTitle && emptyDesc) {
+                        if (this.favoritesOnlyFilter && favCount === 0) {
+                            emptyTitle.textContent = 'Nenhuma fórmula favoritada';
+                            emptyDesc.textContent = 'Clique na estrela (☆) em qualquer fórmula para salvá-la nos seus favoritos.';
+                        } else if (this.favoritesOnlyFilter) {
+                            emptyTitle.textContent = 'Nenhuma favorita corresponde à busca';
+                            emptyDesc.textContent = 'Tente ajustar os termos de busca ou a categoria selecionada.';
+                        } else {
+                            emptyTitle.textContent = 'Nenhuma fórmula encontrada';
+                            emptyDesc.textContent = 'Tente outro termo ou selecione “Todas as categorias”.';
+                        }
+                    }
+                }
                 container.classList.toggle('hidden', visible === 0);
             },
 
@@ -4454,7 +4773,11 @@
                 const categoryEl = document.getElementById('solve-library-category');
                 if (searchEl) searchEl.value = '';
                 if (categoryEl) categoryEl.value = '';
-                this.filterCatalog();
+                if (this.favoritesOnlyFilter) {
+                    this.toggleFavoritesFilter();
+                } else {
+                    this.filterCatalog();
+                }
                 searchEl?.focus();
             },
             renderSolveVariables() {
@@ -4479,58 +4802,73 @@
                 this.solve.varNames.forEach((vName, idx) => {
                     const card = document.createElement('div');
                     const isTarget = vName === this.solve.targetVar;
+                    const isCalculatedResult = isTarget && this.solve.targetVarSource === 'result';
                     card.dataset.solveCard = vName;
-                    card.className = `solve-variable-card rounded-xl border p-3 transition-colors ${isTarget
-                        ? 'bg-amber-950/30 border-amber-500/60 shadow-sm shadow-amber-500/5'
-                        : 'bg-slate-950/90 border-slate-800'}`;
+                    card.className = `solve-variable-card rounded-xl border p-3 transition-all duration-150 ${
+                        isCalculatedResult
+                            ? 'is-result bg-emerald-950/25 border-emerald-500/75 shadow-sm'
+                            : (isTarget
+                                ? 'bg-amber-950/30 border-amber-500/60 shadow-sm shadow-amber-500/5'
+                                : 'bg-slate-950/90 border-slate-800')
+                    }`;
 
                     const value = this.solve.vars[vName];
                     const hasValue = value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value));
                     const hasError = (this.solve.errors || []).includes(vName);
                     const displayVal = hasValue ? this.formatSolveInputValue(value) : '';
-                    const meta = this.solveVariableMeta[vName] || {
-                        label: vName.replaceAll('_', ' ').toLowerCase(),
-                        unit: 'valor',
-                        example: 'Informe o valor'
-                    };
-                    const roleLabel = isTarget
-                        ? (this.solve.targetVarSource === 'auto'
-                            ? 'Incógnita detectada'
-                            : this.solve.targetVarSource === 'result'
-                                ? 'Resultado calculado'
+                    const meta = this.getVarMeta(vName);
+                    const roleLabel = isCalculatedResult
+                        ? '✓ Resultado calculado'
+                        : (isTarget
+                            ? (this.solve.targetVarSource === 'auto'
+                                ? 'Incógnita detectada'
                                 : 'Incógnita selecionada')
-                        : (hasValue ? 'Valor informado' : 'Dado necessário');
-                    const roleClass = isTarget ? 'text-amber-300' : (hasValue ? 'text-emerald-400' : 'text-slate-500');
+                            : (hasValue ? 'Valor informado' : 'Dado necessário'));
+                    const roleClass = isCalculatedResult
+                        ? 'text-emerald-400 font-bold'
+                        : (isTarget
+                            ? 'text-amber-300 font-semibold'
+                            : (hasValue ? 'text-emerald-400 font-semibold' : 'text-slate-500'));
                     const softkeyLabel = idx < 5 ? `Softkey F${idx + 1}` : 'Variável adicional';
 
                     card.innerHTML = `
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                            <div class="min-w-0 sm:w-[44%]">
-                                <div class="flex flex-wrap items-center gap-2 mb-1">
-                                    <span class="text-xs sm:text-sm font-bold font-mono text-amber-300">${vName}</span>
-                                    <span class="text-[10px] text-slate-500">${softkeyLabel}</span>
+                        <div class="flex flex-col gap-2.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 mb-0.5">
+                                        <span class="text-xs sm:text-sm font-bold font-mono ${isCalculatedResult ? 'text-emerald-300' : 'text-amber-300'}">${vName}</span>
+                                        <span class="text-[10px] text-slate-500">${softkeyLabel}</span>
+                                    </div>
+                                    <div class="text-sm font-semibold text-slate-100 leading-snug">${meta.label}</div>
                                 </div>
-                                <div class="text-sm font-semibold text-slate-100 leading-snug">${meta.label}</div>
-                                <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
-                                    <span class="text-slate-400">Unidade: <strong class="text-slate-300">${meta.unit}</strong></span>
-                                    <span id="solve-role-${vName}" class="${roleClass} font-semibold">${roleLabel}</span>
+                                <div class="text-right shrink-0">
+                                    <span class="text-slate-400 text-[11px] block">Unidade: <strong class="text-slate-300">${meta.unit}</strong></span>
+                                    <span id="solve-role-${vName}" class="${roleClass} text-[11px] block mt-0.5">${roleLabel}</span>
                                 </div>
-                                <div class="mt-1 text-[10px] text-slate-500">${meta.example}</div>
                             </div>
-                            <div class="flex min-w-0 flex-1 items-start gap-2">
+                            <div class="flex min-w-0 items-start gap-2.5 pt-0.5">
                                 <div class="min-w-0 flex-1">
                                     <input type="text" inputmode="decimal" autocomplete="off" spellcheck="false" id="solve-var-${vName}" value="${displayVal}" placeholder="Informe o valor"
                                         aria-label="${vName} — ${meta.label}, unidade ${meta.unit}. Ponto para milhares e vírgula para decimais."
                                         aria-invalid="${hasError ? 'true' : 'false'}"
                                         oninput="app.handleSolveVarInput('${vName}', this)" onblur="app.normalizeSolveVarInput('${vName}', this)"
-                                        class="min-w-0 w-full bg-slate-900 border ${hasError ? 'border-rose-500/90 focus:border-rose-400 focus:ring-rose-500/40' : (isTarget ? 'border-amber-500/60' : 'border-slate-700')} rounded-lg px-3 py-2 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 ${hasError ? 'focus:ring-rose-500/40' : 'focus:ring-amber-500/50'}">
+                                        class="h-10 min-w-0 w-full bg-slate-900 border ${hasError ? 'border-rose-500/90 focus:border-rose-400 focus:ring-rose-500/40' : (isCalculatedResult ? 'border-emerald-500/80 text-emerald-300 font-bold focus:border-emerald-400 focus:ring-emerald-500/40' : (isTarget ? 'border-amber-500/60' : 'border-slate-700'))} rounded-lg px-3 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 ${hasError ? 'focus:ring-rose-500/40' : 'focus:ring-amber-500/50'}">
                                     <p id="solve-error-${vName}" class="${hasError ? 'mt-1 text-[11px] leading-snug text-rose-300' : 'hidden'}">${hasError ? 'Informe este valor para continuar.' : ''}</p>
                                 </div>
-                                <button type="button" onclick="app.solveForVariable('${vName}')" aria-label="Calcular ${meta.label}"
-                                    class="px-3 py-2 ${isTarget ? 'bg-amber-500 hover:bg-amber-400' : 'bg-slate-800 hover:bg-slate-700 border border-slate-700'} ${isTarget ? 'text-slate-950' : 'text-slate-100'} font-bold text-xs rounded-lg transition shrink-0">
-                                    Calcular
-                                </button>
+                                <div class="flex flex-col gap-2 shrink-0 w-[104px] sm:w-[110px]" id="solve-actions-${vName}">
+                                    <button type="button" onclick="app.solveForVariable('${vName}')" aria-label="${isCalculatedResult ? 'Recalcular ' + meta.label : 'Calcular ' + meta.label}"
+                                        class="h-10 w-full px-3 ${isCalculatedResult ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700' : (isTarget ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100')} font-bold text-xs rounded-lg transition shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500/50 flex items-center justify-center text-center">
+                                        ${isCalculatedResult ? '↻ Recalcular' : 'Calcular'}
+                                    </button>
+                                    ${isCalculatedResult ? `
+                                    <button type="button" onclick="app.copySolveVarResult('${vName}', this)" aria-label="Copiar resultado de ${meta.label}"
+                                        class="h-10 w-full px-3 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition shrink-0 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 text-center">
+                                        <span aria-hidden="true">⧉</span> Copiar
+                                    </button>
+                                    ` : ''}
+                                </div>
                             </div>
+                            <div class="text-[10px] text-slate-500 -mt-1">${meta.example}</div>
                         </div>
                     `;
                     container.appendChild(card);
@@ -4646,8 +4984,8 @@
                 input.style.fontSize = '';
                 input.title = input.value || '';
                 if (!input.value) return;
+                if (input.clientWidth <= 0 || input.scrollWidth <= input.clientWidth) return;
                 const baseSize = parseFloat(getComputedStyle(input).fontSize) || 14;
-                if (input.scrollWidth <= input.clientWidth) return;
                 const style = getComputedStyle(input);
                 const padding = (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
                 const contentWidth = Math.max(1, input.scrollWidth - padding);
@@ -4696,16 +5034,58 @@
                 this.fitSolveInputToWidth(input);
             },
 
+            async copySolveVarResult(varName, buttonEl) {
+                const val = this.solve.vars[varName];
+                if (val === null || val === undefined) return;
+                const formatted = this.formatSolveInputValue(val);
+                let copied = false;
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(formatted);
+                        copied = true;
+                    }
+                } catch (_) {}
+                if (!copied) {
+                    try {
+                        const temp = document.createElement('textarea');
+                        temp.value = formatted;
+                        temp.setAttribute('readonly', '');
+                        temp.style.position = 'absolute';
+                        temp.style.left = '-9999px';
+                        document.body.appendChild(temp);
+                        temp.select();
+                        copied = document.execCommand('copy');
+                        document.body.removeChild(temp);
+                    } catch (_) {}
+                }
+                if (buttonEl) {
+                    const originalHtml = buttonEl.innerHTML;
+                    buttonEl.innerHTML = '<span aria-hidden="true">✓</span> Copiado!';
+                    buttonEl.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
+                    buttonEl.classList.add('bg-emerald-500', 'text-slate-950');
+                    setTimeout(() => {
+                        buttonEl.innerHTML = originalHtml;
+                        buttonEl.classList.remove('bg-emerald-500', 'text-slate-950');
+                        buttonEl.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+                    }, 1600);
+                }
+            },
+
             syncSolveVariableVisuals() {
                 (this.solve.varNames || []).forEach(vName => {
                     const isTarget = vName === this.solve.targetVar;
+                    const isCalculatedResult = isTarget && this.solve.targetVarSource === 'result';
                     const hasValue = this.isSolveValueProvided(this.solve.vars[vName]);
                     const hasError = (this.solve.errors || []).includes(vName);
                     const card = document.querySelector(`[data-solve-card="${CSS.escape(vName)}"]`);
                     if (card) {
-                        card.className = `solve-variable-card rounded-xl border p-3 transition-colors ${isTarget
-                            ? 'bg-amber-950/30 border-amber-500/60 shadow-sm shadow-amber-500/5'
-                            : 'bg-slate-950/90 border-slate-800'}`;
+                        card.className = `solve-variable-card rounded-xl border p-3 transition-colors ${
+                            isCalculatedResult
+                                ? 'is-result bg-emerald-950/25 border-emerald-500/75 shadow-sm'
+                                : (isTarget
+                                    ? 'bg-amber-950/30 border-amber-500/60 shadow-sm shadow-amber-500/5'
+                                    : 'bg-slate-950/90 border-slate-800')
+                        }`;
                     }
                     const input = document.getElementById(`solve-var-${vName}`);
                     if (input) {
@@ -4714,18 +5094,23 @@
                         input.classList.toggle('focus:border-rose-400', hasError);
                         input.classList.toggle('focus:ring-rose-500/40', hasError);
                         if (!hasError) {
-                            input.classList.toggle('border-amber-500/60', isTarget);
+                            input.classList.toggle('border-emerald-500/80', isCalculatedResult);
+                            input.classList.toggle('text-emerald-300', isCalculatedResult);
+                            input.classList.toggle('font-bold', isCalculatedResult);
+                            input.classList.toggle('border-amber-500/60', isTarget && !isCalculatedResult);
                             input.classList.toggle('border-slate-700', !isTarget);
                             input.classList.add('focus:ring-amber-500/50');
                         } else {
-                            input.classList.remove('border-amber-500/60', 'border-slate-700', 'focus:ring-amber-500/50');
+                            input.classList.remove('border-emerald-500/80', 'text-emerald-300', 'border-amber-500/60', 'border-slate-700', 'focus:ring-amber-500/50');
                         }
                     }
                     const role = document.getElementById(`solve-role-${vName}`);
                     if (role) {
-                        if (isTarget) {
-                            role.textContent = this.solve.targetVarSource === 'auto' ? 'Incógnita detectada' :
-                                this.solve.targetVarSource === 'result' ? 'Resultado calculado' : 'Incógnita selecionada';
+                        if (isCalculatedResult) {
+                            role.textContent = '✓ Resultado calculado';
+                            role.className = 'text-emerald-400 font-bold';
+                        } else if (isTarget) {
+                            role.textContent = this.solve.targetVarSource === 'auto' ? 'Incógnita detectada' : 'Incógnita selecionada';
                             role.className = 'text-amber-300 font-semibold';
                         } else if (hasValue) {
                             role.textContent = 'Valor informado';
@@ -4735,16 +5120,26 @@
                             role.className = 'text-slate-500 font-semibold';
                         }
                     }
-                    const button = card?.querySelector('button');
-                    if (button) {
-                        button.classList.toggle('bg-amber-500', isTarget);
-                        button.classList.toggle('hover:bg-amber-400', isTarget);
-                        button.classList.toggle('text-slate-950', isTarget);
-                        button.classList.toggle('bg-slate-800', !isTarget);
-                        button.classList.toggle('hover:bg-slate-700', !isTarget);
-                        button.classList.toggle('border', !isTarget);
-                        button.classList.toggle('border-slate-700', !isTarget);
-                        button.classList.toggle('text-slate-100', !isTarget);
+                    const actionsBox = document.getElementById(`solve-actions-${vName}`);
+                    const copyBtn = card?.querySelector('button[onclick*="copySolveVarResult"]');
+                    if (copyBtn && !isCalculatedResult) {
+                        copyBtn.remove();
+                    } else if (!copyBtn && isCalculatedResult && actionsBox) {
+                        const meta = this.getVarMeta(vName) || {};
+                        const newCopyBtn = document.createElement('button');
+                        newCopyBtn.type = 'button';
+                        newCopyBtn.setAttribute('onclick', `app.copySolveVarResult('${vName}', this)`);
+                        newCopyBtn.setAttribute('aria-label', `Copiar resultado de ${meta.label || vName}`);
+                        newCopyBtn.className = 'h-10 w-full px-3 inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition shrink-0 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 text-center';
+                        newCopyBtn.innerHTML = '<span aria-hidden="true">⧉</span> Copiar';
+                        actionsBox.appendChild(newCopyBtn);
+                    }
+                    const solveBtn = card?.querySelector('button[onclick*="solveForVariable"]');
+                    if (solveBtn) {
+                        const meta = this.getVarMeta(vName) || {};
+                        solveBtn.textContent = isCalculatedResult ? '↻ Recalcular' : 'Calcular';
+                        solveBtn.setAttribute('aria-label', isCalculatedResult ? `Recalcular ${meta.label || vName}` : `Calcular ${meta.label || vName}`);
+                        solveBtn.className = `h-10 w-full px-3 ${isCalculatedResult ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700' : (isTarget ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-100')} font-bold text-xs rounded-lg transition shrink-0 focus:outline-none focus:ring-2 focus:ring-amber-500/50 flex items-center justify-center text-center`;
                     }
                     const inlineError = document.getElementById(`solve-error-${vName}`);
                     if (inlineError && !hasError) {
@@ -4817,6 +5212,14 @@
                             const equivalentRate = (Math.pow(base, v.TMB / v.TMA) - 1) * 100;
                             if (!Number.isFinite(equivalentRate)) return NaN;
                             return v.TXB - equivalentRate;
+                        }
+                        case 'taxa_pro_rata_die': {
+                            if (Math.abs(v.BASE) < 1e-12) return NaN;
+                            const baseRate = 1 + v.TAXA / 100;
+                            if (baseRate <= 0) return NaN;
+                            const txperCalc = (Math.pow(baseRate, v.DIAS / v.BASE) - 1) * 100;
+                            if (!Number.isFinite(txperCalc)) return NaN;
+                            return v.TXPER - txperCalc;
                         }
                         case 'markup_divisor': {
                             const denom = 1 - (v.IMPOSTO + v.COMISSAO + v.TAXA_CARTAO + v.DESPESA + v.DESPESA_FIXA + v.MARGEM) / 100;
@@ -4914,10 +5317,10 @@
                     this.solve.vars[v] === null || this.solve.vars[v] === undefined || this.solve.vars[v] === '' || !Number.isFinite(Number(this.solve.vars[v]))
                 ));
                 if (missing.length) {
-                    const names = missing.map(v => (this.solveVariableMeta[v] || {}).label || v).join(', ');
+                    const names = missing.map(v => (this.getVarMeta(v) || {}).label || v).join(', ');
                     this.solve.errors = missing;
                     this.solve.messageType = 'warning';
-                    this.solve.message = `Para calcular ${((this.solveVariableMeta[targetVar] || {}).label || targetVar)}, preencha os campos destacados: ${names}. Zero é aceito quando for um valor real.`;
+                    this.solve.message = `Para calcular ${((this.getVarMeta(targetVar) || {}).label || targetVar)}, preencha os campos destacados: ${names}. Zero é aceito quando for um valor real.`;
                     this.renderSolveVariables();
                     const firstMissing = document.getElementById(`solve-var-${missing[0]}`);
                     if (firstMissing) firstMissing.focus({ preventScroll: true });
@@ -4955,7 +5358,7 @@
                 }
 
                 if (!Number.isFinite(f0) || !Number.isFinite(f1)) {
-                    const label = (this.solveVariableMeta[targetVar] || {}).label || targetVar;
+                    const label = (this.getVarMeta(targetVar) || {}).label || targetVar;
                     this.solve.messageType = 'error';
                     this.solve.message = `Não foi possível calcular ${label}. Os valores informados geram divisões por zero ou indefinições matemáticas na equação.`;
                     this.solve.errors = [targetVar];
@@ -5019,7 +5422,7 @@
                 }
 
                 if (!solved || !Number.isFinite(bestX) || isNaN(bestX)) {
-                    const label = (this.solveVariableMeta[targetVar] || {}).label || targetVar;
+                    const label = (this.getVarMeta(targetVar) || {}).label || targetVar;
                     this.solve.messageType = 'error';
                     this.solve.message = `Não foi possível encontrar uma solução para ${label}. Os valores informados não permitem uma solução válida no domínio da equação.`;
                     this.solve.errors = [targetVar];
@@ -5034,13 +5437,14 @@
                 this.solve.vars[targetVar] = finalVal;
                 this.solve.targetVar = targetVar;
                 this.solve.targetVarSource = 'result';
-                const meta = this.solveVariableMeta[targetVar] || { label: targetVar, unit: '' };
+                const meta = this.getVarMeta(targetVar);
                 // O resultado já é apresentado no painel de resultados destacado.
                 // Evita duplicar a mesma informação no aviso inline de solve-status.
                 this.solve.message = '';
                 this.solve.messageType = '';
                 this.renderSolveVariables();
-                this.setResult(finalVal, `${meta.label} calculado`, () => this.solveForVariable(targetVar), meta.unit || '');
+                const resultTitle = /\bcalculad[oa]\b/i.test(meta.label) ? meta.label : `${meta.label} calculado`;
+                this.setResult(finalVal, resultTitle, () => this.solveForVariable(targetVar), meta.unit || '');
             },
 
             // Atualização do LCD e Softkeys
@@ -5586,6 +5990,13 @@
             renderResultPanel() {
                 const panel = document.getElementById('result-panel');
                 if (!panel || !this.lastResult) return;
+
+                // Na aba Fórmulas (HP SOLVE), o resultado é destacado inline no próprio card da variável calculada (Opção 3)
+                const isSolveTab = document.getElementById('tab-SOLVE')?.getAttribute('aria-current') === 'page' || this.currentMenu === 'SOLVE';
+                if (isSolveTab && this.solve && this.solve.targetVarSource === 'result') {
+                    panel.classList.add('hidden');
+                    return;
+                }
                 const title = document.getElementById('result-title');
                 const value = document.getElementById('result-value');
                 const unit = document.getElementById('result-unit');
@@ -6942,6 +7353,7 @@
                             targetVar: this.solve ? this.solve.targetVar : null
                         },
                         tape: Array.isArray(this.tape) ? this.tape.slice(0, 50) : [],
+                        favorites: this.favoriteFormulas ? [...this.favoriteFormulas] : [],
                         stack: {
                             x: Number.isFinite(this.stack.x) ? this.stack.x : 0,
                             y: Number.isFinite(this.stack.y) ? this.stack.y : 0,
@@ -6994,8 +7406,19 @@
                     if (Array.isArray(state.tape)) {
                         this.tape = state.tape;
                     }
+                    if (Array.isArray(state.favorites)) {
+                        const isOldDefault = state.favorites.length === 2 && state.favorites.includes('taxa_pro_rata_die') && state.favorites.includes('coef_financiamento_carencia_premio');
+                        if (isOldDefault) {
+                            this.favoriteFormulas = new Set(['coef_financiamento_carencia_premio', 'converter_taxas_equivalentes', 'taxa_pro_rata_die']);
+                        } else {
+                            this.favoriteFormulas = new Set(state.favorites);
+                        }
+                    }
                     if (state.solve && typeof state.solve === 'object') {
                         if (state.solve.activeFormulaId) {
+                            if (state.solve.activeFormulaId === 'taxa_pro_rata_die_atalho') {
+                                state.solve.activeFormulaId = 'taxa_pro_rata_die';
+                            }
                             const form = this.formulas.find(f => f.id === state.solve.activeFormulaId);
                             if (form) this.solve.activeFormulaId = form.id;
                         }
@@ -7061,7 +7484,10 @@
                 this.updateLCD();
                 try {
                     localStorage.removeItem('hp17bii-workspace-state');
+                    localStorage.removeItem('hp17bii-favorites');
                 } catch (e) {}
+                this.favoriteFormulas = new Set(['coef_financiamento_carencia_premio', 'converter_taxas_equivalentes', 'taxa_pro_rata_die']);
+                this.favoritesOnlyFilter = false;
                 this.setModuleActionFeedback('Calculadora reiniciada para os padrões de fábrica.', 'success');
             },
 
@@ -7173,6 +7599,10 @@
 
                 // Sincroniza a réplica da calculadora HP com as variáveis do módulo ativo
                 this.syncModuleToCalculator(tabId);
+
+                // Garante que o painel central comece no topo ao mudar de módulo
+                const scrollable = document.getElementById('centralPanelScrollable');
+                if (scrollable) scrollable.scrollTop = 0;
             },
 
             // Alternância de visualização em tablets e celulares.
@@ -7421,6 +7851,7 @@
                 });
             }
         };
+        window.app = app;
 
         // Inicialização robusta
         if (document.readyState === 'loading') {
