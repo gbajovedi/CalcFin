@@ -3184,8 +3184,22 @@
         #cflo-add-feedback:empty { display: none; }
         #cflo-list button { min-width: 2rem; min-height: 2rem; }
         body.light-mode #moduleExampleToolbar {
-            background: #edf2f7 !important;
+            background: #f8fafc !important;
             border-color: #cbd5e1 !important;
+        }
+        body.light-mode #moduleExampleToolbar #module-example-title {
+            color: #b45309 !important;
+        }
+        body.light-mode #moduleExampleToolbar #module-example-description {
+            color: #334155 !important;
+        }
+        body.light-mode #moduleExampleToolbar #module-example-description strong {
+            color: #0f172a !important;
+        }
+        body.light-mode #moduleExampleToolbar .module-example-box {
+            background: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #1e293b !important;
         }
         body.light-mode #catalog-toggle {
             background: #fff7e6 !important;
@@ -3467,19 +3481,24 @@
                             </button>
                             <button id="solve-clear-variables" type="button" onclick="app.clearSolveVariables()" class="utility-control" aria-label="Limpar variáveis da fórmula atual">Limpar variáveis</button>
                         </div>
-                        <div id="moduleExampleToolbar" hidden aria-label="Ações para os dados do módulo">
-                            <div class="flex items-center gap-2 min-w-0">
-                                <span aria-hidden="true" class="text-amber-400">ⓘ</span>
-                                <div class="min-w-0">
-                                    <div class="text-xs font-bold text-slate-200" id="module-example-title">Exemplo demonstrativo</div>
-                                    <div class="text-xs text-slate-400" id="module-example-description">Valores ilustrativos; substitua pelos seus dados.</div>
+                        <div id="moduleExampleToolbar" hidden aria-label="Guia explicativo e ações do módulo" class="module-explanatory-card">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                                    <span aria-hidden="true" class="text-amber-400 text-base mt-0.5 shrink-0">💡</span>
+                                    <div class="min-w-0 flex-1">
+                                        <h3 class="text-xs font-bold text-amber-300 font-mono tracking-wide" id="module-example-title">Guia explicativo do módulo</h3>
+                                        <div class="text-xs text-slate-300 mt-1 leading-relaxed" id="module-example-description">
+                                            <!-- Preenchido dinamicamente com explicações detalhadas e exemplos práticos -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="toolbar-actions shrink-0">
+                                    <button type="button" onclick="app.clearActiveModuleFields()" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/90 text-slate-200 text-xs font-bold hover:bg-slate-700 hover:border-slate-600 transition flex items-center gap-1.5 shadow-sm">
+                                        <span aria-hidden="true">✕</span> Limpar campos
+                                    </button>
                                 </div>
                             </div>
-                            <div class="toolbar-actions">
-                                <button type="button" onclick="app.clearActiveModuleFields()" class="px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800 text-slate-200 text-xs font-bold hover:bg-slate-700">Limpar campos</button>
-                                <button type="button" onclick="app.restoreActiveModuleExample()" class="px-3 py-1.5 rounded-lg bg-sky-700 text-white text-xs font-bold hover:bg-sky-600">Restaurar exemplo</button>
-                            </div>
-                            <div id="module-action-feedback" class="text-xs text-slate-400" role="status" aria-live="polite"></div>
+                            <div id="module-action-feedback" class="text-xs text-slate-400 mt-1.5 empty:hidden" role="status" aria-live="polite"></div>
                         </div>
                         <div id="centralPanelScrollable" class="min-w-0 custom-scroll">
 
@@ -3554,33 +3573,33 @@
                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">N (Períodos / F1)</label>
-                                        <input type="number" step="any" id="input-tvm-N" value="12" onchange="app.syncInputToState('tvm', 'N', this.value)" oninput="app.syncInputToState('tvm', 'N', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-N" placeholder="Ex.: 12" value="" onchange="app.syncInputToState('tvm', 'N', this.value)" oninput="app.syncInputToState('tvm', 'N', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600">
                                         <button onclick="app.calculateTVM('N')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular N</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">I%YR (Taxa / F2)</label>
-                                        <input type="number" step="any" id="input-tvm-I" value="12" onchange="app.syncInputToState('tvm', 'I', this.value)" oninput="app.syncInputToState('tvm', 'I', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-I" placeholder="Ex.: 18" value="" onchange="app.syncInputToState('tvm', 'I', this.value)" oninput="app.syncInputToState('tvm', 'I', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600">
                                         <button onclick="app.calculateTVM('I')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular I%</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">PV (Valor Pres. / F3)</label>
-                                        <input type="number" step="any" id="input-tvm-PV" value="-10000" onchange="app.syncInputToState('tvm', 'PV', this.value)" oninput="app.syncInputToState('tvm', 'PV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-PV" placeholder="Ex.: 10000" value="" onchange="app.syncInputToState('tvm', 'PV', this.value)" oninput="app.syncInputToState('tvm', 'PV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600">
                                         <button onclick="app.calculateTVM('PV')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular PV</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">PMT (Parcela / F4)</label>
-                                        <input type="number" step="any" id="input-tvm-PMT" value="0" onchange="app.syncInputToState('tvm', 'PMT', this.value)" oninput="app.syncInputToState('tvm', 'PMT', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-PMT" placeholder="Ex.: -950" value="" onchange="app.syncInputToState('tvm', 'PMT', this.value)" oninput="app.syncInputToState('tvm', 'PMT', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600">
                                         <button onclick="app.calculateTVM('PMT')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular PMT</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-sky-400 font-bold block mb-1">FV (Valor Futuro / F5)</label>
-                                        <input type="number" step="any" id="input-tvm-FV" value="0" onchange="app.syncInputToState('tvm', 'FV', this.value)" oninput="app.syncInputToState('tvm', 'FV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-tvm-FV" placeholder="Ex.: 0" value="" onchange="app.syncInputToState('tvm', 'FV', this.value)" oninput="app.syncInputToState('tvm', 'FV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600">
                                         <button onclick="app.calculateTVM('FV')" class="w-full mt-1.5 py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold">Calcular FV</button>
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex flex-col justify-between">
                                         <div>
                                             <label class="text-[11px] font-mono text-slate-300 font-bold block mb-1">P/YR (Períodos/Ano)</label>
-                                            <input type="number" id="input-tvm-PYR" value="12" onchange="app.syncInputToState('tvm', 'PYR', this.value)" oninput="app.syncInputToState('tvm', 'PYR', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                            <input type="number" id="input-tvm-PYR" placeholder="12" value="12" onchange="app.syncInputToState('tvm', 'PYR', this.value)" oninput="app.syncInputToState('tvm', 'PYR', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600">
                                         </div>
                                         <button onclick="app.toggleBgnEnd()" class="w-full mt-1 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded text-xs font-mono font-bold" id="btn-amort-mode-label">Modo: END</button>
                                     </div>
@@ -3640,7 +3659,7 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
                                         <label class="text-[11px] font-mono text-slate-400 block mb-1">Taxa de Desconto I% (Ano)</label>
-                                        <input type="number" step="any" id="input-cflo-rate" value="10" onchange="app.syncCfloRate(this.value)" oninput="app.syncCfloRate(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white">
+                                        <input type="number" step="any" id="input-cflo-rate" placeholder="Ex.: 10" value="" onchange="app.syncCfloRate(this.value)" oninput="app.syncCfloRate(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600">
                                     </div>
                                     <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-end">
                                         <button onclick="app.computeNPV()" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs font-mono">Calcular VPL (NPV)</button>
@@ -3658,7 +3677,7 @@
                                         <div>
                                             <label for="cflo-new-amount" class="block text-xs font-semibold text-slate-300 mb-1">Valor do novo fluxo (R$)</label>
                                             <div class="flex items-center gap-2">
-                                                <input id="cflo-new-amount" type="number" step="any" required inputmode="decimal" value="10000" aria-describedby="cflo-add-help cflo-add-feedback" class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50" placeholder="Ex.: -50000" />
+                                                <input id="cflo-new-amount" type="number" step="any" required inputmode="decimal" value="" aria-describedby="cflo-add-help cflo-add-feedback" class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50" placeholder="Ex.: -50000 para investimento inicial" />
                                                 <button type="submit" class="shrink-0 h-10 px-4 py-2 rounded-lg bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400 transition whitespace-nowrap shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 flex items-center justify-center">+ Adicionar fluxo</button>
                                             </div>
                                             <p id="cflo-add-help" class="mt-1 text-[11px] text-slate-400">Use sinal negativo para investimento/saída e positivo para entrada.</p>
@@ -3685,11 +3704,11 @@
                                         <div class="space-y-2 text-xs font-mono">
                                             <div>
                                                 <label class="text-slate-400 block">Taxa Nominal (% a.a.)</label>
-                                                <input type="number" id="input-icnv-nom" value="12" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-icnv-nom" placeholder="Ex.: 12" value="" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600">
                                             </div>
                                             <div>
                                                 <label class="text-slate-400 block">Períodos por Ano (P/YR)</label>
-                                                <input type="number" id="input-icnv-pyr" value="12" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-icnv-pyr" placeholder="12" value="12" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600">
                                             </div>
                                             <button onclick="app.calcEffRate()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded">Calcular Taxa Efetiva</button>
                                         </div>
@@ -3699,15 +3718,15 @@
                                         <div class="space-y-2 text-xs font-mono">
                                             <div>
                                                 <label class="text-slate-400 block">Custo Inicial (R$)</label>
-                                                <input type="number" id="input-depr-cost" value="50000" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-depr-cost" placeholder="Ex.: 50000" value="" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600">
                                             </div>
                                             <div>
                                                 <label class="text-slate-400 block">Valor Residual (R$)</label>
-                                                <input type="number" id="input-depr-salvage" value="5000" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-depr-salvage" placeholder="Ex.: 5000" value="" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600">
                                             </div>
                                             <div>
                                                 <label class="text-slate-400 block">Vida Útil (Anos)</label>
-                                                <input type="number" id="input-depr-life" value="5" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                <input type="number" id="input-depr-life" placeholder="Ex.: 5" value="" onchange="app.syncFinTools()" oninput="app.syncFinTools()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600">
                                             </div>
                                             <button onclick="app.calcDepreciationSL()" class="w-full py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded">Calcular Depreciação / Ano</button>
                                         </div>
@@ -3728,11 +3747,11 @@
                                         <h3 class="font-bold text-white">%CHG — Variação Percentual</h3>
                                         <div>
                                             <label class="text-slate-400 block">Valor Anterior (Old)</label>
-                                            <input type="number" id="input-pchg-old" value="150" onchange="app.syncBusSum()" oninput="app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                            <input type="number" id="input-pchg-old" placeholder="Ex.: 150" value="" onchange="app.syncBusSum()" oninput="app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600">
                                         </div>
                                         <div>
                                             <label class="text-slate-400 block">Novo Valor (New)</label>
-                                            <input type="number" id="input-pchg-new" value="180" onchange="app.syncBusSum()" oninput="app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                            <input type="number" id="input-pchg-new" placeholder="Ex.: 180" value="" onchange="app.syncBusSum()" oninput="app.syncBusSum()" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white placeholder:text-slate-600">
                                         </div>
                                         <button onclick="app.calcPercentChange()" class="w-full py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded">Calcular % Variação</button>
                                     </div>
@@ -3744,8 +3763,8 @@
                                         <div>
                                             <label class="text-slate-400 block text-[11px]">Inserir Ponto X : Y</label>
                                             <div class="flex gap-2 mt-1">
-                                                <input type="number" id="input-stat-x" placeholder="X" value="10" class="w-1/2 bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-mono">
-                                                <input type="number" id="input-stat-y" placeholder="Y" value="20" class="w-1/2 bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-mono">
+                                                <input type="number" id="input-stat-x" placeholder="X (Ex.: 10)" value="" class="w-1/2 bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-mono placeholder:text-slate-600">
+                                                <input type="number" id="input-stat-y" placeholder="Y (Ex.: 20)" value="" class="w-1/2 bg-slate-900 border border-slate-700 rounded p-1.5 text-white font-mono placeholder:text-slate-600">
                                             </div>
                                         </div>
                                         <div class="flex gap-2">
@@ -4116,21 +4135,17 @@
 
             // TVM (Time Value of Money)
             tvm: {
-                N: 12,
-                I: 12,
-                PV: -10000,
-                PMT: 0,
-                FV: 0,
+                N: null,
+                I: null,
+                PV: null,
+                PMT: null,
+                FV: null,
                 PYR: 12,
                 isBegin: false
             },
 
             // Fluxo de Caixa (CFLO)
-            cflo: [
-                { amount: -50000, count: 1 },
-                { amount: 15000, count: 2 },
-                { amount: 20000, count: 2 }
-            ],
+            cflo: [],
 
             // Estatística (SUM)
             stats: {
@@ -6677,7 +6692,12 @@
             syncStateToInputs() {
                 const setVal = (id, val) => {
                     const el = document.getElementById(id);
-                    if (el) el.value = this.cleanFloat(val, this.decimals, 0).toFixed(this.decimals);
+                    if (!el) return;
+                    if (val === null || val === undefined || isNaN(val)) {
+                        el.value = '';
+                    } else {
+                        el.value = this.cleanFloat(val, this.decimals, 0).toFixed(this.decimals);
+                    }
                 };
                 setVal('input-tvm-N', this.tvm.N);
                 setVal('input-tvm-I', this.tvm.I);
@@ -6685,13 +6705,14 @@
                 setVal('input-tvm-PMT', this.tvm.PMT);
                 setVal('input-tvm-FV', this.tvm.FV);
                 const pyrEl = document.getElementById('input-tvm-PYR');
-                if (pyrEl) pyrEl.value = this.tvm.PYR;
+                if (pyrEl) pyrEl.value = this.tvm.PYR || 12;
             },
 
             syncInputToState(module, key, value) {
-                const n = parseFloat(value);
                 if (module === 'tvm') {
-                    this.tvm[key] = isNaN(n) ? 0 : n;
+                    const raw = String(value || '').trim();
+                    const n = parseFloat(raw);
+                    this.tvm[key] = raw === '' || isNaN(n) ? null : n;
                     this.saveWorkspaceState();
                     if (this.currentMenu === 'TVM') {
                         this.syncModuleToCalculator('TVM');
@@ -7394,21 +7415,36 @@
                         this.decimals = state.decimals;
                     }
                     if (state.tvm && typeof state.tvm === 'object') {
-                        Object.assign(this.tvm, {
-                            N: Number(state.tvm.N) || 0,
-                            I: Number(state.tvm.I) || 0,
-                            PV: Number(state.tvm.PV) || 0,
-                            PMT: Number(state.tvm.PMT) || 0,
-                            FV: Number(state.tvm.FV) || 0,
-                            PYR: Number(state.tvm.PYR) || 12,
-                            isBegin: !!state.tvm.isBegin
-                        });
+                        const isLegacyDemoTvm = state.tvm.N === 12 && state.tvm.I === 12 && state.tvm.PV === -10000 && state.tvm.PMT === 0 && state.tvm.FV === 0;
+                        if (isLegacyDemoTvm) {
+                            this.tvm = { N: null, I: null, PV: null, PMT: null, FV: null, PYR: 12, isBegin: !!state.tvm.isBegin };
+                        } else {
+                            Object.assign(this.tvm, {
+                                N: (state.tvm.N !== null && state.tvm.N !== undefined && state.tvm.N !== '') ? Number(state.tvm.N) : null,
+                                I: (state.tvm.I !== null && state.tvm.I !== undefined && state.tvm.I !== '') ? Number(state.tvm.I) : null,
+                                PV: (state.tvm.PV !== null && state.tvm.PV !== undefined && state.tvm.PV !== '') ? Number(state.tvm.PV) : null,
+                                PMT: (state.tvm.PMT !== null && state.tvm.PMT !== undefined && state.tvm.PMT !== '') ? Number(state.tvm.PMT) : null,
+                                FV: (state.tvm.FV !== null && state.tvm.FV !== undefined && state.tvm.FV !== '') ? Number(state.tvm.FV) : null,
+                                PYR: Number(state.tvm.PYR) || 12,
+                                isBegin: !!state.tvm.isBegin
+                            });
+                        }
                     }
                     if (Array.isArray(state.cflo)) {
-                        this.cflo = state.cflo.filter(cf => cf && typeof cf.amount === 'number');
+                        const isLegacyDemoCflo = state.cflo.length === 3 && state.cflo[0]?.amount === -50000 && state.cflo[1]?.amount === 15000 && state.cflo[2]?.amount === 20000;
+                        if (isLegacyDemoCflo) {
+                            this.cflo = [];
+                        } else {
+                            this.cflo = state.cflo.filter(cf => cf && typeof cf.amount === 'number');
+                        }
                     }
                     if (state.stats && Array.isArray(state.stats.pairs)) {
-                        this.stats.pairs = state.stats.pairs.filter(p => p && typeof p.x === 'number' && typeof p.y === 'number');
+                        const isLegacyDemoStats = state.stats.pairs.length === 3 && state.stats.pairs[0]?.x === 10 && state.stats.pairs[1]?.x === 20;
+                        if (isLegacyDemoStats) {
+                            this.stats.pairs = [];
+                        } else {
+                            this.stats.pairs = state.stats.pairs.filter(p => p && typeof p.x === 'number' && typeof p.y === 'number');
+                        }
                     }
                     if (state.stack && typeof state.stack === 'object') {
                         ['x', 'y', 'z', 't', 'lastX'].forEach(reg => {
@@ -7461,12 +7497,8 @@
                 this.stack = { x: 0, y: 0, z: 0, t: 0, lastX: 0 };
                 this.entry = { buffer: '0', isEntering: false, hasDot: false };
                 this.alg = { pendingOp: null, operand1: 0 };
-                this.tvm = { N: 12, I: 12, PV: -10000, PMT: 0, FV: 0, PYR: 12, isBegin: false };
-                this.cflo = [
-                    { amount: -50000, count: 1 },
-                    { amount: 15000, count: 2 },
-                    { amount: 20000, count: 2 }
-                ];
+                this.tvm = { N: null, I: null, PV: null, PMT: null, FV: null, PYR: 12, isBegin: false };
+                this.cflo = [];
                 this.stats = { pairs: [] };
                 this.tape = ['*** PADRÃO DE FÁBRICA RESTAURADO ***'];
                 this.lastResult = null;
@@ -7686,17 +7718,95 @@
                 const desc = document.getElementById('module-example-description');
                 const feedback = document.getElementById('module-action-feedback');
                 if (!toolbar) return;
-                const labels = {
-                    TVM: ['Exemplo demonstrativo · TVM', 'Valores de exemplo para períodos, taxa, valor presente e parcelas.'],
-                    CFLO: ['Exemplo demonstrativo · Fluxo de caixa', 'Os fluxos iniciais são ilustrativos; revise sinais e valores antes de calcular.'],
-                    FIN_TOOLS: ['Exemplo demonstrativo · Taxas e depreciação', 'Valores iniciais são ilustrativos e podem ser substituídos.'],
-                    BUS_SUM: ['Exemplo demonstrativo · Varejo e estatística', 'Valores iniciais servem apenas para mostrar como as ferramentas funcionam.']
+
+                const guides = {
+                    TVM: {
+                        title: 'Guia Prático · Matemática Financeira (TVM)',
+                        html: `
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Calcule variáveis de financiamentos, empréstimos e investimentos com juros compostos. Preencha os campos conhecidos e clique em <strong>Calcular</strong> na variável que deseja descobrir:
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2 text-[11px] text-slate-300">
+                                <div><strong class="font-mono text-sky-400">N:</strong> Total de períodos/meses (ex.: <em>12</em> para 1 ano).</div>
+                                <div><strong class="font-mono text-sky-400">I%YR:</strong> Taxa de juros anual (ex.: <em>18</em> para 18% a.a.).</div>
+                                <div><strong class="font-mono text-sky-400">PV:</strong> Valor presente / financiado (<span class="text-rose-400 font-semibold">saídas negativas</span>, <span class="text-emerald-400 font-semibold">entradas positivas</span>).</div>
+                                <div><strong class="font-mono text-sky-400">PMT:</strong> Valor da prestação ou parcela periódica.</div>
+                                <div><strong class="font-mono text-sky-400">FV:</strong> Valor futuro ou saldo residual final.</div>
+                                <div><strong class="font-mono text-sky-400">P/YR:</strong> Pagamentos/ano (<em>12</em> para mensal, <em>1</em> anual).</div>
+                            </div>
+                            <div class="mt-2.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-relaxed text-slate-300 module-example-box">
+                                <span class="text-amber-400 font-bold block mb-1">💡 Exemplo prático de Financiamento:</span>
+                                Empréstimo de R$ 10.000 em 12 parcelas mensais a 18% a.a. com saldo final zero:<br/>
+                                Preencha <strong>N: 12</strong>, <strong>I%YR: 18</strong>, <strong>PV: 10000</strong>, <strong>FV: 0</strong>, <strong>P/YR: 12</strong> e clique no botão <strong>Calcular PMT</strong> → Resultado: <em class="text-emerald-400 font-bold font-mono">-916,80</em> (prestação mensal a pagar).
+                            </div>
+                        `
+                    },
+                    CFLO: {
+                        title: 'Guia Prático · Fluxo de Caixa Descontado (CFLO)',
+                        html: `
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Avalie a viabilidade de investimentos calculando o <strong>VPL</strong> (Valor Presente Líquido) e a <strong>TIR</strong> (Taxa Interna de Retorno):
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2 text-[11px] text-slate-300">
+                                <div><strong class="font-mono text-amber-400">CF0:</strong> Investimento inicial (<span class="text-rose-400 font-semibold">sinal negativo</span> por ser saída de caixa).</div>
+                                <div><strong class="font-mono text-amber-400">CF1, CF2...:</strong> Entradas líquidas esperadas em cada período.</div>
+                                <div><strong class="font-mono text-amber-400">Taxa I%:</strong> Taxa de desconto anual (custo de capital / TMA).</div>
+                                <div><strong class="font-mono text-sky-400">Critério:</strong> Se <em>VPL &gt; 0</em> ou <em>TIR &gt; Taxa</em>, o projeto cria valor!</div>
+                            </div>
+                            <div class="mt-2.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-relaxed text-slate-300 module-example-box">
+                                <span class="text-amber-400 font-bold block mb-1">💡 Exemplo prático de Projeto:</span>
+                                Aporte inicial de R$ 50.000 que gera retornos de R$ 15.000 no ano 1, R$ 20.000 no ano 2 e R$ 30.000 no ano 3 a uma taxa de 10% a.a.:<br/>
+                                1. Digite <strong>-50000</strong> no campo abaixo e clique em <strong>+ Adicionar fluxo</strong> (CF0).<br/>
+                                2. Digite <strong>15000</strong> e adicione (CF1), depois <strong>20000</strong> (CF2) e <strong>30000</strong> (CF3).<br/>
+                                3. Informe Taxa <strong>10</strong> e clique em <strong>Calcular VPL</strong> (<em class="text-emerald-400 font-mono font-bold">+3.418,48</em>) ou <strong>Calcular TIR</strong> (<em class="text-sky-400 font-mono font-bold">13,4% a.a.</em>).
+                            </div>
+                        `
+                    },
+                    FIN_TOOLS: {
+                        title: 'Guia Prático · Taxas e Depreciação (ICNV e DEPR)',
+                        html: `
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Converta taxas nominais em efetivas e calcule cotas de depreciação de ativos por método linear:
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2 text-[11px] text-slate-300">
+                                <div><strong class="font-mono text-amber-400">Taxa Nominal:</strong> Taxa contratual expressa (ex.: <em>12% a.a.</em>).</div>
+                                <div><strong class="font-mono text-amber-400">P/YR:</strong> Capitalizações por ano (<em>12</em> mensal, <em>4</em> trimestral).</div>
+                                <div><strong class="font-mono text-sky-400">Custo Inicial:</strong> Valor pago pelo bem / ativo na aquisição.</div>
+                                <div><strong class="font-mono text-sky-400">Residual & Vida:</strong> Valor residual no descarte e anos úteis.</div>
+                            </div>
+                            <div class="mt-2.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-relaxed text-slate-300 module-example-box">
+                                <span class="text-amber-400 font-bold block mb-1">💡 Exemplos práticos:</span>
+                                • <strong>Conversão de Taxa:</strong> Empréstimo a 12% a.a. capitalizado mensalmente: preencha <strong>Nominal: 12</strong> e <strong>P/YR: 12</strong> → <strong>Calcular Taxa Efetiva</strong> resulta em <em class="text-amber-400 font-mono font-bold">12,68% a.a.</em><br/>
+                                • <strong>Depreciação:</strong> Máquina de R$ 50.000 com valor residual de R$ 5.000 após 5 anos: preencha <strong>Custo: 50000</strong>, <strong>Residual: 5000</strong> e <strong>Vida: 5</strong> → <strong>Calcular Depreciação</strong> resulta em <em class="text-sky-400 font-mono font-bold">R$ 9.000,00/ano</em>.
+                            </div>
+                        `
+                    },
+                    BUS_SUM: {
+                        title: 'Guia Prático · Varejo e Estatística (%CHG e SUM)',
+                        html: `
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Calcule reajustes percentuais comerciais e processe estatísticas e projeções de regressão com pares (x, y):
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-2 text-[11px] text-slate-300">
+                                <div><strong class="font-mono text-amber-400">%CHG:</strong> Compara o valor anterior (<strong>Old</strong>) com o novo (<strong>New</strong>).</div>
+                                <div><strong class="font-mono text-sky-400">SUM (Pares x, y):</strong> Dados correlacionados (ex.: Investimento X vs. Venda Y).</div>
+                                <div><strong class="font-mono text-sky-400">Σ+:</strong> Adiciona o par digitado à memória estatística.</div>
+                                <div><strong class="font-mono text-sky-400">Σ- / CLΣ:</strong> Exclui o último par inserido ou limpa todos os pares.</div>
+                            </div>
+                            <div class="mt-2.5 p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] leading-relaxed text-slate-300 module-example-box">
+                                <span class="text-amber-400 font-bold block mb-1">💡 Exemplos práticos:</span>
+                                • <strong>Variação %:</strong> Produto passou de R$ 150 para R$ 180: informe <strong>Old: 150</strong> e <strong>New: 180</strong> → <strong>Calcular % Variação</strong> resulta em <em class="text-amber-400 font-mono font-bold">+20,00%</em>.<br/>
+                                • <strong>Estatística:</strong> Digite <strong>X: 10</strong> e <strong>Y: 20</strong> e clique em <strong>+ Inserir Par (Σ+)</strong>; repita para <strong>X: 20, Y: 40</strong> e <strong>X: 30, Y: 60</strong> para calcular médias, desvios e projeções lineares na calculadora.
+                            </div>
+                        `
+                    }
                 };
-                const label = labels[tabId];
-                toolbar.hidden = !label;
-                if (label) {
-                    if (title) title.textContent = label[0];
-                    if (desc) desc.textContent = label[1];
+
+                const guide = guides[tabId];
+                toolbar.hidden = !guide;
+                if (guide) {
+                    if (title) title.textContent = guide.title;
+                    if (desc) desc.innerHTML = guide.html;
                 }
                 if (feedback) feedback.textContent = '';
             },
@@ -7728,21 +7838,29 @@
 
             clearActiveModuleFields() {
                 const module = this.activeModuleId();
-                const feedback = document.getElementById('module-action-feedback');
                 const ids = {
-                    TVM: ['input-tvm-N','input-tvm-I','input-tvm-PV','input-tvm-PMT','input-tvm-FV','input-tvm-PYR'],
-                    CFLO: ['input-cflo-rate'],
-                    FIN_TOOLS: ['input-icnv-nom','input-icnv-pyr','input-depr-cost','input-depr-salvage','input-depr-life'],
+                    TVM: ['input-tvm-N','input-tvm-I','input-tvm-PV','input-tvm-PMT','input-tvm-FV'],
+                    CFLO: ['input-cflo-rate', 'cflo-new-amount'],
+                    FIN_TOOLS: ['input-icnv-nom','input-depr-cost','input-depr-salvage','input-depr-life'],
                     BUS_SUM: ['input-pchg-old','input-pchg-new','input-stat-x','input-stat-y']
                 };
                 (ids[module] || []).forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
                 if (module === 'TVM') {
-                    ['N','I','PV','PMT','FV','PYR'].forEach(k => { this.tvm[k] = 0; });
+                    ['N','I','PV','PMT','FV'].forEach(k => { this.tvm[k] = null; });
+                    this.tvm.PYR = 12;
+                    const pyr = document.getElementById('input-tvm-PYR'); if (pyr) pyr.value = '12';
+                    const feedback = document.getElementById('tvm-feedback'); if (feedback) feedback.classList.add('hidden');
+                    const amortBody = document.getElementById('amort-table-body');
+                    if (amortBody) amortBody.innerHTML = '<tr><td colspan="5" class="p-2 text-center text-slate-500">Clique em "Gerar Tabela" para listar os períodos calculados.</td></tr>';
+                    const amortFoot = document.getElementById('amort-table-foot');
+                    if (amortFoot) amortFoot.classList.add('hidden');
                 } else if (module === 'CFLO') {
                     this.cflo = [];
                     this.renderCashFlows();
                     const msg = document.getElementById('cflo-add-feedback');
                     if (msg) msg.textContent = '';
+                } else if (module === 'FIN_TOOLS') {
+                    const pyr = document.getElementById('input-icnv-pyr'); if (pyr) pyr.value = '12';
                 } else if (module === 'BUS_SUM') {
                     this.stats.pairs = [];
                     this.renderStatPairsList();
@@ -7751,38 +7869,7 @@
                 if (result) result.classList.add('hidden');
                 this.saveWorkspaceState();
                 this.syncModuleToCalculator(module);
-                this.setModuleActionFeedback('Campos do módulo limpos.', 'info');
-            },
-
-            restoreActiveModuleExample() {
-                const module = this.activeModuleId();
-                this.setTvmFeedback('');
-                const setValues = values => Object.entries(values).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.value = String(value); });
-                const feedback = document.getElementById('module-action-feedback');
-                if (module === 'TVM') {
-                    Object.assign(this.tvm, { N:12, I:12, PV:-10000, PMT:0, FV:0, PYR:12 });
-                    this.syncStateToInputs();
-                    const pyr = document.getElementById('input-tvm-PYR'); if (pyr) pyr.value = '12';
-                } else if (module === 'CFLO') {
-                    setValues({ 'input-cflo-rate': 10, 'cflo-new-amount': 10000 });
-                    this.cflo = [{ amount:-50000, count:1 }, { amount:15000, count:2 }, { amount:20000, count:2 }];
-                    this.renderCashFlows();
-                    const msg = document.getElementById('cflo-add-feedback'); if (msg) msg.textContent = '';
-                } else if (module === 'FIN_TOOLS') {
-                    setValues({ 'input-icnv-nom':12, 'input-icnv-pyr':12, 'input-depr-cost':50000, 'input-depr-salvage':5000, 'input-depr-life':5 });
-                } else if (module === 'BUS_SUM') {
-                    setValues({ 'input-pchg-old':150, 'input-pchg-new':180, 'input-stat-x':10, 'input-stat-y':20 });
-                    this.stats.pairs = [{ x: 10, y: 20 }, { x: 20, y: 40 }, { x: 30, y: 60 }];
-                    this.renderStatPairsList();
-                } else {
-                    if (feedback) feedback.textContent = 'Este módulo não utiliza um conjunto de valores de exemplo predefinido.';
-                    return;
-                }
-                const result = document.getElementById('result-panel');
-                if (result) result.classList.add('hidden');
-                this.saveWorkspaceState();
-                this.syncModuleToCalculator(module);
-                this.setModuleActionFeedback('Valores de exemplo restaurados.', 'success');
+                this.setModuleActionFeedback('Campos do módulo limpos com sucesso.', 'info');
             },
 
             // Ouvinte global: só controla a calculadora quando o foco não está editando um campo.
