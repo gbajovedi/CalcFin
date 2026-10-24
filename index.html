@@ -3277,6 +3277,88 @@
                 grid-column: span 6 / span 6 !important;
             }
         }
+
+        /* Otimização responsiva para notebooks (ex.: 15" e 15.6" 1080p com escala de 125% - altura <= 940px)
+           Garante que a réplica inteira da calculadora HP caiba na tela sem cortes ou necessidade de rolagem */
+        @media (min-width: 1024px) and (max-height: 940px) {
+            main {
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+            #calculator-section-column {
+                top: 3.75rem !important;
+            }
+            #hp-calculator-chassis {
+                padding: 0.75rem 0.875rem !important;
+                border-radius: 1.5rem !important;
+                max-width: 480px !important;
+            }
+            #hp-calculator-chassis .brushed-aluminum {
+                padding: 0.75rem 0.875rem !important;
+                border-radius: 1.25rem !important;
+                gap: 0.5rem !important;
+            }
+            #hp-calculator-chassis .flex.items-center.justify-between.border-b {
+                padding-bottom: 0.25rem !important;
+            }
+            #hp-calculator-chassis .lcd-screen {
+                min-height: 135px !important;
+                padding: 0.5rem 0.75rem 0.375rem !important;
+                border-radius: 0.875rem !important;
+            }
+            #hp-calculator-chassis #lcdLine2 {
+                font-size: 1.75rem !important;
+                margin-top: 0.125rem !important;
+                margin-bottom: 0.125rem !important;
+            }
+            #hp-calculator-chassis .hp-softkey {
+                height: 2.125rem !important;
+            }
+            #hp-calculator-chassis .grid.grid-cols-6:has(.hp-key) {
+                gap: 0.375rem !important;
+            }
+            #hp-calculator-chassis .grid.grid-cols-6 .hp-key {
+                height: 2.25rem !important;
+                border-radius: 0.625rem !important;
+                padding: 0.125rem !important;
+            }
+            #hp-calculator-chassis .grid.grid-cols-5 {
+                gap-x: 0.5rem !important;
+                gap-y: 0.375rem !important;
+                padding-top: 0 !important;
+            }
+            #hp-calculator-chassis .grid.grid-cols-5 .hp-key {
+                height: 2.75rem !important;
+                border-radius: 0.625rem !important;
+                padding: 0.125rem !important;
+            }
+            #hp-calculator-chassis .grid.grid-cols-5 .hp-key span:first-child {
+                font-size: 0.875rem !important;
+            }
+            #hp-calculator-chassis .grid.grid-cols-5 .hp-key span:last-child {
+                font-size: 0.55rem !important;
+                margin-top: 0.125rem !important;
+            }
+        }
+
+        /* Otimização da barra de abas em notebooks para evitar que abas fiquem ocultas por rolagem */
+        @media (min-width: 1024px) and (max-width: 1600px) {
+            #workstation-left-wrapper nav[aria-label="Módulos da calculadora"] {
+                gap: 0.25rem !important;
+                padding: 0.25rem !important;
+            }
+            #workstation-left-wrapper nav[aria-label="Módulos da calculadora"] .tab-btn {
+                padding: 0.375rem 0.55rem !important;
+                font-size: 0.72rem !important;
+                letter-spacing: -0.01em !important;
+            }
+        }
+
+        /* Alinhamento harmônico e simetria visual dos cards de variáveis TVM */
+        #panel-TVM .calc-card-result > div:first-child > div:first-child {
+            min-height: 1.75rem;
+            align-items: flex-start;
+        }
         /* Controles utilitários com dimensões padronizadas. */
         .utility-control {
             box-sizing: border-box;
