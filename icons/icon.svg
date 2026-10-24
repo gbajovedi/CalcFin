@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Gradiente de Fundo do Ícone -->
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+
+    <!-- Gradiente da Placa Metálica Silver -->
+    <linearGradient id="silverPlate" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="15%" stop-color="#e2e8f0"/>
+      <stop offset="85%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+
+    <!-- Gradiente do Visor LCD da HP -->
+    <linearGradient id="lcdGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#061c16"/>
+      <stop offset="10%" stop-color="#04221b"/>
+      <stop offset="90%" stop-color="#062e24"/>
+      <stop offset="100%" stop-color="#041a14"/>
+    </linearGradient>
+
+    <!-- Gradiente Dourado Âmbar das Teclas e Detalhes -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <!-- Sombra elegante para elementos do corpo -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Fundo do Ícone com cantos arredondados (Squircle) -->
+  <rect width="512" height="512" rx="112" fill="url(#bodyGrad)"/>
+  
+  <!-- Borda Sutil Externa -->
+  <rect x="8" y="8" width="496" height="496" rx="104" fill="none" stroke="#334155" stroke-width="4" opacity="0.6"/>
+
+  <!-- Placa Superior Prata / Titanium -->
+  <g filter="url(#dropShadow)">
+    <rect x="48" y="44" width="416" height="424" rx="36" fill="url(#silverPlate)"/>
+    <rect x="48" y="44" width="416" height="424" rx="36" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+  </g>
+
+  <!-- Cabeçalho HP 17bII+ no topo da placa -->
+  <g transform="translate(76, 74)">
+    <!-- Badge HP -->
+    <rect x="0" y="0" width="46" height="24" rx="6" fill="#0f172a"/>
+    <text x="23" y="17" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="15" text-anchor="middle" letter-spacing="1">hp</text>
+    
+    <!-- Modelo 17bII+ Silver -->
+    <text x="60" y="17" fill="#1e293b" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="16" letter-spacing="0.5">17bII+</text>
+    <text x="140" y="17" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="12" letter-spacing="1.5">SILVER</text>
+
+    <!-- Indicador de 2 Linhas -->
+    <rect x="310" y="3" width="50" height="18" rx="4" fill="#0f172a" opacity="0.15"/>
+    <text x="335" y="16" fill="#0f172a" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" font-size="10" text-anchor="middle">2-LINE</text>
+  </g>
+
+  <!-- Moldura e Visor LCD HP Escuro / Esmeralda Clássico -->
+  <g transform="translate(72, 114)">
+    <!-- Moldura externa do LCD -->
+    <rect x="0" y="0" width="368" height="116" rx="16" fill="#090d16" stroke="#334155" stroke-width="2"/>
+    
+    <!-- Tela do LCD interna -->
+    <rect x="8" y="8" width="352" height="100" rx="10" fill="url(#lcdGrad)"/>
+
+    <!-- Indicadores de Status (Linha Superior do LCD) -->
+    <text x="20" y="30" fill="#34d399" opacity="0.85" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700">RPN  TVM:END  PYR:12</text>
+    <text x="340" y="30" fill="#34d399" opacity="0.85" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" text-anchor="end">RAD</text>
+
+    <!-- Valor Principal Calculado (Destaque LCD) -->
+    <text x="340" y="68" fill="#a7f3d0" font-family="'JetBrains Mono', Consolas, monospace" font-size="34" font-weight="800" text-anchor="end" letter-spacing="1">1.250,00</text>
+
+    <!-- Barra de Softkeys no Visor (F1 a F6) -->
+    <g transform="translate(10, 80)">
+      <rect x="0" y="0" width="54" height="20" rx="4" fill="#0f2922"/>
+      <text x="27" y="14" fill="#6ee7b7" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" text-anchor="middle">FIN</text>
+
+      <rect x="58" y="0" width="54" height="20" rx="4" fill="#0f2922"/>
+      <text x="85" y="14" fill="#6ee7b7" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" text-anchor="middle">BUS</text>
+
+      <rect x="116" y="0" width="54" height="20" rx="4" fill="#0f2922"/>
+      <text x="143" y="14" fill="#6ee7b7" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" text-anchor="middle">SUM</text>
+
+      <rect x="174" y="0" width="54" height="20" rx="4" fill="#0f2922"/>
+      <text x="201" y="14" fill="#6ee7b7" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" text-anchor="middle">TIME</text>
+
+      <rect x="232" y="0" width="54" height="20" rx="4" fill="#0f2922"/>
+      <text x="259" y="14" fill="#6ee7b7" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" text-anchor="middle">SOLVE</text>
+
+      <rect x="290" y="0" width="42" height="20" rx="4" fill="#14532d"/>
+      <text x="311" y="14" fill="#fde047" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="800" text-anchor="middle">CALC</text>
+    </g>
+  </g>
+
+  <!-- 6 Teclas Softkeys Físicas Prateadas Abaixo do Display -->
+  <g transform="translate(72, 246)">
+    <rect x="0" y="0" width="56" height="26" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <text x="28" y="17" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="800" text-anchor="middle">F1</text>
+
+    <rect x="62" y="0" width="56" height="26" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <text x="90" y="17" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="800" text-anchor="middle">F2</text>
+
+    <rect x="124" y="0" width="56" height="26" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <text x="152" y="17" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="800" text-anchor="middle">F3</text>
+
+    <rect x="186" y="0" width="56" height="26" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <text x="214" y="17" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="800" text-anchor="middle">F4</text>
+
+    <rect x="248" y="0" width="56" height="26" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <text x="276" y="17" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="800" text-anchor="middle">F5</text>
+
+    <rect x="310" y="0" width="58" height="26" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <text x="339" y="17" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="800" text-anchor="middle">F6</text>
+  </g>
+
+  <!-- Teclado Numérico Estilizado e Tecla INPUT/ENTER Dourada Âmbar -->
+  <g transform="translate(72, 286)">
+    <!-- Linha 1 de Funções Principais -->
+    <rect x="0" y="0" width="68" height="34" rx="8" fill="#334155"/>
+    <text x="34" y="22" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="13" font-weight="700" text-anchor="middle">MODO</text>
+
+    <rect x="74" y="0" width="68" height="34" rx="8" fill="#334155"/>
+    <text x="108" y="22" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="13" font-weight="700" text-anchor="middle">DSP</text>
+
+    <rect x="148" y="0" width="68" height="34" rx="8" fill="#334155"/>
+    <text x="182" y="22" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="13" font-weight="700" text-anchor="middle">CLR</text>
+
+    <!-- Tecla INPUT/ENTER em destaque Dourada Âmbar -->
+    <rect x="222" y="0" width="146" height="76" rx="10" fill="url(#goldGrad)" stroke="#b45309" stroke-width="1.5" filter="url(#dropShadow)"/>
+    <text x="295" y="44" fill="#0f172a" font-family="system-ui, sans-serif" font-size="20" font-weight="900" text-anchor="middle" letter-spacing="1">INPUT</text>
+
+    <!-- Linha 2 de Teclas: 7, 8, 9 -->
+    <rect x="0" y="42" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="34" y="65" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">7</text>
+
+    <rect x="74" y="42" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="108" y="65" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">8</text>
+
+    <rect x="148" y="42" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="182" y="65" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">9</text>
+
+    <!-- Linha 3 de Teclas: 4, 5, 6, Operadores -->
+    <rect x="0" y="84" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="34" y="107" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">4</text>
+
+    <rect x="74" y="84" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="108" y="107" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">5</text>
+
+    <rect x="148" y="84" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="182" y="107" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">6</text>
+
+    <rect x="222" y="84" width="68" height="34" rx="8" fill="#1e293b"/>
+    <text x="256" y="107" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="20" font-weight="800" text-anchor="middle">×</text>
+
+    <rect x="296" y="84" width="72" height="34" rx="8" fill="#1e293b"/>
+    <text x="332" y="107" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="20" font-weight="800" text-anchor="middle">÷</text>
+
+    <!-- Linha 4 de Teclas: 1, 2, 3, +, - -->
+    <rect x="0" y="126" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="34" y="149" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">1</text>
+
+    <rect x="74" y="126" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="108" y="149" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">2</text>
+
+    <rect x="148" y="126" width="68" height="34" rx="8" fill="#0f172a"/>
+    <text x="182" y="149" fill="#ffffff" font-family="system-ui, sans-serif" font-size="17" font-weight="700" text-anchor="middle">3</text>
+
+    <rect x="222" y="126" width="68" height="34" rx="8" fill="#1e293b"/>
+    <text x="256" y="149" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="20" font-weight="800" text-anchor="middle">−</text>
+
+    <rect x="296" y="126" width="72" height="34" rx="8" fill="#1e293b"/>
+    <text x="332" y="149" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="20" font-weight="800" text-anchor="middle">+</text>
+  </g>
+</svg>
+
