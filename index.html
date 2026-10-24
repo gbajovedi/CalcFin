@@ -2121,7 +2121,11 @@
             text-shadow: 1px 1px 0 rgba(115, 135, 97, 0.6);
         }
 
-        /* Tecla física 3D táctil */
+        /* Tecla física 3D táctil e otimização de toque móvel */
+        .hp-key, .hp-softkey, .lcd-tab-btn {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
         .hp-key {
             background: linear-gradient(180deg, #2b3543 0%, #1b222d 58%, #0d1219 100%);
             box-shadow: 0 4px 0 #05080c, 0 6px 7px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.22);
@@ -3370,7 +3374,7 @@
         </div>
 
         <!-- Alternância persistente para tablets e celulares: evita rolar até o fim para acessar a calculadora. -->
-        <nav id="mobileViewSwitcher" aria-label="Alternar entre calculadora e ferramentas" class="xl:hidden max-w-[1720px] mx-auto mt-2 grid grid-cols-2 gap-2">
+        <nav id="mobileViewSwitcher" aria-label="Alternar entre calculadora e ferramentas" class="xl:hidden max-w-[1720px] mx-auto mt-2 grid grid-cols-[1fr_1fr_auto] gap-2 items-stretch">
             <button id="mobile-view-calc-btn" type="button" onclick="app.setMobileView('calculator')" aria-pressed="true"
                 class="rounded-xl border border-amber-400 bg-amber-500 px-3 py-2.5 text-sm font-bold text-slate-950 shadow-md transition">
                 <span aria-hidden="true">⌨</span> Calculadora
@@ -3378,6 +3382,12 @@
             <button id="mobile-view-tools-btn" type="button" onclick="app.setMobileView('tools')" aria-pressed="false"
                 class="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm font-bold text-slate-300 transition hover:bg-slate-800">
                 <span aria-hidden="true">☷</span> Ferramentas
+            </button>
+            <button id="mobile-feedback-toggle-btn" type="button" onclick="app.toggleMobileFeedback()" aria-pressed="true"
+                title="Som e feedback tátil das teclas no celular (Ativado)" aria-label="Som e feedback tátil das teclas no celular: ativado"
+                class="rounded-xl border border-amber-400/80 bg-slate-900 px-3 py-2.5 text-sm font-bold text-amber-400 transition hover:bg-slate-800 flex items-center justify-center gap-1.5 shadow-sm">
+                <span id="mobile-feedback-icon" aria-hidden="true">🔔</span>
+                <span id="mobile-feedback-label" class="text-xs">Som</span>
             </button>
         </nav>
     </header>
@@ -4110,6 +4120,11 @@
             shiftActive: false,
             decimals: 2,
             currentMenu: 'SOLVE', // 'MAIN', 'MATH', 'MODES', 'SOLVE'
+
+            // Feedback Tátil e Sonoro (apenas em modo celular)
+            audioCtx: null,
+            mobileFeedbackEnabled: true,
+            _lastFeedbackTime: 0,
             
             // Pilha RPN (X, Y, Z, T, LastX)
             stack: {
@@ -4465,6 +4480,7 @@
                 this.renderStatPairsList();
                 this.syncStateToInputs();
                 this.setupKeyboardListeners();
+                this.initMobileFeedback();
                 this.setMobileView('calculator', false);
                 this.updateModuleToolbar('SOLVE');
 
@@ -5580,6 +5596,7 @@
 
             // Ação centralizada das 6 Softkeys F1 a F6 (Acionada pelo Chevron OU pelo bloco LCD)
             pressSoftkey(index) {
+                this.triggerKeyFeedback();
                 if (this.currentMenu === 'SOLVE') {
                     if (index < 5 && this.solve.varNames[index]) {
                         this.handleSolveSoftkey(this.solve.varNames[index]);
@@ -5922,6 +5939,7 @@
 
             // Entrada Numérica
             pressDigit(d) {
+                this.triggerKeyFeedback();
                 if (!this.entry.isEntering) {
                     if (this.mode === 'RPN') {
                         this.stack.t = this.stack.z;
@@ -5942,6 +5960,7 @@
             },
 
             pressDot() {
+                this.triggerKeyFeedback();
                 if (this.shiftActive) {
                     this.shiftActive = false;
                     this.setDecimals(this.decimals === 2 ? 4 : 2);
@@ -6134,6 +6153,7 @@
             },
 
             pressEnter() {
+                this.triggerKeyFeedback();
                 if (this.shiftActive) {
                     this.shiftActive = false;
                     this.setResult(this.stack.lastX, 'LAST X');
@@ -6162,6 +6182,7 @@
             },
 
             pressOp(op) {
+                this.triggerKeyFeedback();
                 if (this.shiftActive) {
                     this.shiftActive = false;
                     const x = this.getDisplayValue();
@@ -6274,6 +6295,7 @@
             },
 
             pressKey(key) {
+                this.triggerKeyFeedback();
                 if (key === 'EXIT') {
                     if (this.shiftActive) {
                         this.shiftActive = false;
@@ -6403,6 +6425,7 @@
             },
 
             toggleShift() {
+                this.triggerKeyFeedback();
                 this.shiftActive = !this.shiftActive;
                 // updateLCD sincroniza aria-pressed, o indicador do visor e a cor da tecla.
                 this.updateLCD();
@@ -7647,6 +7670,165 @@
                 // Garante que o painel central comece no topo ao mudar de módulo
                 const scrollable = document.getElementById('centralPanelScrollable');
                 if (scrollable) scrollable.scrollTop = 0;
+            },
+
+            // Verifica se a sessão atual está em modo celular / dispositivo móvel
+            isMobileMode() {
+                const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const hasTouch = (typeof window !== 'undefined') && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+                const isNarrow = (typeof window !== 'undefined') && (window.innerWidth < 1024);
+                const isCoarse = (typeof window !== 'undefined') && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+                return isMobileUA || (hasTouch && isNarrow) || (isCoarse && isNarrow);
+            },
+
+            // Som e feedback tátil só disparam se estiver em modo celular e habilitado
+            isMobileFeedbackActive() {
+                if (!this.mobileFeedbackEnabled) return false;
+                return this.isMobileMode();
+            },
+
+            // Emite clique mecânico realista via Web Audio API (sub-milissegundo de latência, offline)
+            playKeyClick() {
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioCtx) return;
+                    if (!this.audioCtx) {
+                        this.audioCtx = new AudioCtx();
+                    }
+                    if (this.audioCtx.state === 'suspended') {
+                        this.audioCtx.resume();
+                    }
+                    const now = this.audioCtx.currentTime;
+
+                    // Componente 1: tick mecânico agudo e seco (snap da tecla ~14ms)
+                    const osc1 = this.audioCtx.createOscillator();
+                    const gain1 = this.audioCtx.createGain();
+                    osc1.type = 'triangle';
+                    osc1.frequency.setValueAtTime(1250, now);
+                    osc1.frequency.exponentialRampToValueAtTime(350, now + 0.014);
+                    gain1.gain.setValueAtTime(0.08, now);
+                    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.014);
+                    osc1.connect(gain1);
+                    gain1.connect(this.audioCtx.destination);
+                    osc1.start(now);
+                    osc1.stop(now + 0.015);
+
+                    // Componente 2: ressonância do corpo do chassi (~22ms)
+                    const osc2 = this.audioCtx.createOscillator();
+                    const gain2 = this.audioCtx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(180, now);
+                    osc2.frequency.exponentialRampToValueAtTime(65, now + 0.022);
+                    gain2.gain.setValueAtTime(0.11, now);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
+                    osc2.connect(gain2);
+                    gain2.connect(this.audioCtx.destination);
+                    osc2.start(now);
+                    osc2.stop(now + 0.024);
+                } catch (e) {
+                    // Silencioso se áudio não estiver autorizado pelo navegador
+                }
+            },
+
+            // Emite feedback tátil (vibração háptica) em celulares compatíveis
+            triggerHaptic() {
+                if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+                    try {
+                        navigator.vibrate(18); // 18ms para simular switch mecânico
+                    } catch (e) {
+                        // Silencioso se bloqueado por permissão
+                    }
+                }
+            },
+
+            // Disparo conjunto de áudio e tátil com proteção anti-duplo clique
+            triggerKeyFeedback() {
+                if (!this.isMobileFeedbackActive()) return;
+                const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+                if (this._lastFeedbackTime && (now - this._lastFeedbackTime < 120)) {
+                    return; // Já executado pelo evento pointerdown anterior
+                }
+                this._lastFeedbackTime = now;
+                this.playKeyClick();
+                this.triggerHaptic();
+            },
+
+            // Inicialização do feedback móvel e desbloqueio pró-ativo de áudio
+            initMobileFeedback() {
+                try {
+                    const saved = localStorage.getItem('calcfin_mobile_feedback');
+                    if (saved !== null) {
+                        this.mobileFeedbackEnabled = (saved === 'true');
+                    }
+                } catch (e) {}
+
+                // Desbloqueia o AudioContext no primeiro toque em mobile
+                const unlockAudio = () => {
+                    try {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        if (!this.audioCtx && AudioCtx) {
+                            this.audioCtx = new AudioCtx();
+                        }
+                        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+                            this.audioCtx.resume();
+                        }
+                    } catch (e) {}
+                    window.removeEventListener('pointerdown', unlockAudio, true);
+                    window.removeEventListener('touchstart', unlockAudio, true);
+                };
+                window.addEventListener('pointerdown', unlockAudio, { capture: true, passive: true });
+                window.addEventListener('touchstart', unlockAudio, { capture: true, passive: true });
+
+                // Escuta delegada de pointerdown no chassi para latência instantânea (0ms)
+                const chassis = document.getElementById('hp-calculator-chassis');
+                if (chassis) {
+                    chassis.addEventListener('pointerdown', (e) => {
+                        const btn = e.target.closest('.hp-key, .hp-softkey, .lcd-tab-btn');
+                        if (btn) {
+                            this.triggerKeyFeedback();
+                        }
+                    }, { passive: true });
+                }
+
+                this.updateFeedbackToggleUI();
+            },
+
+            // Alternância manual de som e vibração no modo celular
+            toggleMobileFeedback() {
+                this.mobileFeedbackEnabled = !this.mobileFeedbackEnabled;
+                try {
+                    localStorage.setItem('calcfin_mobile_feedback', this.mobileFeedbackEnabled ? 'true' : 'false');
+                } catch (e) {}
+                this.updateFeedbackToggleUI();
+
+                const isMob = this.isMobileMode();
+                const status = this.mobileFeedbackEnabled ? 'ON' : 'OFF';
+                document.getElementById('lcdLine1').textContent = isMob ? `Som/Tátil: ${status}` : `Som/Tátil: ${status} (só celular)`;
+                if (isMob && this.mobileFeedbackEnabled) {
+                    this.playKeyClick();
+                    this.triggerHaptic();
+                }
+                this.updateLCD();
+            },
+
+            // Atualização visual do botão no alternador de visualização móvel
+            updateFeedbackToggleUI() {
+                const btn = document.getElementById('mobile-feedback-toggle-btn');
+                const icon = document.getElementById('mobile-feedback-icon');
+                const label = document.getElementById('mobile-feedback-label');
+                if (!btn) return;
+
+                const active = this.mobileFeedbackEnabled;
+                btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+                btn.title = active ? 'Som e feedback tátil das teclas no celular (Ativado)' : 'Som e feedback tátil das teclas no celular (Desativado)';
+                if (icon) icon.textContent = active ? '🔔' : '🔕';
+                if (label) label.textContent = active ? 'Som' : 'Mudo';
+
+                if (active) {
+                    btn.className = 'rounded-xl border border-amber-400/80 bg-slate-900 px-3 py-2.5 text-sm font-bold text-amber-400 transition hover:bg-slate-800 flex items-center justify-center gap-1.5 shadow-sm';
+                } else {
+                    btn.className = 'rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm font-bold text-slate-400 transition hover:bg-slate-800 flex items-center justify-center gap-1.5 opacity-70';
+                }
             },
 
             // Alternância de visualização em tablets e celulares.
