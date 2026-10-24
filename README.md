@@ -1,5 +1,7 @@
 # Calculadora Financeira HP 17bII+ Silver — PWA
 
+🌐 **Acesse online:** [https://gbajovedi.github.io/CalcFin/](https://gbajovedi.github.io/CalcFin/)
+
 Emulador completo da clássica calculadora financeira **HP 17bII+ Silver** desenvolvido para a web como um **Progressive Web App (PWA)** instalável no **Android**, **iOS** e **Windows/macOS**, com funcionamento **100% offline** e atualização automática.
 
 ---
