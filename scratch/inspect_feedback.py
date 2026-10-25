@@ -17,3 +17,4 @@ print("\n=== JS methods around mobileFeedback ===")
 idx = text.find('initMobileFeedback() {')
 if idx != -1:
     print(text[idx-100:idx+1500])
+

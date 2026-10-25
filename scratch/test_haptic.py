@@ -2,6 +2,11 @@
 """
 test_haptic.py
 Automated CDP verification for dedicated haptic feedback toggle switch in mobile mode.
+Tests:
+- Visibility: Hidden on desktop (>=1024px), visible in mobile mode (<1024px).
+- Amber Color Consistency: Exactly matches sound-toggle and theme-toggle amber palette.
+- Interactivity & Persistence: LocalStorage, aria-checked, on/off toggling.
+- Haptic Response: Hardware vibration + audio-haptic sub-bass thump fallback.
 """
 
 import asyncio
@@ -132,7 +137,7 @@ async def run_tests():
             """)
             check("No desktop (>= 1024px), #haptic-toggle está oculto (display: none)", desktop_display == "none", f"Obtido: {desktop_display}")
 
-            # Agora simula viewport de celular (390x844 - iPhone 14 / celular moderno)
+            # Agora simula viewport de celular (390x844 - iPhone / celular moderno)
             await send_cmd("Emulation.setDeviceMetricsOverride", {
                 "width": 390,
                 "height": 844,
@@ -149,7 +154,26 @@ async def run_tests():
             """)
             check("No celular (390px), #haptic-toggle está visível (display: flex/inline-flex)", mobile_display in ["flex", "inline-flex"], f"Obtido: {mobile_display}")
 
-            print("\n--- GRUPO 3: Alternância (Toggle) e Persistência localStorage ---")
+            is_mob = await eval_js("window.app.isMobileMode()")
+            check("isMobileMode() retorna true no viewport mobile (390px)", is_mob is True)
+
+            print("\n--- GRUPO 3: Padronização da Cor Âmbar (Consistente com Som e Tema) ---")
+            colors = await eval_js("""
+                (() => {
+                    const soundTrack = document.getElementById('sound-switch-track');
+                    const hapticTrack = document.getElementById('haptic-switch-track');
+                    return {
+                        soundBg: window.getComputedStyle(soundTrack).backgroundColor,
+                        hapticBg: window.getComputedStyle(hapticTrack).backgroundColor,
+                        soundBorder: window.getComputedStyle(soundTrack).borderColor,
+                        hapticBorder: window.getComputedStyle(hapticTrack).borderColor
+                    };
+                })()
+            """)
+            check("Track do Haptic possui exatamente a mesma cor Âmbar do Sound (Background)", colors['soundBg'] == colors['hapticBg'], f"Sound: {colors['soundBg']}, Haptic: {colors['hapticBg']}")
+            check("Track do Haptic possui exatamente a mesma borda do Sound (Border)", colors['soundBorder'] == colors['hapticBorder'], f"Sound: {colors['soundBorder']}, Haptic: {colors['hapticBorder']}")
+
+            print("\n--- GRUPO 4: Alternância (Toggle) e Persistência localStorage ---")
             # Click on haptic-toggle
             await eval_js("document.getElementById('haptic-toggle').click()")
             toggled_state_1 = await eval_js("window.app.hapticFeedbackEnabled")
@@ -168,33 +192,33 @@ async def run_tests():
             check("Aria-checked atualizado para 'true'", aria_checked_2 == "true")
             check("LocalStorage salvo como 'true'", storage_2 == "true")
 
-            print("\n--- GRUPO 4: Independência entre Som e Vibração ---")
+            print("\n--- GRUPO 5: Independência entre Som e Vibração + Disparo Acústico/Háptico ---")
             # Turn sound OFF, keep haptic ON
             await eval_js("window.app.mobileFeedbackEnabled = false; window.app.hapticFeedbackEnabled = true;")
             feedback_state = await eval_js("""
                 (() => {
                     let hapticFired = false;
                     let soundFired = false;
+                    let thumpFired = false;
                     const origHaptic = window.app.triggerHaptic;
                     const origSound = window.app.playKeyClick;
-                    window.app.triggerHaptic = () => { hapticFired = true; };
-                    window.app.playKeyClick = () => { soundFired = true; };
-                    
-                    // Força isMobileMode como true para o teste
-                    const origIsMob = window.app.isMobileMode;
-                    window.app.isMobileMode = () => true;
+                    const origThump = window.app.playHapticThump;
+                    window.app.triggerHaptic = function(d) { hapticFired = true; origHaptic.call(window.app, d); };
+                    window.app.playKeyClick = function() { soundFired = true; };
+                    window.app.playHapticThump = function() { thumpFired = true; };
                     
                     window.app.triggerKeyFeedback();
                     
-                    // Restaura
                     window.app.triggerHaptic = origHaptic;
                     window.app.playKeyClick = origSound;
-                    window.app.isMobileMode = origIsMob;
+                    window.app.playHapticThump = origThump;
                     
-                    return { hapticFired, soundFired };
+                    return { hapticFired, soundFired, thumpFired };
                 })()
             """)
-            check("Com som OFF e haptic ON: dispara apenas vibração", feedback_state.get("hapticFired") is True and feedback_state.get("soundFired") is False, f"Obtido: {feedback_state}")
+            check("Com som OFF e haptic ON: dispara vibração", feedback_state.get("hapticFired") is True)
+            check("Com som OFF e haptic ON: NÃO dispara som mecânico agudo", feedback_state.get("soundFired") is False)
+            check("Com som OFF e haptic ON: dispara pulso sub-grave playHapticThump", feedback_state.get("thumpFired") is True)
 
             # Turn sound ON, turn haptic OFF
             await eval_js("window.app.mobileFeedbackEnabled = true; window.app.hapticFeedbackEnabled = false;")
@@ -207,19 +231,16 @@ async def run_tests():
                     window.app.triggerHaptic = () => { hapticFired = true; };
                     window.app.playKeyClick = () => { soundFired = true; };
                     
-                    const origIsMob = window.app.isMobileMode;
-                    window.app.isMobileMode = () => true;
-                    
                     window.app.triggerKeyFeedback();
                     
                     window.app.triggerHaptic = origHaptic;
                     window.app.playKeyClick = origSound;
-                    window.app.isMobileMode = origIsMob;
                     
                     return { hapticFired, soundFired };
                 })()
             """)
-            check("Com som ON e haptic OFF: dispara apenas som", feedback_state2.get("hapticFired") is False and feedback_state2.get("soundFired") is True, f"Obtido: {feedback_state2}")
+            check("Com som ON e haptic OFF: NÃO dispara vibração", feedback_state2.get("hapticFired") is False)
+            check("Com som ON e haptic OFF: dispara som mecânico", feedback_state2.get("soundFired") is True)
 
             # Restaura estados
             await eval_js("window.app.mobileFeedbackEnabled = true; window.app.hapticFeedbackEnabled = true;")
