@@ -9,6 +9,7 @@ import time
 import urllib.request
 import asyncio
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
 
 async def run_tests():
     try:

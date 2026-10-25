@@ -4345,8 +4345,19 @@
                                     </div>
                                     <button onclick="app.clearTape()" class="px-2.5 py-1 bg-red-900/50 hover:bg-red-800/60 border border-red-700 text-red-200 text-xs rounded font-mono">Limpar Fita</button>
                                 </div>
-                                <div id="tape-content" class="bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-xs text-amber-300 max-h-64 overflow-y-auto custom-scroll space-y-1">
+                                <div id="tape-content" class="bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-xs text-amber-300 max-h-56 overflow-y-auto custom-scroll space-y-1">
                                     <!-- Entradas da fita -->
+                                </div>
+                                <div class="border-t border-slate-800 pt-3">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h3 class="text-xs font-bold text-sky-400 font-mono flex items-center gap-1.5">
+                                            <span>💾</span> Registradores de Armazenamento (R0 a R9)
+                                        </h3>
+                                        <button type="button" onclick="app.clearRegisters()" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-[10px] rounded font-mono transition">Zerar Registradores</button>
+                                    </div>
+                                    <div id="tape-registers-grid" class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 font-mono text-xs">
+                                        <!-- R0 a R9 cards gerados dinamicamente -->
+                                    </div>
                                 </div>
                             </div>
 
@@ -4630,11 +4641,16 @@
     <!-- MOTOR JAVASCRIPT DA CALCULADORA HP 17bII+ -->
     <script>
         const app = {
-            // Configurações e Registradores
+            // Configurações e Registradores Oficiais HP 17bII+
             mode: 'RPN', // 'RPN' ou 'ALG'
             shiftActive: false,
             decimals: 2,
             currentMenu: 'SOLVE', // 'MAIN', 'MATH', 'MODES', 'SOLVE'
+            registers: new Array(10).fill(0), // Registradores 0 a 9 de armazenamento oficial
+            stoState: null, // null ou 'pending'
+            stoOp: null, // null, '+', '-', '*', '/'
+            rclState: false, // true quando aguarda dígito de registrador 0-9
+            stackLift: true, // Controle de Stack Lift da pilha RPN
 
             // Feedback Tátil e Sonoro (apenas em modo celular)
             audioCtx: null,
@@ -4657,10 +4673,11 @@
                 hasDot: false
             },
 
-            // Modo Algébrico
+            // Modo Algébrico Oficial com Suporte a Parênteses
             alg: {
                 pendingOp: null,
-                operand1: 0
+                operand1: 0,
+                parenStack: []
             },
 
             // TVM (Time Value of Money)
@@ -4993,6 +5010,7 @@
                 this.renderCatalog();
                 this.renderCashFlows();
                 this.renderStatPairsList();
+                this.renderTapeRegisters();
                 this.syncStateToInputs();
                 this.setupKeyboardListeners();
                 this.initMobileFeedback();
@@ -6568,14 +6586,100 @@
                 this.updateLCD();
             },
 
-            // Entrada Numérica
+            // Entrada Numérica Oficial HP 17bII+
             pressDigit(d) {
                 this.triggerKeyFeedback();
+
+                // Armazenamento em Registrador: STO [0-9] ou STO [op] [0-9]
+                if (this.stoState === 'pending') {
+                    const regIdx = parseInt(d, 10);
+                    const x = this.getDisplayValue();
+                    if (this.stoOp) {
+                        let oldVal = this.registers[regIdx] || 0;
+                        let newVal = oldVal;
+                        if (this.stoOp === '+') newVal = oldVal + x;
+                        else if (this.stoOp === '-') newVal = oldVal - x;
+                        else if (this.stoOp === '*') newVal = oldVal * x;
+                        else if (this.stoOp === '/') {
+                            if (x === 0) {
+                                this.setError('Divisão por zero em STO');
+                                this.stoState = null;
+                                this.stoOp = null;
+                                return;
+                            }
+                            newVal = oldVal / x;
+                        }
+                        this.registers[regIdx] = this.cleanFloat(newVal, 10, newVal);
+                        const desc = `STO ${this.stoOp} R${regIdx} = ${this.formatNum(newVal)}`;
+                        document.getElementById('lcdLine1').textContent = desc;
+                        this.addTapeEntry(desc);
+                    } else {
+                        this.registers[regIdx] = x;
+                        const desc = `STO R${regIdx} = ${this.formatNum(x)}`;
+                        document.getElementById('lcdLine1').textContent = desc;
+                        this.addTapeEntry(desc);
+                    }
+                    this.stoState = null;
+                    this.stoOp = null;
+                    this.renderTapeRegisters();
+                    this.saveWorkspaceState();
+                    this.updateLCD();
+                    return;
+                }
+
+                // Recuperação de Registrador: RCL [0-9]
+                if (this.rclState) {
+                    const regIdx = parseInt(d, 10);
+                    const val = this.registers[regIdx] || 0;
+                    this.rclState = false;
+                    if (this.mode === 'RPN') {
+                        if (this.entry.isEntering) {
+                            this.stack.t = this.stack.z;
+                            this.stack.z = this.stack.y;
+                            this.stack.y = this.getDisplayValue();
+                        } else if (this.stackLift) {
+                            this.stack.t = this.stack.z;
+                            this.stack.z = this.stack.y;
+                            this.stack.y = this.stack.x;
+                        }
+                        this.stack.x = val;
+                        this.stackLift = true;
+                    } else {
+                        this.stack.x = val;
+                    }
+                    this.entry.buffer = String(val).replace('.', ',');
+                    this.entry.isEntering = false;
+                    this.entry.hasDot = String(val).includes('.');
+                    const desc = `RCL R${regIdx} = ${this.formatNum(val)}`;
+                    document.getElementById('lcdLine1').textContent = desc;
+                    this.addTapeEntry(desc);
+                    this.updateLCD();
+                    return;
+                }
+
+                // Sub-função MEM (Shift + 0)
+                if (d === '0' && this.shiftActive) {
+                    this.shiftActive = false;
+                    const shiftBadge = document.getElementById('lcdShiftBadge');
+                    if (shiftBadge) shiftBadge.style.opacity = '0';
+                    const shiftBtn = document.getElementById('keyShiftBtn');
+                    if (shiftBtn) shiftBtn.setAttribute('aria-pressed', 'false');
+                    document.getElementById('lcdLine1').textContent = 'MEM: 10 REG DISP';
+                    const line2 = document.getElementById('lcdLine2');
+                    if (line2) line2.textContent = 'LIVRE: 100%';
+                    this.addTapeEntry('MEM: 10 Registradores Disponíveis (R0-R9)');
+                    return;
+                }
+
+                // Digitação regular com controle de Stack Lift
                 if (!this.entry.isEntering) {
                     if (this.mode === 'RPN') {
-                        this.stack.t = this.stack.z;
-                        this.stack.z = this.stack.y;
-                        this.stack.y = this.stack.x;
+                        if (this.stackLift) {
+                            this.stack.t = this.stack.z;
+                            this.stack.z = this.stack.y;
+                            this.stack.y = this.stack.x;
+                        }
+                        this.stackLift = true;
                     }
                     this.entry.buffer = d;
                     this.entry.isEntering = true;
@@ -6583,7 +6687,7 @@
                 } else {
                     if (this.entry.buffer === '0') {
                         this.entry.buffer = d;
-                    } else if (this.entry.buffer.length < 14) {
+                    } else if (this.entry.buffer.length < 16) {
                         this.entry.buffer += d;
                     }
                 }
@@ -6592,21 +6696,32 @@
 
             pressDot() {
                 this.triggerKeyFeedback();
+                // Sub-função SHOW (Shift + .) - Exibe os 12 dígitos reais sem formatação
                 if (this.shiftActive) {
                     this.shiftActive = false;
-                    this.setDecimals(this.decimals === 2 ? 4 : 2);
+                    const x = this.getDisplayValue();
+                    document.getElementById('lcdLine1').textContent = 'SHOW (Precisão Total 12 dígitos)';
+                    const fullStr = Number.isFinite(x) ? String(x).replace('.', ',') : '0';
+                    const line2 = document.getElementById('lcdLine2');
+                    if (line2) line2.textContent = fullStr;
+                    this.addTapeEntry(`SHOW: ${fullStr}`);
                     return;
                 }
+                if (this.stoState === 'pending') return;
+
                 if (!this.entry.isEntering) {
                     if (this.mode === 'RPN') {
-                        this.stack.t = this.stack.z;
-                        this.stack.z = this.stack.y;
-                        this.stack.y = this.stack.x;
+                        if (this.stackLift) {
+                            this.stack.t = this.stack.z;
+                            this.stack.z = this.stack.y;
+                            this.stack.y = this.stack.x;
+                        }
+                        this.stackLift = true;
                     }
                     this.entry.buffer = '0,';
                     this.entry.isEntering = true;
                     this.entry.hasDot = true;
-                } else if (!this.entry.hasDot) {
+                } else if (!this.entry.hasDot && !this.entry.buffer.includes('E')) {
                     this.entry.buffer += ',';
                     this.entry.hasDot = true;
                 }
@@ -6615,7 +6730,12 @@
 
             getDisplayValue() {
                 if (this.entry.isEntering) {
-                    return parseFloat(this.entry.buffer.replace(',', '.'));
+                    let str = this.entry.buffer.replace(',', '.');
+                    if (str.endsWith('E') || str.endsWith('E-') || str.endsWith('E+')) {
+                        str = str.replace(/E.*$/, '');
+                    }
+                    const val = parseFloat(str);
+                    return isNaN(val) ? 0 : val;
                 }
                 return this.stack.x;
             },
@@ -6640,9 +6760,13 @@
                 this.saveWorkspaceState();
             },
 
-            setResult(val, description = '', recalculate = null, unit = '') {
+            setResult(val, description = '', recalculate = null, unit = '', explicitLastX = null) {
                 val = this.cleanFloat(val, Math.max(this.decimals, 6), NaN);
-                this.stack.lastX = this.stack.x;
+                if (explicitLastX !== null && !isNaN(explicitLastX)) {
+                    this.stack.lastX = explicitLastX;
+                } else if (this.stack.lastX === undefined || isNaN(this.stack.lastX)) {
+                    this.stack.lastX = this.stack.x;
+                }
                 this.stack.x = val;
                 this.entry.isEntering = false;
                 this.entry.buffer = '0';
@@ -6787,9 +6911,31 @@
 
             pressEnter() {
                 this.triggerKeyFeedback();
+                // Sub-função LAST (Shift + = ou Shift + INPUT)
                 if (this.shiftActive) {
                     this.shiftActive = false;
-                    this.setResult(this.stack.lastX, 'LAST X');
+                    const lastVal = Number.isFinite(this.stack.lastX) ? this.stack.lastX : 0;
+                    if (this.mode === 'RPN') {
+                        if (this.entry.isEntering) {
+                            this.stack.t = this.stack.z;
+                            this.stack.z = this.stack.y;
+                            this.stack.y = this.getDisplayValue();
+                        } else if (this.stackLift) {
+                            this.stack.t = this.stack.z;
+                            this.stack.z = this.stack.y;
+                            this.stack.y = this.stack.x;
+                        }
+                        this.stack.x = lastVal;
+                        this.stackLift = true;
+                    } else {
+                        this.stack.x = lastVal;
+                    }
+                    this.entry.isEntering = false;
+                    this.entry.buffer = String(lastVal).replace('.', ',');
+                    this.entry.hasDot = String(lastVal).includes('.');
+                    document.getElementById('lcdLine1').textContent = `LAST X = ${this.formatNum(lastVal)}`;
+                    this.addTapeEntry(`LAST X = ${this.formatNum(lastVal)}`);
+                    this.updateLCD();
                     return;
                 }
 
@@ -6802,29 +6948,57 @@
                     this.entry.isEntering = false;
                     this.entry.buffer = '0';
                     this.entry.hasDot = false;
+                    this.stackLift = false; // Desativa elevação automática para o próximo número imediato (HP standard)
                     document.getElementById('lcdLine1').textContent = `RPN: Enter ${this.formatNum(val)}`;
                     this.addTapeEntry(`ENTER: ${this.formatNum(val)}`);
                 } else {
+                    let currentVal = this.getDisplayValue();
+                    if (Array.isArray(this.alg.parenStack)) {
+                        while (this.alg.parenStack.length > 0) {
+                            if (this.alg.pendingOp) {
+                                currentVal = this.computeAlgOp(this.alg.pendingOp, this.alg.operand1, currentVal);
+                            }
+                            const parent = this.alg.parenStack.pop();
+                            this.alg.operand1 = parent.operand1;
+                            this.alg.pendingOp = parent.pendingOp;
+                        }
+                    }
                     if (this.alg.pendingOp) {
-                        const val2 = this.getDisplayValue();
-                        this.executeAlgOp(this.alg.pendingOp, this.alg.operand1, val2);
+                        currentVal = this.computeAlgOp(this.alg.pendingOp, this.alg.operand1, currentVal);
                         this.alg.pendingOp = null;
                     }
+                    this.stack.lastX = this.alg.operand1;
+                    this.alg.operand1 = currentVal;
+                    this.setResult(currentVal, `= ${this.formatNum(currentVal)}`);
                 }
                 this.updateLCD();
             },
 
             pressOp(op) {
                 this.triggerKeyFeedback();
+
+                // Aritmética de Registrador: STO + [0-9], STO - [0-9], STO * [0-9], STO / [0-9]
+                if (this.stoState === 'pending' && !this.stoOp) {
+                    if (['+', '-', '*', '/'].includes(op)) {
+                        this.stoOp = op;
+                        document.getElementById('lcdLine1').textContent = `STO ${op} _ (Digite 0-9)`;
+                        this.updateLCD();
+                        return;
+                    }
+                }
+
+                // Funções Secundárias / Unárias com Shift (1/x, yˣ, √x, x²)
                 if (this.shiftActive) {
                     this.shiftActive = false;
                     const x = this.getDisplayValue();
+                    this.stack.lastX = x;
+                    this.stackLift = true;
                     if (op === '/') {
                         if (x === 0) {
                             this.setError('Divisão por zero', '1/0');
                             return;
                         }
-                        this.setResult(1 / x, `1/${this.formatNum(x)}`);
+                        this.setResult(1 / x, `1/${this.formatNum(x)}`, null, '', x);
                         return;
                     }
                     if (op === '*') {
@@ -6842,7 +7016,7 @@
                             this.setError('Indeterminação matemática', `${this.formatNum(y)} ^ ${this.formatNum(x)}`);
                             return;
                         }
-                        this.setResult(res, `${this.formatNum(y)} ^ ${this.formatNum(x)}`);
+                        this.setResult(res, `${this.formatNum(y)} ^ ${this.formatNum(x)}`, null, '', x);
                         return;
                     }
                     if (op === '-') {
@@ -6850,7 +7024,7 @@
                             this.setError('Raiz de número negativo', `√(${this.formatNum(x)})`);
                             return;
                         }
-                        this.setResult(Math.sqrt(x), `√(${this.formatNum(x)})`);
+                        this.setResult(Math.sqrt(x), `√(${this.formatNum(x)})`, null, '', x);
                         return;
                     }
                     if (op === '+') {
@@ -6859,7 +7033,7 @@
                             this.setError('Overflow', `(${this.formatNum(x)})²`);
                             return;
                         }
-                        this.setResult(res, `(${this.formatNum(x)})²`);
+                        this.setResult(res, `(${this.formatNum(x)})²`, null, '', x);
                         return;
                     }
                 }
@@ -6867,6 +7041,8 @@
                 if (this.mode === 'RPN') {
                     const x = this.getDisplayValue();
                     const y = this.stack.y;
+                    this.stack.lastX = x;
+                    this.stackLift = true;
                     if (op === '/' && x === 0) {
                         this.setError('Divisão por zero', `${this.formatNum(y)} / 0`);
                         return;
@@ -6885,9 +7061,11 @@
                     this.stack.x = res;
                     this.stack.y = this.stack.z;
                     this.stack.z = this.stack.t;
-                    this.setResult(res, `${this.formatNum(y)} ${op} ${this.formatNum(x)}`);
+                    // Stack drop oficial HP: topo T permanece duplicado/preservado no registrador T
+                    this.setResult(res, `${this.formatNum(y)} ${op} ${this.formatNum(x)}`, null, '', x);
                 } else {
                     const currentVal = this.getDisplayValue();
+                    this.stackLift = true;
                     if (this.alg.pendingOp) {
                         if (this.alg.pendingOp === '/' && currentVal === 0) {
                             this.setError('Divisão por zero', `${this.formatNum(this.alg.operand1)} / 0`);
@@ -6905,11 +7083,10 @@
                 this.updateLCD();
             },
 
-            executeAlgOp(op, a, b) {
+            computeAlgOp(op, a, b) {
                 if (op === '/' && b === 0) {
                     this.setError('Divisão por zero', `${this.formatNum(a)} / 0`);
-                    this.alg.pendingOp = null;
-                    return;
+                    return NaN;
                 }
                 let res = 0;
                 switch (op) {
@@ -6917,19 +7094,30 @@
                     case '-': res = a - b; break;
                     case '*': res = a * b; break;
                     case '/': res = a / b; break;
+                    default: res = b; break;
                 }
                 if (!isFinite(res) || isNaN(res)) {
                     this.setError('Indeterminação matemática', `${this.formatNum(a)} ${op} ${this.formatNum(b)}`);
-                    this.alg.pendingOp = null;
-                    return;
+                    return NaN;
                 }
-                this.alg.operand1 = res;
-                this.setResult(res, `${this.formatNum(a)} ${op} ${this.formatNum(b)}`);
+                return this.cleanFloat(res, Math.max(this.decimals, 6), res);
+            },
+
+            executeAlgOp(op, a, b) {
+                const res = this.computeAlgOp(op, a, b);
+                if (!isNaN(res)) {
+                    this.alg.operand1 = res;
+                    this.setResult(res, `${this.formatNum(a)} ${op} ${this.formatNum(b)}`);
+                }
             },
 
             pressKey(key) {
                 this.triggerKeyFeedback();
+
                 if (key === 'EXIT') {
+                    this.stoState = null;
+                    this.stoOp = null;
+                    this.rclState = false;
                     if (this.shiftActive) {
                         this.shiftActive = false;
                         this.currentMenu = 'MAIN';
@@ -6972,13 +7160,24 @@
                 }
 
                 if (key === 'CLR') {
+                    this.stoState = null;
+                    this.stoOp = null;
+                    this.rclState = false;
+                    if (this.shiftActive) {
+                        this.shiftActive = false;
+                        document.getElementById('lcdLine1').textContent = 'HP 17bII+ Desligada (OFF / Standby)';
+                        this.updateLCD();
+                        return;
+                    }
                     this.entry.buffer = '0';
                     this.entry.isEntering = false;
                     this.entry.hasDot = false;
                     this.stack.x = 0;
+                    this.stackLift = false;
                     if (this.mode === 'ALG') {
                         this.alg.pendingOp = null;
                         this.alg.operand1 = 0;
+                        this.alg.parenStack = [];
                     }
                     document.getElementById('lcdLine1').textContent = 'Visor Limpo (CLR)';
                     this.updateLCD();
@@ -6986,6 +7185,14 @@
                 }
 
                 if (key === 'BACKSPACE') {
+                    if (this.stoState || this.rclState) {
+                        this.stoState = null;
+                        this.stoOp = null;
+                        this.rclState = false;
+                        document.getElementById('lcdLine1').textContent = 'Operação cancelada';
+                        this.updateLCD();
+                        return;
+                    }
                     if (this.entry.isEntering) {
                         if (this.entry.buffer.length > 1) {
                             if (this.entry.buffer.slice(-1) === ',') this.entry.hasDot = false;
@@ -7002,11 +7209,29 @@
                 }
 
                 if (key === '+/-') {
+                    // Sub-função E (Shift + +/-) - Expoente científico
+                    if (this.shiftActive) {
+                        this.shiftActive = false;
+                        if (!this.entry.isEntering) {
+                            this.entry.buffer = (this.stack.x ? String(this.stack.x).replace('.', ',') : '1') + 'E';
+                            this.entry.isEntering = true;
+                        } else if (!this.entry.buffer.includes('E')) {
+                            this.entry.buffer += 'E';
+                        }
+                        document.getElementById('lcdLine1').textContent = 'Expoente Científico (E)';
+                        this.updateLCD();
+                        return;
+                    }
                     if (this.entry.isEntering) {
-                        if (this.entry.buffer.startsWith('-')) {
-                            this.entry.buffer = this.entry.buffer.substring(1);
+                        if (this.entry.buffer.includes('E')) {
+                            const parts = this.entry.buffer.split('E');
+                            let exp = parts[1] || '';
+                            if (exp.startsWith('-')) exp = exp.substring(1);
+                            else exp = '-' + exp;
+                            this.entry.buffer = parts[0] + 'E' + exp;
                         } else {
-                            this.entry.buffer = '-' + this.entry.buffer;
+                            if (this.entry.buffer.startsWith('-')) this.entry.buffer = this.entry.buffer.substring(1);
+                            else this.entry.buffer = '-' + this.entry.buffer;
                         }
                     } else {
                         this.setResult(-this.stack.x);
@@ -7016,6 +7241,15 @@
                 }
 
                 if (key === 'INPUT') {
+                    // Sub-função CLR DATA (Shift + INPUT)
+                    if (this.shiftActive) {
+                        this.shiftActive = false;
+                        this.clearActiveModuleFields();
+                        document.getElementById('lcdLine1').textContent = 'DADOS LIMPOS (CLR DATA)';
+                        this.addTapeEntry('CLR DATA: Dados do módulo limpos');
+                        this.updateLCD();
+                        return;
+                    }
                     this.pressEnter();
                     return;
                 }
@@ -7023,12 +7257,29 @@
                 if (key === '(') {
                     if (this.shiftActive) {
                         this.shiftActive = false;
-                        const tmp = this.stack.x;
+                        // Roll Down da pilha RPN
+                        const oldX = this.stack.x;
                         this.stack.x = this.stack.y;
                         this.stack.y = this.stack.z;
                         this.stack.z = this.stack.t;
-                        this.stack.t = tmp;
-                        document.getElementById('lcdLine1').textContent = 'Pilha R↓ (Roll Down)';
+                        this.stack.t = oldX;
+                        document.getElementById('lcdLine1').textContent = `Pilha R↓ (Roll Down): X=${this.formatNum(this.stack.x)}`;
+                        this.updateLCD();
+                        return;
+                    }
+                    if (this.mode === 'ALG') {
+                        if (!Array.isArray(this.alg.parenStack)) this.alg.parenStack = [];
+                        this.alg.parenStack.push({
+                            operand1: this.alg.operand1,
+                            pendingOp: this.alg.pendingOp
+                        });
+                        this.alg.operand1 = 0;
+                        this.alg.pendingOp = null;
+                        this.entry.buffer = '0';
+                        this.entry.isEntering = false;
+                        this.entry.hasDot = false;
+                        const depth = this.alg.parenStack.length;
+                        document.getElementById('lcdLine1').textContent = `( nível ${depth}`;
                         this.updateLCD();
                     }
                     return;
@@ -7037,22 +7288,87 @@
                 if (key === ')') {
                     if (this.shiftActive) {
                         this.shiftActive = false;
+                        // SWAP X e Y
                         const tmp = this.stack.x;
                         this.stack.x = this.stack.y;
                         this.stack.y = tmp;
-                        document.getElementById('lcdLine1').textContent = 'Troca X⇄Y (SWAP)';
+                        document.getElementById('lcdLine1').textContent = `Troca X⇄Y (SWAP): X=${this.formatNum(this.stack.x)} Y=${this.formatNum(this.stack.y)}`;
+                        this.updateLCD();
+                        return;
+                    }
+                    if (this.mode === 'ALG') {
+                        if (!Array.isArray(this.alg.parenStack) || this.alg.parenStack.length === 0) {
+                            document.getElementById('lcdLine1').textContent = 'Nenhum parêntese aberto';
+                            return;
+                        }
+                        let currentVal = this.getDisplayValue();
+                        if (this.alg.pendingOp) {
+                            currentVal = this.computeAlgOp(this.alg.pendingOp, this.alg.operand1, currentVal);
+                        }
+                        const parent = this.alg.parenStack.pop();
+                        this.alg.operand1 = parent.operand1;
+                        this.alg.pendingOp = parent.pendingOp;
+                        this.stack.x = currentVal;
+                        this.entry.buffer = String(currentVal).replace('.', ',');
+                        this.entry.isEntering = false;
+                        this.entry.hasDot = String(currentVal).includes('.');
+                        document.getElementById('lcdLine1').textContent = `) resultado: ${this.formatNum(currentVal)}`;
+                        this.updateLCD();
+                    }
+                    return;
+                }
+
+                if (key === 'UP') {
+                    if (this.mode === 'RPN') {
+                        // Roll Up (R↑) da pilha RPN
+                        const oldX = this.stack.x;
+                        this.stack.x = this.stack.t;
+                        this.stack.t = this.stack.z;
+                        this.stack.z = this.stack.y;
+                        this.stack.y = oldX;
+                        document.getElementById('lcdLine1').textContent = `Pilha R↑ (Roll Up): X=${this.formatNum(this.stack.x)}`;
+                        this.updateLCD();
+                    }
+                    return;
+                }
+
+                if (key === 'DOWN') {
+                    if (this.mode === 'RPN') {
+                        // Roll Down (R↓) da pilha RPN
+                        const oldX = this.stack.x;
+                        this.stack.x = this.stack.y;
+                        this.stack.y = this.stack.z;
+                        this.stack.z = this.stack.t;
+                        this.stack.t = oldX;
+                        document.getElementById('lcdLine1').textContent = `Pilha R↓ (Roll Down): X=${this.formatNum(this.stack.x)}`;
                         this.updateLCD();
                     }
                     return;
                 }
 
                 if (key === 'STO') {
-                    document.getElementById('lcdLine1').textContent = 'STO: Digite o destino no teclado/variável';
+                    this.stoState = 'pending';
+                    this.stoOp = null;
+                    this.rclState = false;
+                    document.getElementById('lcdLine1').textContent = 'STO _ (Digite 0-9 ou +, -, *, /)';
+                    this.updateLCD();
                     return;
                 }
 
                 if (key === 'RCL') {
-                    document.getElementById('lcdLine1').textContent = `RCL: ${this.formatNum(this.stack.x)}`;
+                    // Sub-função RND (Shift + RCL) - Arredonda X para as casas decimais ativas
+                    if (this.shiftActive) {
+                        this.shiftActive = false;
+                        const x = this.getDisplayValue();
+                        const rounded = this.cleanFloat(x, this.decimals, x);
+                        this.setResult(rounded, `RND: ${this.formatNum(rounded)}`);
+                        return;
+                    }
+                    this.rclState = true;
+                    this.stoState = null;
+                    this.stoOp = null;
+                    document.getElementById('lcdLine1').textContent = 'RCL _ (Digite 0-9)';
+                    this.updateLCD();
                     return;
                 }
             },
@@ -8536,6 +8852,75 @@
                 this.saveWorkspaceState();
             },
 
+            // Gestão dos 10 Registradores de Armazenamento Oficial (R0 a R9)
+            renderTapeRegisters() {
+                const grid = document.getElementById('tape-registers-grid');
+                if (!grid) return;
+                if (!Array.isArray(this.registers) || this.registers.length < 10) {
+                    this.registers = new Array(10).fill(0);
+                }
+                grid.innerHTML = this.registers.map((val, i) => `
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-1.5 flex flex-col justify-between">
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold mb-1">
+                            <span class="text-amber-400 font-mono">R${i}</span>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="app.storeToRegister(${i})" title="Armazenar valor de X no registrador R${i}" class="px-1 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-sky-400 text-[9px] font-mono transition">STO</button>
+                                <button type="button" onclick="app.recallFromRegister(${i})" title="Recuperar registrador R${i} para o visor" class="px-1 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-emerald-400 text-[9px] font-mono transition">RCL</button>
+                            </div>
+                        </div>
+                        <div class="text-right text-xs font-mono text-slate-200 truncate" title="${val}">
+                            ${this.formatNum(val)}
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            storeToRegister(i) {
+                const x = this.getDisplayValue();
+                this.registers[i] = x;
+                const msg = `STO R${i} = ${this.formatNum(x)}`;
+                document.getElementById('lcdLine1').textContent = msg;
+                this.addTapeEntry(msg);
+                this.renderTapeRegisters();
+                this.saveWorkspaceState();
+                this.updateLCD();
+            },
+
+            recallFromRegister(i) {
+                const val = this.registers[i] || 0;
+                if (this.mode === 'RPN') {
+                    if (this.entry.isEntering) {
+                        this.stack.t = this.stack.z;
+                        this.stack.z = this.stack.y;
+                        this.stack.y = this.getDisplayValue();
+                    } else if (this.stackLift) {
+                        this.stack.t = this.stack.z;
+                        this.stack.z = this.stack.y;
+                        this.stack.y = this.stack.x;
+                    }
+                    this.stack.x = val;
+                    this.stackLift = true;
+                } else {
+                    this.stack.x = val;
+                }
+                this.entry.buffer = String(val).replace('.', ',');
+                this.entry.isEntering = false;
+                this.entry.hasDot = String(val).includes('.');
+                const msg = `RCL R${i} = ${this.formatNum(val)}`;
+                document.getElementById('lcdLine1').textContent = msg;
+                this.addTapeEntry(msg);
+                this.updateLCD();
+            },
+
+            clearRegisters() {
+                this.registers = new Array(10).fill(0);
+                this.renderTapeRegisters();
+                this.saveWorkspaceState();
+                document.getElementById('lcdLine1').textContent = 'Registradores R0 a R9 zerados';
+                this.addTapeEntry('Registradores R0-R9 zerados');
+                this.updateLCD();
+            },
+
             // Persistência Completa de Estado no localStorage
             saveWorkspaceState() {
                 try {
@@ -8563,6 +8948,7 @@
                         },
                         tape: Array.isArray(this.tape) ? this.tape.slice(0, 50) : [],
                         favorites: this.favoriteFormulas ? [...this.favoriteFormulas] : [],
+                        registers: Array.isArray(this.registers) ? this.registers.slice(0, 10).map(v => Number.isFinite(v) ? v : 0) : new Array(10).fill(0),
                         stack: {
                             x: Number.isFinite(this.stack.x) ? this.stack.x : 0,
                             y: Number.isFinite(this.stack.y) ? this.stack.y : 0,
@@ -8630,6 +9016,12 @@
                     if (Array.isArray(state.tape)) {
                         this.tape = state.tape;
                     }
+                    if (Array.isArray(state.registers)) {
+                        this.registers = state.registers.slice(0, 10).map(v => Number.isFinite(v) ? v : 0);
+                        while (this.registers.length < 10) this.registers.push(0);
+                    } else {
+                        this.registers = new Array(10).fill(0);
+                    }
                     if (Array.isArray(state.favorites)) {
                         const isOldDefault = state.favorites.length === 2 && state.favorites.includes('taxa_pro_rata_die') && state.favorites.includes('coef_financiamento_carencia_premio');
                         if (isOldDefault) {
@@ -8668,6 +9060,8 @@
 
                 this.mode = 'RPN';
                 this.decimals = 2;
+                this.registers = new Array(10).fill(0);
+                this.renderTapeRegisters();
                 this.shiftActive = false;
                 this.currentMenu = 'SOLVE';
                 this.stack = { x: 0, y: 0, z: 0, t: 0, lastX: 0 };
@@ -9255,8 +9649,8 @@
                         e.preventDefault(); this.pressDigit(e.key);
                     } else if (e.key === '.' || e.key === ',') {
                         e.preventDefault(); this.pressDot();
-                    } else if (e.key === 'Enter') {
-                        // Enter em botões e links mantém sua ação nativa; no fundo da página opera a calculadora.
+                    } else if (e.key === 'Enter' || e.key === '=') {
+                        // Enter e igual (=) mantém ação nativa em botões/links; na calculadora executam a operação.
                         if (active && ['BUTTON', 'A', 'SUMMARY'].includes(activeTag)) return;
                         e.preventDefault(); this.pressEnter();
                     } else if (['+', '-', '*', '/'].includes(e.key)) {
@@ -9271,6 +9665,10 @@
                         e.preventDefault(); this.pressSoftkey(Number(e.key.slice(1)) - 1);
                     } else if (e.key === '(' || e.key === ')') {
                         e.preventDefault(); this.pressKey(e.key);
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault(); this.pressKey('UP');
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault(); this.pressKey('DOWN');
                     }
                 });
 
