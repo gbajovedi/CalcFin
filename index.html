@@ -4181,7 +4181,7 @@
                                         <p class="text-[11px] text-slate-500 font-mono mt-0.5">CFLO · VPL e TIR</p>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <button type="button" onclick="app.clearActiveModule('CFLO')" title="Limpar taxa de desconto, fluxos e resultados de CFLO" class="btn-clear-module inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-700 hover:bg-red-800 border border-red-700 transition shadow-sm">Limpar CFLO</button>
+                                        <button type="button" onclick="app.clearCfloModule()" title="Limpar taxa de desconto, fluxos e resultados de CFLO" class="btn-clear-module inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-700 hover:bg-red-800 border border-red-700 transition shadow-sm">Limpar CFLO</button>
                                         <span class="text-xs text-slate-400 font-mono hidden sm:inline">Análise de investimento</span>
                                     </div>
                                 </div>
@@ -9521,6 +9521,29 @@
                 if (copyBtn) {
                     copyBtn.classList.remove('hidden');
                     copyBtn.className = 'w-full py-1 px-1 inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] sm:text-xs rounded transition shadow-sm text-center truncate';
+                }
+            },
+
+            clearCfloModule() {
+                const ids = ['input-cflo-rate', 'cflo-new-amount'];
+                ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+                this.cflo = [];
+                this.renderCashFlows();
+                this.clearCfloResults();
+                const msg = document.getElementById('cflo-add-feedback');
+                if (msg) msg.textContent = '';
+                const result = document.getElementById('result-panel');
+                if (result) result.classList.add('hidden');
+                this.setModuleActionFeedback('Fluxos de caixa (CFLO) e resultados limpos com sucesso.', 'info');
+            },
+
+            clearActiveModule(moduleName) {
+                if (moduleName === 'CFLO') {
+                    this.clearCfloModule();
+                } else if (moduleName === 'TVM') {
+                    this.clearTvmModule();
+                } else {
+                    this.clearActiveModuleFields();
                 }
             },
 

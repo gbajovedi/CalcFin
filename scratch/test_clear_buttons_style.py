@@ -108,12 +108,21 @@ async def test_clear_buttons():
             # Fill CFLO inputs
             await evaluate("document.getElementById('input-cflo-rate').value = '15'")
             await evaluate("document.getElementById('cflo-new-amount').value = '1000'")
-            # Click Limpar Campos
+            # Click Limpar Campos (toolbar)
             await evaluate("document.getElementById('module-clear-fields-btn').click()")
             rate_val = await evaluate("document.getElementById('input-cflo-rate').value")
             amount_val = await evaluate("document.getElementById('cflo-new-amount').value")
             print(f"Após clique em Limpar Campos: rate='{rate_val}', amount='{amount_val}'")
             assert rate_val == "" and amount_val == "", "Campos não foram limpos!"
+
+            print("\n--- TESTE 6: Funcionalidade do Botão Limpar CFLO no Cabeçalho ---")
+            await evaluate("document.getElementById('input-cflo-rate').value = '18'")
+            await evaluate("document.getElementById('cflo-new-amount').value = '2500'")
+            await evaluate("document.querySelector('#panel-CFLO button.btn-clear-module').click()")
+            rate_val2 = await evaluate("document.getElementById('input-cflo-rate').value")
+            amount_val2 = await evaluate("document.getElementById('cflo-new-amount').value")
+            print(f"Após clique em Limpar CFLO: rate='{rate_val2}', amount='{amount_val2}'")
+            assert rate_val2 == "" and amount_val2 == "", "Campos não foram limpos pelo botão Limpar CFLO!"
 
             print("\n==========================================")
             print("TODOS OS TESTES DE ESTILO E FUNCIONALIDADE DOS BOTÕES PASSARAM COM SUCESSO!")
