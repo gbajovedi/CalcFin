@@ -27,3 +27,4 @@ print(f"Calculadora Financeira 17bIi.html SHA256: {h1}")
 print(f"index.html SHA256:                        {h2}")
 assert h1 == h2, "Hash mismatch"
 print("PERFECT MATCH")
+

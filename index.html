@@ -3483,23 +3483,43 @@
             outline: 3px solid #fbbf24;
             outline-offset: 2px;
         }
-        #solve-clear-variables {
-            border: 1px solid #b91c1c;
-            background: #b91c1c;
-            color: #ffffff;
+        #solve-clear-variables,
+        #module-clear-fields-btn,
+        .btn-clear-module {
+            border: 1px solid #b91c1c !important;
+            background: #b91c1c !important;
+            color: #ffffff !important;
             font-weight: 700;
             text-decoration: none;
             cursor: pointer;
             transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
         }
-        #solve-clear-variables:hover {
-            background: #991b1b;
-            border-color: #991b1b;
-            color: #ffffff;
+        #solve-clear-variables:hover,
+        #module-clear-fields-btn:hover,
+        .btn-clear-module:hover {
+            background: #991b1b !important;
+            border-color: #991b1b !important;
+            color: #ffffff !important;
         }
-        #solve-clear-variables:focus-visible {
+        #solve-clear-variables:focus-visible,
+        #module-clear-fields-btn:focus-visible,
+        .btn-clear-module:focus-visible {
             outline: 3px solid #fbbf24;
             outline-offset: 2px;
+        }
+        body.light-mode #solve-clear-variables,
+        body.light-mode #module-clear-fields-btn,
+        body.light-mode .btn-clear-module {
+            border-color: #b91c1c !important;
+            background: #b91c1c !important;
+            color: #ffffff !important;
+        }
+        body.light-mode #solve-clear-variables:hover,
+        body.light-mode #module-clear-fields-btn:hover,
+        body.light-mode .btn-clear-module:hover {
+            border-color: #991b1b !important;
+            background: #991b1b !important;
+            color: #ffffff !important;
         }
         @media (max-width: 440px) {
             #central-utility-bar .utility-control {
@@ -3895,9 +3915,7 @@
                                     <span aria-hidden="true" class="text-amber-400 text-xs shrink-0">💡</span>
                                     <h3 class="text-xs font-bold text-amber-300 font-mono tracking-wide truncate" id="module-example-title">Guia Prático</h3>
                                 </div>
-                                <button type="button" onclick="app.clearActiveModuleFields()" class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-800/90 text-slate-300 hover:text-white text-[11px] font-bold hover:bg-slate-700 transition flex items-center gap-1 shrink-0 shadow-sm" title="Limpar todos os campos deste módulo">
-                                    <span aria-hidden="true">✕</span> Limpar campos
-                                </button>
+                                <button id="module-clear-fields-btn" type="button" onclick="app.clearActiveModuleFields()" class="btn-clear-module px-2.5 py-1 rounded-lg border border-red-700 bg-red-700 hover:bg-red-800 text-[11px] font-bold transition flex items-center justify-center shrink-0 shadow-sm" title="Limpar todos os campos deste módulo">Limpar Campos</button>
                             </div>
                             <div class="text-xs text-slate-300 leading-relaxed" id="module-example-description">
                                 <!-- Preenchido dinamicamente com orientações concisas e exemplos práticos -->
@@ -3986,9 +4004,7 @@
                                         <p class="text-[11px] text-slate-500 font-mono mt-0.5">TVM · Valor do dinheiro no tempo e amortização</p>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <button type="button" onclick="app.clearTvmModule()" title="Limpar todos os campos de TVM e amortização" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
-                                            <span aria-hidden="true">↺</span> Limpar TVM
-                                        </button>
+                                        <button type="button" onclick="app.clearTvmModule()" title="Limpar todos os campos de TVM e amortização" class="btn-clear-module inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-700 hover:bg-red-800 border border-red-700 transition shadow-sm">Limpar TVM</button>
                                         <span class="text-xs text-slate-400 font-mono hidden sm:inline">Softkeys F1–F5</span>
                                     </div>
                                 </div>
@@ -4165,9 +4181,7 @@
                                         <p class="text-[11px] text-slate-500 font-mono mt-0.5">CFLO · VPL e TIR</p>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <button type="button" onclick="app.clearActiveModule('CFLO')" title="Limpar taxa de desconto, fluxos e resultados de CFLO" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
-                                            <span aria-hidden="true">↺</span> Limpar CFLO
-                                        </button>
+                                        <button type="button" onclick="app.clearActiveModule('CFLO')" title="Limpar taxa de desconto, fluxos e resultados de CFLO" class="btn-clear-module inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-700 hover:bg-red-800 border border-red-700 transition shadow-sm">Limpar CFLO</button>
                                         <span class="text-xs text-slate-400 font-mono hidden sm:inline">Análise de investimento</span>
                                     </div>
                                 </div>
