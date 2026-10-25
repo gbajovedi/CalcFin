@@ -3776,6 +3776,17 @@
                 <button id="btn-tvm-toggle" type="button" aria-pressed="false" onclick="app.toggleBgnEnd()" class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-mono font-bold bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-sky-400 transition">
                     <span id="label-tvm-indicator">TVM: END</span>
                 </button>
+                <div id="decimals-control-group" class="inline-flex items-center rounded-lg border border-slate-700 bg-slate-800/90 p-0.5 text-[11px] sm:text-xs font-mono font-bold shadow-sm" role="group" aria-label="Controle de casas decimais">
+                    <button id="btn-dec-decrease" type="button" onclick="app.decrementDecimals()" class="h-6 w-6 sm:h-7 sm:w-7 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center font-bold text-sm leading-none focus:outline-none focus:ring-1 focus:ring-amber-400" title="Diminuir casas decimais" aria-label="Diminuir casas decimais">
+                        −
+                    </button>
+                    <span id="label-decimals-indicator" class="px-2 text-slate-200 select-none text-center whitespace-nowrap min-w-[3.5rem]" title="Quantidade de dígitos após a vírgula">
+                        4 casas
+                    </span>
+                    <button id="btn-dec-increase" type="button" onclick="app.incrementDecimals()" class="h-6 w-6 sm:h-7 sm:w-7 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center font-bold text-sm leading-none focus:outline-none focus:ring-1 focus:ring-amber-400" title="Aumentar casas decimais" aria-label="Aumentar casas decimais">
+                        +
+                    </button>
+                </div>
                 <button id="btn-shortcuts-help" type="button" onclick="app.toggleShortcuts()" aria-haspopup="dialog" aria-controls="shortcutsDialog" class="px-2.5 py-1 sm:px-3 sm:py-2 rounded-lg text-[11px] sm:text-xs font-bold border border-slate-700 bg-slate-800/90 text-slate-200 hover:bg-slate-700 transition inline-flex items-center gap-1 sm:gap-1.5" title="Ver atalhos do teclado">
                     <span aria-hidden="true">⌨</span><span>Atalhos</span>
                 </button>
@@ -4725,7 +4736,7 @@
                                 <div class="flex items-center gap-2.5">
                                     <span id="lcdModeBadge" class="font-bold">RPN</span>
                                     <span id="lcdTvmBadge" class="font-bold">END</span>
-                                    <span id="lcdDecBadge" class="font-bold">2 DEC</span>
+                                    <span id="lcdDecBadge" class="font-bold">4 DEC</span>
                                 </div>
                             </div>
 
@@ -4736,7 +4747,7 @@
 
                             <!-- Linha 2: Valor Principal do Registrador X -->
                             <div id="lcdLine2" class="text-right text-2xl sm:text-4xl font-black tracking-tight text-slate-950 my-1 leading-tight">
-                                0,00
+                                0,0000
                             </div>
 
                             <!-- Linha de Softkeys F1 a F6 no rodapé do LCD (ALINHAMENTO 1:1 COM OS CHEVRONS) -->
@@ -4973,7 +4984,7 @@
             // Configurações e Registradores Oficiais HP 17bII+
             mode: 'RPN', // 'RPN' ou 'ALG'
             shiftActive: false,
-            decimals: 2,
+            decimals: 4,
             currentMenu: 'SOLVE', // 'MAIN', 'MATH', 'MODES', 'SOLVE'
             registers: new Array(10).fill(0), // Registradores 0 a 9 de armazenamento oficial
             stoState: null, // null ou 'pending'
@@ -5375,6 +5386,7 @@
                 const modeInd = document.getElementById('label-mode-indicator');
                 if (modeInd) modeInd.textContent = `MODO: ${this.mode}`;
                 this.setTvmMode(this.tvm.isBegin);
+                this.updateDecimalsUI();
 
                 const help = document.getElementById('shortcutsDock');
                 if (help) { help.hidden = true; help.classList.add('hidden'); help.setAttribute('aria-hidden', 'true'); }
@@ -5387,7 +5399,7 @@
             // Sanitização e Arredondamento Limpo de Números
             cleanFloat(num, decimals = this.decimals, fallback = null) {
                 if (num === null || num === undefined || isNaN(num) || !isFinite(num)) return fallback;
-                const d = (decimals !== null && decimals !== undefined) ? decimals : 2;
+                const d = (decimals !== null && decimals !== undefined) ? decimals : 4;
                 return Number(Number(num).toFixed(d));
             },
 
@@ -8441,13 +8453,51 @@
                 this.setMode(this.mode === 'RPN' ? 'ALG' : 'RPN');
             },
 
+            updateDecimalsUI() {
+                const decEl = document.getElementById('lcdDecBadge');
+                if (decEl) decEl.textContent = `${this.decimals} DEC`;
+
+                const decInd = document.getElementById('label-decimals-indicator');
+                if (decInd) decInd.textContent = `${this.decimals} ${this.decimals === 1 ? 'casa' : 'casas'}`;
+
+                const btnDec = document.getElementById('btn-dec-decrease');
+                if (btnDec) {
+                    btnDec.disabled = this.decimals <= 0;
+                    btnDec.classList.toggle('opacity-40', this.decimals <= 0);
+                    btnDec.classList.toggle('cursor-not-allowed', this.decimals <= 0);
+                }
+
+                const btnInc = document.getElementById('btn-dec-increase');
+                if (btnInc) {
+                    btnInc.disabled = this.decimals >= 11;
+                    btnInc.classList.toggle('opacity-40', this.decimals >= 11);
+                    btnInc.classList.toggle('cursor-not-allowed', this.decimals >= 11);
+                }
+            },
+
             setDecimals(d) {
-                this.decimals = d;
-                document.getElementById('lcdLine1').textContent = `Exibição fixada em ${d} casas decimais`;
+                this.decimals = Math.max(0, Math.min(11, d));
+                const lcd1 = document.getElementById('lcdLine1');
+                if (lcd1) lcd1.textContent = `Exibição fixada em ${this.decimals} casas decimais`;
+                this.updateDecimalsUI();
                 this.renderSolveVariables();
                 this.syncStateToInputs();
                 this.updateLCD();
                 this.saveWorkspaceState();
+            },
+
+            incrementDecimals() {
+                this.triggerKeyFeedback();
+                if (this.decimals < 11) {
+                    this.setDecimals(this.decimals + 1);
+                }
+            },
+
+            decrementDecimals() {
+                this.triggerKeyFeedback();
+                if (this.decimals > 0) {
+                    this.setDecimals(this.decimals - 1);
+                }
             },
 
             setTvmMode(isBegin) {
@@ -10651,6 +10701,7 @@
                         version: 1,
                         mode: this.mode,
                         decimals: this.decimals,
+                        hasCustomDecimals: true,
                         tvm: {
                             N: this.tvm.N,
                             I: this.tvm.I,
@@ -10699,7 +10750,13 @@
                         this.mode = state.mode;
                     }
                     if (typeof state.decimals === 'number' && state.decimals >= 0 && state.decimals <= 11) {
-                        this.decimals = state.decimals;
+                        if (state.decimals === 2 && !state.hasCustomDecimals) {
+                            this.decimals = 4;
+                        } else {
+                            this.decimals = state.decimals;
+                        }
+                    } else {
+                        this.decimals = 4;
                     }
                     if (state.tvm && typeof state.tvm === 'object') {
                         const isLegacyDemoTvm = state.tvm.N === 12 && state.tvm.I === 12 && state.tvm.PV === -10000 && state.tvm.PMT === 0 && state.tvm.FV === 0;
@@ -10786,7 +10843,7 @@
                 }
 
                 this.mode = 'RPN';
-                this.decimals = 2;
+                this.decimals = 4;
                 this.registers = new Array(10).fill(0);
                 this.renderTapeRegisters();
                 this.shiftActive = false;
