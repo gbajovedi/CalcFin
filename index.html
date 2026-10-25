@@ -4144,7 +4144,7 @@
                                                 </div>
                                                 <span id="role-tvm-FV" class="text-[10px] font-semibold text-slate-500 shrink-0 text-right mt-0.5">Dado TVM</span>
                                             </div>
-                                            <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-tvm-FV" placeholder="Insira os dados" value="" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncInputToState('tvm', 'FV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                            <input type="text" inputmode="decimal" maxlength="18" autocomplete="off" spellcheck="false" id="input-tvm-FV" placeholder="Insira os dados" value="0.0000" oninput="app.handleNumericInput(this, {allowNegative:true, allowDecimal:true, maxLength:18}); app.syncInputToState('tvm', 'FV', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
                                         </div>
                                         <div class="grid grid-cols-1 gap-1.5 mt-2" id="actions-tvm-FV">
                                             <button id="btn-tvm-FV" onclick="app.calculateTVM('FV')" class="w-full py-1 bg-sky-600 hover:bg-sky-500 text-white rounded text-xs font-bold transition">Calcular FV</button>
@@ -4162,7 +4162,7 @@
                                                 </div>
                                                 <span class="text-[10px] font-semibold text-slate-500 shrink-0 text-right mt-0.5">Config.</span>
                                             </div>
-                                            <input type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" id="input-tvm-PYR" placeholder="Insira os dados" value="" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:false, maxLength:3}); app.syncInputToState('tvm', 'PYR', this.value)" onblur="app.syncInputToState('tvm', 'PYR', this.value);" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                            <input type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" id="input-tvm-PYR" placeholder="Insira os dados" value="12" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:false, maxLength:3}); app.syncInputToState('tvm', 'PYR', this.value)" onblur="app.syncInputToState('tvm', 'PYR', this.value);" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
                                         </div>
                                         <div class="mt-2" id="tvm-regime-container">
                                             <div class="flex items-center justify-between mb-1">
@@ -5099,8 +5099,8 @@
                 I: null,
                 PV: null,
                 PMT: null,
-                FV: null,
-                PYR: null,
+                FV: 0,
+                PYR: 12,
                 isBegin: false
             },
 
@@ -10929,15 +10929,15 @@
                     if (state.tvm && typeof state.tvm === 'object') {
                         const isLegacyDemoTvm = state.tvm.N === 12 && state.tvm.I === 12 && state.tvm.PV === -10000 && state.tvm.PMT === 0 && state.tvm.FV === 0;
                         if (isLegacyDemoTvm) {
-                            this.tvm = { N: null, I: null, PV: null, PMT: null, FV: null, PYR: 12, isBegin: !!state.tvm.isBegin };
+                            this.tvm = { N: null, I: null, PV: null, PMT: null, FV: 0, PYR: 12, isBegin: !!state.tvm.isBegin };
                         } else {
                             Object.assign(this.tvm, {
                                 N: (state.tvm.N !== null && state.tvm.N !== undefined && state.tvm.N !== '') ? Number(state.tvm.N) : null,
                                 I: (state.tvm.I !== null && state.tvm.I !== undefined && state.tvm.I !== '') ? Number(state.tvm.I) : null,
                                 PV: (state.tvm.PV !== null && state.tvm.PV !== undefined && state.tvm.PV !== '') ? Number(state.tvm.PV) : null,
                                 PMT: (state.tvm.PMT !== null && state.tvm.PMT !== undefined && state.tvm.PMT !== '') ? Number(state.tvm.PMT) : null,
-                                FV: (state.tvm.FV !== null && state.tvm.FV !== undefined && state.tvm.FV !== '') ? Number(state.tvm.FV) : null,
-                                PYR: (state.tvm && state.tvm.PYR) ? Number(state.tvm.PYR) : null,
+                                FV: (state.tvm.FV !== null && state.tvm.FV !== undefined && state.tvm.FV !== '') ? Number(state.tvm.FV) : (state.tvm.FV === null ? null : 0),
+                                PYR: (state.tvm.PYR !== null && state.tvm.PYR !== undefined && state.tvm.PYR !== '') ? Number(state.tvm.PYR) : (state.tvm.PYR === null ? null : 12),
                                 isBegin: !!state.tvm.isBegin
                             });
                         }
@@ -11019,7 +11019,7 @@
                 this.stack = { x: 0, y: 0, z: 0, t: 0, lastX: 0 };
                 this.entry = { buffer: '0', isEntering: false, hasDot: false };
                 this.alg = { pendingOp: null, operand1: 0 };
-                this.tvm = { N: null, I: null, PV: null, PMT: null, FV: null, PYR: null, isBegin: false };
+                this.tvm = { N: null, I: null, PV: null, PMT: null, FV: 0, PYR: 12, isBegin: false };
                 this.cflo = [];
                 this.stats = { pairs: [] };
                 this.tape = ['*** PADRÃO DE FÁBRICA RESTAURADO ***'];
