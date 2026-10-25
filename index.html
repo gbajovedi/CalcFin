@@ -5030,6 +5030,8 @@
     <script>
         const app = {
             // Configurações e Registradores Oficiais HP 17bII+
+            activeTab: 'SOLVE',
+            mobileView: 'calculator',
             mode: 'RPN', // 'RPN' ou 'ALG'
             shiftActive: false,
             decimals: 4,
@@ -5414,11 +5416,11 @@
                 this.setupStickyResultOffset();
                 const hadSavedState = this.loadWorkspaceState();
                 if (!hadSavedState) {
-                    this.selectFormula('coef_financiamento_carencia_premio');
+                    this.selectFormula('coef_financiamento_carencia_premio', false, false);
                     this.addTapeEntry('*** HP 17bII+ SILVER INICIADA ***');
                 } else {
                     const formulaId = (this.solve && this.solve.activeFormulaId) ? this.solve.activeFormulaId : 'coef_financiamento_carencia_premio';
-                    this.selectFormula(formulaId, true);
+                    this.selectFormula(formulaId, true, false);
                     this.renderTape();
                 }
                 this.renderCatalog();
@@ -5428,8 +5430,32 @@
                 this.syncStateToInputs();
                 this.setupKeyboardListeners();
                 this.initMobileFeedback();
-                this.setMobileView('calculator', false);
-                this.updateModuleToolbar('SOLVE');
+
+                // Determinar aba ativa a reabrir (última acessada pelo usuário)
+                let targetTab = 'SOLVE';
+                try {
+                    const directTab = localStorage.getItem('hp17bii-active-tab');
+                    if (directTab) targetTab = directTab;
+                } catch (e) {}
+                if (this.activeTab) {
+                    targetTab = this.activeTab;
+                }
+                const validTabs = ['SOLVE', 'TVM', 'CFLO', 'FIN_TOOLS', 'BUS_SUM', 'TIME', 'CURRX', 'TAPE'];
+                if (!validTabs.includes(targetTab)) {
+                    targetTab = 'SOLVE';
+                }
+                this.switchTab(targetTab);
+
+                // Determinar visualização mobile (calculadora ou ferramentas)
+                let targetMobileView = 'calculator';
+                try {
+                    const directMobile = localStorage.getItem('hp17bii-mobile-view');
+                    if (directMobile) targetMobileView = directMobile;
+                } catch (e) {}
+                if (this.mobileView) {
+                    targetMobileView = this.mobileView;
+                }
+                this.setMobileView(targetMobileView, false);
 
                 // Sincronizar indicadores visuais
                 const modeInd = document.getElementById('label-mode-indicator');
@@ -5549,7 +5575,7 @@
             },
 
             // Seleção de Fórmula no Catálogo
-            selectFormula(formulaId, preserveVars = false) {
+            selectFormula(formulaId, preserveVars = false, shouldSwitchTab = true) {
                 if (formulaId === 'taxa_pro_rata_die_atalho') formulaId = 'taxa_pro_rata_die';
                 const form = this.formulas.find(f => f.id === formulaId);
                 if (!form) return;
@@ -5613,8 +5639,10 @@
                 this.renderSolveVariables();
                 this.renderCatalog();
                 this.updateLCD();
-                this.switchTab('SOLVE');
-                this.saveWorkspaceState();
+                if (shouldSwitchTab) {
+                    this.switchTab('SOLVE');
+                    this.saveWorkspaceState();
+                }
             },
 
             loadFavoriteFormulas() {
@@ -10867,6 +10895,8 @@
                 try {
                     const state = {
                         version: 1,
+                        activeTab: this.activeTab || 'SOLVE',
+                        mobileView: this.mobileView || 'calculator',
                         mode: this.mode,
                         decimals: this.decimals,
                         hasCustomDecimals: true,
@@ -10913,6 +10943,13 @@
                     if (!raw) return false;
                     const state = JSON.parse(raw);
                     if (!state || typeof state !== 'object') return false;
+
+                    if (state.activeTab && typeof state.activeTab === 'string') {
+                        this.activeTab = state.activeTab;
+                    }
+                    if (state.mobileView && typeof state.mobileView === 'string') {
+                        this.mobileView = state.mobileView;
+                    }
 
                     if (state.mode === 'RPN' || state.mode === 'ALG') {
                         this.mode = state.mode;
@@ -11025,7 +11062,7 @@
                 this.tape = ['*** PADRÃO DE FÁBRICA RESTAURADO ***'];
                 this.lastResult = null;
 
-                this.selectFormula('coef_financiamento_carencia_premio');
+                this.selectFormula('coef_financiamento_carencia_premio', false, false);
                 this.renderCatalog();
                 this.syncStateToInputs();
                 this.renderCashFlows();
@@ -11042,7 +11079,13 @@
                 try {
                     localStorage.removeItem('hp17bii-workspace-state');
                     localStorage.removeItem('hp17bii-favorites');
+                    localStorage.removeItem('hp17bii-active-tab');
+                    localStorage.removeItem('hp17bii-mobile-view');
                 } catch (e) {}
+                this.activeTab = 'SOLVE';
+                this.mobileView = 'calculator';
+                this.switchTab('SOLVE');
+                this.setMobileView('calculator', false);
                 this.favoriteFormulas = new Set(['coef_financiamento_carencia_premio', 'converter_taxas_equivalentes', 'taxa_pro_rata_die']);
                 this.favoritesOnlyFilter = false;
                 this.setModuleActionFeedback('Calculadora reiniciada para os padrões de fábrica.', 'success');
@@ -11160,6 +11203,13 @@
                 // Garante que o painel central comece no topo ao mudar de módulo
                 const scrollable = document.getElementById('centralPanelScrollable');
                 if (scrollable) scrollable.scrollTop = 0;
+
+                // Armazena a última aba aberta pelo usuário
+                this.activeTab = tabId;
+                try {
+                    localStorage.setItem('hp17bii-active-tab', tabId);
+                } catch (e) {}
+                this.saveWorkspaceState();
             },
 
             // Verifica se a sessão atual está em modo celular / dispositivo móvel
@@ -11398,6 +11448,12 @@
             // Alternância de visualização em tablets e celulares.
             setMobileView(view, shouldScroll = true) {
                 const normalizedView = view === 'tools' ? 'tools' : 'calculator';
+                this.mobileView = normalizedView;
+                try {
+                    localStorage.setItem('hp17bii-mobile-view', normalizedView);
+                } catch (e) {}
+                this.saveWorkspaceState();
+
                 document.body.classList.toggle('mobile-view-calc', normalizedView === 'calculator');
                 document.body.classList.toggle('mobile-view-tools', normalizedView === 'tools');
 
