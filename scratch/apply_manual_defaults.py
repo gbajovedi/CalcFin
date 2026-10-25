@@ -100,3 +100,4 @@ print(f"SHA-256 Calculadora Financeira 17bIi.html: {h1}")
 print(f"SHA-256 index.html:                       {h2}")
 assert h1 == h2, "Hashes do not match!"
 print("PARITY VERIFIED: Both files are 100% byte-for-byte identical!")
+
