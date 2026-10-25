@@ -11119,18 +11119,24 @@
             },
 
             // Emite feedback tátil (vibração háptica em Android e pulso sub-grave para iOS/chassi)
-            triggerHaptic(duration = 35) {
-                if (!this.hapticFeedbackEnabled) return;
+            triggerHaptic(duration = 40) {
+                if (!this.hapticFeedbackEnabled) return false;
+                let vibrated = false;
                 // 1. Vibração de hardware nos dispositivos móveis compatíveis (Android)
                 if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
                     try {
-                        navigator.vibrate(duration);
+                        // Tenta array de pulso sólido (40ms-60ms) compatível com todas as marcas
+                        vibrated = navigator.vibrate([duration]);
+                        if (!vibrated) {
+                            vibrated = navigator.vibrate(duration);
+                        }
                     } catch (e) {
-                        // Silencioso se bloqueado por permissão
+                        try { vibrated = navigator.vibrate(duration); } catch (err) {}
                     }
                 }
                 // 2. Pulso tátil acústico no chassi (resposta tátil real no diafragma do falante em iOS e desktop)
                 this.playHapticThump();
+                return vibrated;
             },
 
             // Emite pulso ultra-grave de curta duração que gera impacto tátil no falante do dispositivo
@@ -11141,32 +11147,39 @@
                     if (!this.audioCtx) {
                         this.audioCtx = new AudioCtx();
                     }
+                    const play = () => {
+                        try {
+                            const now = this.audioCtx.currentTime;
+                            const osc = this.audioCtx.createOscillator();
+                            const gain = this.audioCtx.createGain();
+                            osc.type = 'sine';
+                            // Onda senoidal de 70Hz a 35Hz (sub-graves puros em 25ms para impacto físico)
+                            osc.frequency.setValueAtTime(70, now);
+                            osc.frequency.exponentialRampToValueAtTime(35, now + 0.025);
+                            gain.gain.setValueAtTime(0.4, now);
+                            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+                            osc.connect(gain);
+                            gain.connect(this.audioCtx.destination);
+                            osc.start(now);
+                            osc.stop(now + 0.028);
+                        } catch (e) {}
+                    };
+
                     if (this.audioCtx.state === 'suspended') {
-                        this.audioCtx.resume();
+                        this.audioCtx.resume().then(play).catch(() => {});
+                    } else {
+                        play();
                     }
-                    const now = this.audioCtx.currentTime;
-                    const osc = this.audioCtx.createOscillator();
-                    const gain = this.audioCtx.createGain();
-                    osc.type = 'sine';
-                    // Onda senoidal de 65Hz a 32Hz (sub-graves puros em 24ms para impacto físico)
-                    osc.frequency.setValueAtTime(65, now);
-                    osc.frequency.exponentialRampToValueAtTime(32, now + 0.024);
-                    gain.gain.setValueAtTime(0.35, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.024);
-                    osc.connect(gain);
-                    gain.connect(this.audioCtx.destination);
-                    osc.start(now);
-                    osc.stop(now + 0.026);
                 } catch (e) {}
             },
 
-            // Disparo de áudio (desktop e celular) e feedback tátil (apenas celular) EXCLUSIVAMENTE quando o botão é clicado/digitado
+            // Disparo de áudio e feedback tátil EXCLUSIVAMENTE quando o botão é clicado/digitado
             triggerKeyFeedback() {
                 if (this.mobileFeedbackEnabled) {
                     this.playKeyClick();
                 }
-                if (this.hapticFeedbackEnabled && this.isMobileMode()) {
-                    this.triggerHaptic(35);
+                if (this.hapticFeedbackEnabled) {
+                    this.triggerHaptic(40);
                 }
             },
 
@@ -11235,13 +11248,19 @@
                 this.updateFeedbackToggleUI();
 
                 const status = this.hapticFeedbackEnabled ? 'ON' : 'OFF';
-                const lcd1 = document.getElementById('lcdLine1');
-                if (lcd1) lcd1.textContent = `Vibração: ${status}`;
+                let diag = '';
                 if (this.hapticFeedbackEnabled) {
-                    this.triggerHaptic(50);
+                    const vibrated = this.triggerHaptic(50);
+                    if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') {
+                        diag = ' (Somente áudio - iOS sem vibração)';
+                    } else if (vibrated === false) {
+                        diag = ' (Verifique vibração do Android/HTTPS)';
+                    }
                 } else if (this.mobileFeedbackEnabled) {
                     this.playKeyClick();
                 }
+                const lcd1 = document.getElementById('lcdLine1');
+                if (lcd1) lcd1.textContent = `Vibração: ${status}${diag}`;
                 this.updateLCD();
             },
 
