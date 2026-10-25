@@ -4162,7 +4162,7 @@
                                                 </div>
                                                 <span class="text-[10px] font-semibold text-slate-500 shrink-0 text-right mt-0.5">Config.</span>
                                             </div>
-                                            <input type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" id="input-tvm-PYR" placeholder="Insira os dados" value="12" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:false, maxLength:3}); app.syncInputToState('tvm', 'PYR', this.value)" onblur="app.syncInputToState('tvm', 'PYR', this.value);" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
+                                            <input type="text" inputmode="numeric" maxlength="3" autocomplete="off" spellcheck="false" id="input-tvm-PYR" placeholder="Insira os dados" value="1" oninput="app.handleNumericInput(this, {allowNegative:false, allowDecimal:false, maxLength:3}); app.syncInputToState('tvm', 'PYR', this.value)" onblur="app.syncInputToState('tvm', 'PYR', this.value);" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-500/50">
                                         </div>
                                         <div class="mt-2" id="tvm-regime-container">
                                             <div class="flex items-center justify-between mb-1">
@@ -5100,7 +5100,7 @@
                 PV: null,
                 PMT: null,
                 FV: 0,
-                PYR: 12,
+                PYR: 1,
                 isBegin: false
             },
 
@@ -8771,8 +8771,8 @@
                 // 1. Ler e validar P/YR (não auto-preenche 12 na interface)
                 const pyrField = document.getElementById('input-tvm-PYR');
                 const rawPyr = (pyrField && pyrField.value.trim() !== '') ? this.parseNumericValue(pyrField.value) : null;
-                const pyr = (rawPyr && rawPyr > 0) ? rawPyr : 12;
-                this.tvm.PYR = rawPyr;
+                const pyr = (rawPyr && rawPyr > 0) ? rawPyr : 1;
+                this.tvm.PYR = pyr;
 
                 // 2. Se o alvo não for N, N é obrigatório e deve ser > 0
                 if (target !== 'N') {
@@ -9099,6 +9099,14 @@
                 const lcdLine1 = document.getElementById('lcdLine1');
 
                 if (tabId === 'TVM') {
+                    const inputFv = document.getElementById('input-tvm-FV');
+                    const inputPyr = document.getElementById('input-tvm-PYR');
+                    if (this.tvm.FV === null || this.tvm.FV === undefined || this.tvm.FV === '' || (inputFv && inputFv.value.trim() === '')) {
+                        this.tvm.FV = 0;
+                    }
+                    if (this.tvm.PYR === null || this.tvm.PYR === undefined || this.tvm.PYR === '' || this.tvm.PYR === 12 || (inputPyr && (inputPyr.value.trim() === '' || inputPyr.value.trim() === '12'))) {
+                        this.tvm.PYR = 1;
+                    }
                     this.syncStateToInputs(false);
                     this.updateTvmLcdHeader();
                 } else if (tabId === 'CFLO') {
@@ -9160,7 +9168,7 @@
                 const fvField = document.getElementById('input-tvm-FV');
 
                 let balance = Math.abs(this.tvm.PV !== null ? this.tvm.PV : (pvField ? this.parseNumericValue(pvField.value) || 0 : 0));
-                const pyr = this.tvm.PYR || 12;
+                const pyr = this.tvm.PYR || 1;
                 const iRate = this.tvm.I !== null ? this.tvm.I : (iField ? this.parseNumericValue(iField.value) || 0 : 0);
                 const i = pyr !== 0 ? (iRate / 100) / pyr : 0;
                 const pmt = Math.abs(this.tvm.PMT !== null ? this.tvm.PMT : (pmtField ? this.parseNumericValue(pmtField.value) || 0 : 0));
@@ -10929,15 +10937,15 @@
                     if (state.tvm && typeof state.tvm === 'object') {
                         const isLegacyDemoTvm = state.tvm.N === 12 && state.tvm.I === 12 && state.tvm.PV === -10000 && state.tvm.PMT === 0 && state.tvm.FV === 0;
                         if (isLegacyDemoTvm) {
-                            this.tvm = { N: null, I: null, PV: null, PMT: null, FV: 0, PYR: 12, isBegin: !!state.tvm.isBegin };
+                            this.tvm = { N: null, I: null, PV: null, PMT: null, FV: 0, PYR: 1, isBegin: !!state.tvm.isBegin };
                         } else {
                             Object.assign(this.tvm, {
                                 N: (state.tvm.N !== null && state.tvm.N !== undefined && state.tvm.N !== '') ? Number(state.tvm.N) : null,
                                 I: (state.tvm.I !== null && state.tvm.I !== undefined && state.tvm.I !== '') ? Number(state.tvm.I) : null,
                                 PV: (state.tvm.PV !== null && state.tvm.PV !== undefined && state.tvm.PV !== '') ? Number(state.tvm.PV) : null,
                                 PMT: (state.tvm.PMT !== null && state.tvm.PMT !== undefined && state.tvm.PMT !== '') ? Number(state.tvm.PMT) : null,
-                                FV: (state.tvm.FV !== null && state.tvm.FV !== undefined && state.tvm.FV !== '') ? Number(state.tvm.FV) : (state.tvm.FV === null ? null : 0),
-                                PYR: (state.tvm.PYR !== null && state.tvm.PYR !== undefined && state.tvm.PYR !== '') ? Number(state.tvm.PYR) : (state.tvm.PYR === null ? null : 12),
+                                FV: (state.tvm.FV !== null && state.tvm.FV !== undefined && state.tvm.FV !== '') ? Number(state.tvm.FV) : 0,
+                                PYR: (state.tvm.PYR !== null && state.tvm.PYR !== undefined && state.tvm.PYR !== '' && state.tvm.PYR !== 12) ? Number(state.tvm.PYR) : 1,
                                 isBegin: !!state.tvm.isBegin
                             });
                         }
@@ -11019,7 +11027,7 @@
                 this.stack = { x: 0, y: 0, z: 0, t: 0, lastX: 0 };
                 this.entry = { buffer: '0', isEntering: false, hasDot: false };
                 this.alg = { pendingOp: null, operand1: 0 };
-                this.tvm = { N: null, I: null, PV: null, PMT: null, FV: 0, PYR: 12, isBegin: false };
+                this.tvm = { N: null, I: null, PV: null, PMT: null, FV: 0, PYR: 1, isBegin: false };
                 this.cflo = [];
                 this.stats = { pairs: [] };
                 this.tape = ['*** PADRÃO DE FÁBRICA RESTAURADO ***'];
@@ -11150,6 +11158,20 @@
                 const solveClearButton = document.getElementById('solve-clear-variables');
                 if (solveClearButton) solveClearButton.hidden = tabId !== 'SOLVE';
                 this.updateModuleToolbar(tabId);
+
+                // Pré-preenche FV=0 e P/YR=1 ao abrir a aba de matemática financeira
+                if (tabId === 'TVM') {
+                    const inputFv = document.getElementById('input-tvm-FV');
+                    const inputPyr = document.getElementById('input-tvm-PYR');
+                    if (this.tvm.FV === null || this.tvm.FV === undefined || this.tvm.FV === '' || (inputFv && inputFv.value.trim() === '')) {
+                        this.tvm.FV = 0;
+                        if (inputFv) inputFv.value = (0).toFixed(this.decimals !== undefined ? this.decimals : 4);
+                    }
+                    if (this.tvm.PYR === null || this.tvm.PYR === undefined || this.tvm.PYR === '' || this.tvm.PYR === 12 || (inputPyr && (inputPyr.value.trim() === '' || inputPyr.value.trim() === '12'))) {
+                        this.tvm.PYR = 1;
+                        if (inputPyr) inputPyr.value = '1';
+                    }
+                }
 
                 // Expande o catálogo automaticamente na aba Fórmulas (SOLVE) e recolhe nas demais abas
                 this.toggleCatalog(tabId !== 'SOLVE');
