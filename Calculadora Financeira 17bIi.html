@@ -2617,8 +2617,9 @@
             outline-offset: 3px;
         }
 
-        /* Alternância de som e feedback tátil das teclas no celular (toggle switch ao lado do tema) */
-        .sound-toggle {
+        /* Alternância de som e feedback tátil das teclas (toggle switches ao lado do tema) */
+        .sound-toggle,
+        .haptic-toggle {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -2633,15 +2634,31 @@
             transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
             touch-action: manipulation;
         }
-        .sound-icon {
+
+        /* O toggle de feedback tátil é exibido exclusivamente no modo celular */
+        @media (min-width: 1024px) {
+            .haptic-toggle {
+                display: none !important;
+            }
+            body.is-mobile-device .haptic-toggle {
+                display: inline-flex !important;
+            }
+        }
+
+        .sound-icon,
+        .haptic-icon {
             width: 16px;
             height: 16px;
             flex: 0 0 16px;
             transition: color .18s ease, opacity .18s ease, transform .18s ease;
         }
-        .sound-icon-off { color: #64748b; }
+        .sound-icon-off,
+        .haptic-icon-off { color: #64748b; }
         .sound-icon-on { color: #fbbf24; }
-        .sound-switch-track {
+        .haptic-icon-on { color: #38bdf8; }
+
+        .sound-switch-track,
+        .haptic-switch-track {
             width: 42px;
             height: 26px;
             padding: 2px;
@@ -2653,7 +2670,8 @@
             border: 1px solid #64748b;
             transition: background-color .18s ease, border-color .18s ease;
         }
-        .sound-switch-knob {
+        .sound-switch-knob,
+        .haptic-switch-knob {
             width: 18px;
             height: 18px;
             flex: 0 0 18px;
@@ -2676,6 +2694,18 @@
         .sound-toggle[aria-checked="true"] .sound-icon-on { color: #fbbf24; }
         .sound-toggle[aria-checked="true"] .sound-icon-off { color: #64748b; }
 
+        /* Haptic ATIVADO (aria-checked="true") no modo escuro */
+        .haptic-toggle[aria-checked="true"] .haptic-switch-track {
+            background: #0284c7;
+            border-color: #38bdf8;
+        }
+        .haptic-toggle[aria-checked="true"] .haptic-switch-knob {
+            transform: translateX(18px);
+            background: #f0f9ff;
+        }
+        .haptic-toggle[aria-checked="true"] .haptic-icon-on { color: #38bdf8; }
+        .haptic-toggle[aria-checked="true"] .haptic-icon-off { color: #64748b; }
+
         /* Som DESATIVADO (aria-checked="false") no modo escuro */
         .sound-toggle[aria-checked="false"] .sound-switch-track {
             background: #1e293b;
@@ -2688,8 +2718,21 @@
         .sound-toggle[aria-checked="false"] .sound-icon-on { color: #475569; }
         .sound-toggle[aria-checked="false"] .sound-icon-off { color: #f87171; }
 
+        /* Haptic DESATIVADO (aria-checked="false") no modo escuro */
+        .haptic-toggle[aria-checked="false"] .haptic-switch-track {
+            background: #1e293b;
+            border-color: #475569;
+        }
+        .haptic-toggle[aria-checked="false"] .haptic-switch-knob {
+            transform: translateX(0);
+            background: #94a3b8;
+        }
+        .haptic-toggle[aria-checked="false"] .haptic-icon-on { color: #475569; }
+        .haptic-toggle[aria-checked="false"] .haptic-icon-off { color: #f87171; }
+
         /* Modo CLARO (body.light-mode) */
-        body.light-mode .sound-toggle {
+        body.light-mode .sound-toggle,
+        body.light-mode .haptic-toggle {
             background: #ffffff;
             border-color: #cbd5e1;
         }
@@ -2704,25 +2747,46 @@
         body.light-mode .sound-toggle[aria-checked="true"] .sound-icon-on { color: #b7791f; }
         body.light-mode .sound-toggle[aria-checked="true"] .sound-icon-off { color: #94a3b8; }
 
-        body.light-mode .sound-toggle[aria-checked="false"] .sound-switch-track {
+        body.light-mode .haptic-toggle[aria-checked="true"] .haptic-switch-track {
+            background: #0284c7;
+            border-color: #0369a1;
+        }
+        body.light-mode .haptic-toggle[aria-checked="true"] .haptic-switch-knob {
+            transform: translateX(18px);
+            background: #f0f9ff;
+        }
+        body.light-mode .haptic-toggle[aria-checked="true"] .haptic-icon-on { color: #0284c7; }
+        body.light-mode .haptic-toggle[aria-checked="true"] .haptic-icon-off { color: #94a3b8; }
+
+        body.light-mode .sound-toggle[aria-checked="false"] .sound-switch-track,
+        body.light-mode .haptic-toggle[aria-checked="false"] .haptic-switch-track {
             background: #e2e8f0;
             border-color: #cbd5e1;
         }
-        body.light-mode .sound-toggle[aria-checked="false"] .sound-switch-knob {
+        body.light-mode .sound-toggle[aria-checked="false"] .sound-switch-knob,
+        body.light-mode .haptic-toggle[aria-checked="false"] .haptic-switch-knob {
             transform: translateX(0);
             background: #cbd5e1;
         }
         body.light-mode .sound-toggle[aria-checked="false"] .sound-icon-on { color: #cbd5e1; }
         body.light-mode .sound-toggle[aria-checked="false"] .sound-icon-off { color: #dc2626; }
+        body.light-mode .haptic-toggle[aria-checked="false"] .haptic-icon-on { color: #cbd5e1; }
+        body.light-mode .haptic-toggle[aria-checked="false"] .haptic-icon-off { color: #dc2626; }
 
-        .sound-toggle:hover {
+        .sound-toggle:hover,
+        .haptic-toggle:hover {
             border-color: #64748b;
         }
-        body.light-mode .sound-toggle:hover {
+        body.light-mode .sound-toggle:hover,
+        body.light-mode .haptic-toggle:hover {
             border-color: #94a3b8;
         }
         .sound-toggle:focus-visible {
             outline: 3px solid #fbbf24;
+            outline-offset: 3px;
+        }
+        .haptic-toggle:focus-visible {
+            outline: 3px solid #38bdf8;
             outline-offset: 3px;
         }
 
@@ -3070,22 +3134,26 @@
         }
         @media (max-width: 540px) {
             .header-theme { gap: 0.375rem; }
-            .theme-toggle, .sound-toggle { min-width: 72px; min-height: 36px; gap: 4px; padding: 4px 6px; }
-            .theme-icon, .sound-icon { width: 14px; height: 14px; flex-basis: 14px; }
-            .theme-switch-track, .sound-switch-track { width: 36px; flex-basis: 36px; height: 22px; }
-            .theme-switch-knob, .sound-switch-knob { width: 14px; height: 14px; flex-basis: 14px; }
+            .theme-toggle, .sound-toggle, .haptic-toggle { min-width: 72px; min-height: 36px; gap: 4px; padding: 4px 6px; }
+            .theme-icon, .sound-icon, .haptic-icon { width: 14px; height: 14px; flex-basis: 14px; }
+            .theme-switch-track, .sound-switch-track, .haptic-switch-track { width: 36px; flex-basis: 36px; height: 22px; }
+            .theme-switch-knob, .sound-switch-knob, .haptic-switch-knob { width: 14px; height: 14px; flex-basis: 14px; }
             body.light-mode .theme-switch-knob { transform: translateX(16px); }
-            .sound-toggle[aria-checked="true"] .sound-switch-knob { transform: translateX(16px); }
-            body.light-mode .sound-toggle[aria-checked="true"] .sound-switch-knob { transform: translateX(16px); }
+            .sound-toggle[aria-checked="true"] .sound-switch-knob,
+            .haptic-toggle[aria-checked="true"] .haptic-switch-knob { transform: translateX(16px); }
+            body.light-mode .sound-toggle[aria-checked="true"] .sound-switch-knob,
+            body.light-mode .haptic-toggle[aria-checked="true"] .haptic-switch-knob { transform: translateX(16px); }
         }
         @media (max-width: 380px) {
             .header-theme { gap: 0.25rem; }
-            .theme-toggle, .sound-toggle { min-width: 64px; padding: 3px 4px; gap: 3px; }
-            .theme-switch-track, .sound-switch-track { width: 30px; flex-basis: 30px; height: 20px; }
-            .theme-switch-knob, .sound-switch-knob { width: 12px; height: 12px; flex-basis: 12px; }
+            .theme-toggle, .sound-toggle, .haptic-toggle { min-width: 60px; padding: 3px 4px; gap: 3px; }
+            .theme-switch-track, .sound-switch-track, .haptic-switch-track { width: 30px; flex-basis: 30px; height: 20px; }
+            .theme-switch-knob, .sound-switch-knob, .haptic-switch-knob { width: 12px; height: 12px; flex-basis: 12px; }
             body.light-mode .theme-switch-knob { transform: translateX(12px); }
-            .sound-toggle[aria-checked="true"] .sound-switch-knob { transform: translateX(12px); }
-            body.light-mode .sound-toggle[aria-checked="true"] .sound-switch-knob { transform: translateX(12px); }
+            .sound-toggle[aria-checked="true"] .sound-switch-knob,
+            .haptic-toggle[aria-checked="true"] .haptic-switch-knob { transform: translateX(12px); }
+            body.light-mode .sound-toggle[aria-checked="true"] .sound-switch-knob,
+            body.light-mode .haptic-toggle[aria-checked="true"] .haptic-switch-knob { transform: translateX(12px); }
         }
 
 
@@ -3644,9 +3712,9 @@
                 </div>
             </div>
 
-            <!-- Controles de Som (celular) e Alternância de Tema Claro/Escuro -->
+            <!-- Controles de Som, Feedback Tátil (celular) e Alternância de Tema Claro/Escuro -->
             <div class="header-theme shrink-0 flex items-center gap-1.5 sm:gap-2">
-                <!-- Botão Toggle Switch de Som das Teclas e Feedback Tátil -->
+                <!-- Botão Toggle Switch de Som das Teclas -->
                 <button id="sound-toggle" type="button" role="switch" aria-checked="true"
                     aria-label="Som e clique das teclas: ativado" title="Som e clique das teclas (Ativado)"
                     onclick="app.toggleMobileFeedback()" class="sound-toggle" aria-describedby="sound-toggle-description">
@@ -3663,7 +3731,28 @@
                         <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                         <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
                     </svg>
-                    <span id="sound-toggle-description" class="sr-only">Alto-falante mudo à esquerda e com som à direita. Liga e desliga o som mecânico e a vibração das teclas ao clicar ou digitar.</span>
+                    <span id="sound-toggle-description" class="sr-only">Alto-falante mudo à esquerda e com som à direita. Liga e desliga o som mecânico das teclas ao clicar ou digitar.</span>
+                </button>
+
+                <!-- Botão Toggle Switch de Feedback Tátil (apenas celular) -->
+                <button id="haptic-toggle" type="button" role="switch" aria-checked="true"
+                    aria-label="Feedback tátil (vibração): ativado" title="Feedback tátil / Vibração (Ativado)"
+                    onclick="app.toggleHapticFeedback()" class="haptic-toggle" aria-describedby="haptic-toggle-description">
+                    <svg class="haptic-icon haptic-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="6" y="2" width="12" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                        <line x1="2" y1="2" x2="22" y2="22"></line>
+                    </svg>
+                    <span id="haptic-switch-track" class="haptic-switch-track" aria-hidden="true">
+                        <span id="haptic-switch-knob" class="haptic-switch-knob"></span>
+                    </span>
+                    <svg class="haptic-icon haptic-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="6" y="2" width="12" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                        <path d="M2 8a12 12 0 0 0 0 8"></path>
+                        <path d="M22 8a12 12 0 0 1 0 8"></path>
+                    </svg>
+                    <span id="haptic-toggle-description" class="sr-only">Celular sem vibração à esquerda e com ondas de vibração à direita. Liga e desliga a vibração tátil das teclas no celular.</span>
                 </button>
 
                 <!-- Botão de Alternância de Tema Claro/Escuro -->
@@ -5088,9 +5177,10 @@
             alphaBuffer: '',
             alphaSubmenu: null,
 
-            // Feedback Tátil e Sonoro (apenas em modo celular)
+            // Feedback Tátil e Sonoro
             audioCtx: null,
             mobileFeedbackEnabled: true,
+            hapticFeedbackEnabled: true,
             _lastFeedbackTime: 0,
             
             // Pilha RPN (X, Y, Z, T, LastX)
@@ -11054,11 +11144,12 @@
                 }
             },
 
-            // Emite feedback tátil (vibração háptica) exclusivamente em celulares compatíveis quando um botão é acionado
-            triggerHaptic() {
+            // Emite feedback tátil (vibração háptica) exclusivamente quando habilitado e em dispositivos compatíveis
+            triggerHaptic(duration = 18) {
+                if (!this.hapticFeedbackEnabled) return;
                 if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
                     try {
-                        navigator.vibrate(18); // 18ms para simular switch mecânico
+                        navigator.vibrate(duration); // Simula switch mecânico
                     } catch (e) {
                         // Silencioso se bloqueado por permissão
                     }
@@ -11067,9 +11158,10 @@
 
             // Disparo de áudio (desktop e celular) e feedback tátil (apenas celular) EXCLUSIVAMENTE quando o botão é clicado/digitado
             triggerKeyFeedback() {
-                if (!this.mobileFeedbackEnabled) return;
-                this.playKeyClick();
-                if (this.isMobileMode()) {
+                if (this.mobileFeedbackEnabled) {
+                    this.playKeyClick();
+                }
+                if (this.hapticFeedbackEnabled && this.isMobileMode()) {
                     this.triggerHaptic();
                 }
             },
@@ -11077,11 +11169,19 @@
             // Inicialização do feedback de áudio/tátil e desbloqueio pró-ativo de áudio
             initMobileFeedback() {
                 try {
-                    const saved = localStorage.getItem('calcfin_mobile_feedback');
-                    if (saved !== null) {
-                        this.mobileFeedbackEnabled = (saved === 'true');
+                    const savedSound = localStorage.getItem('calcfin_mobile_feedback');
+                    if (savedSound !== null) {
+                        this.mobileFeedbackEnabled = (savedSound === 'true');
+                    }
+                    const savedHaptic = localStorage.getItem('calcfin_haptic_feedback');
+                    if (savedHaptic !== null) {
+                        this.hapticFeedbackEnabled = (savedHaptic === 'true');
                     }
                 } catch (e) {}
+
+                if (this.isMobileMode()) {
+                    document.body.classList.add('is-mobile-device');
+                }
 
                 // Desbloqueia o AudioContext na primeira interação do usuário (clique, toque ou tecla digitada)
                 const unlockAudio = () => {
@@ -11105,7 +11205,7 @@
                 this.updateFeedbackToggleUI();
             },
 
-            // Alternância manual de som (desktop e celular) e vibração (celular)
+            // Alternância manual de som das teclas (desktop e celular)
             toggleMobileFeedback() {
                 this.mobileFeedbackEnabled = !this.mobileFeedbackEnabled;
                 try {
@@ -11113,26 +11213,48 @@
                 } catch (e) {}
                 this.updateFeedbackToggleUI();
 
-                const isMob = this.isMobileMode();
                 const status = this.mobileFeedbackEnabled ? 'ON' : 'OFF';
-                document.getElementById('lcdLine1').textContent = isMob ? `Som/Tátil: ${status}` : `Som: ${status}`;
+                const lcd1 = document.getElementById('lcdLine1');
+                if (lcd1) lcd1.textContent = `Som: ${status}`;
                 if (this.mobileFeedbackEnabled) {
                     this.playKeyClick();
-                    if (isMob) {
-                        this.triggerHaptic();
-                    }
                 }
                 this.updateLCD();
             },
 
-            // Atualização visual do toggle switch de som das teclas
+            // Alternância manual de feedback tátil / vibração (exibido exclusivamente no modo celular)
+            toggleHapticFeedback() {
+                this.hapticFeedbackEnabled = !this.hapticFeedbackEnabled;
+                try {
+                    localStorage.setItem('calcfin_haptic_feedback', this.hapticFeedbackEnabled ? 'true' : 'false');
+                } catch (e) {}
+                this.updateFeedbackToggleUI();
+
+                const status = this.hapticFeedbackEnabled ? 'ON' : 'OFF';
+                const lcd1 = document.getElementById('lcdLine1');
+                if (lcd1) lcd1.textContent = `Vibração: ${status}`;
+                if (this.hapticFeedbackEnabled) {
+                    this.triggerHaptic(25);
+                }
+                this.updateLCD();
+            },
+
+            // Atualização visual dos toggle switches de som das teclas e feedback tátil
             updateFeedbackToggleUI() {
-                const btn = document.getElementById('sound-toggle');
-                if (btn) {
+                const btnSound = document.getElementById('sound-toggle');
+                if (btnSound) {
                     const active = !!this.mobileFeedbackEnabled;
-                    btn.setAttribute('aria-checked', active ? 'true' : 'false');
-                    btn.setAttribute('aria-label', active ? 'Som e clique das teclas: ativado' : 'Som e clique das teclas: desativado');
-                    btn.title = active ? 'Som e clique das teclas (Ativado)' : 'Som e clique das teclas (Desativado)';
+                    btnSound.setAttribute('aria-checked', active ? 'true' : 'false');
+                    btnSound.setAttribute('aria-label', active ? 'Som e clique das teclas: ativado' : 'Som e clique das teclas: desativado');
+                    btnSound.title = active ? 'Som e clique das teclas (Ativado)' : 'Som e clique das teclas (Desativado)';
+                }
+
+                const btnHaptic = document.getElementById('haptic-toggle');
+                if (btnHaptic) {
+                    const activeHaptic = !!this.hapticFeedbackEnabled;
+                    btnHaptic.setAttribute('aria-checked', activeHaptic ? 'true' : 'false');
+                    btnHaptic.setAttribute('aria-label', activeHaptic ? 'Feedback tátil (vibração): ativado' : 'Feedback tátil (vibração): desativado');
+                    btnHaptic.title = activeHaptic ? 'Feedback tátil / Vibração (Ativado)' : 'Feedback tátil / Vibração (Desativado)';
                 }
 
                 // Compatibilidade caso algum elemento legado ainda esteja no DOM
