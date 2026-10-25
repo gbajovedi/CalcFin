@@ -294,20 +294,20 @@ def run():
                             this.navigateToMenu('FIN', 'MENU FIN: Finanças e Negócios');
                             break;
                         case 1: // BUS
-                            this.navigateToMenu('BUS', 'MENU BUS: Ferramentas Comerciais');
                             this.switchTab('BUS_SUM');
+                            this.navigateToMenu('BUS', 'MENU BUS: Ferramentas Comerciais');
                             break;
                         case 2: // SUM
-                            this.navigateToMenu('SUM', 'MENU SUM: Estatística e Regressão');
                             this.switchTab('BUS_SUM');
+                            this.navigateToMenu('SUM', 'MENU SUM: Estatística e Regressão');
                             break;
                         case 3: // TIME
                             const nowStr = new Date().toLocaleTimeString('pt-BR') + ' ' + new Date().toLocaleDateString('pt-BR');
                             this.navigateToMenu('TIME', `TIME: ${nowStr}`);
                             break;
                         case 4: // SOLVE
-                            this.navigateToMenu('SOLVE', 'MENU SOLVE: Equações');
                             this.switchTab('SOLVE');
+                            this.navigateToMenu('SOLVE', 'MENU SOLVE: Equações');
                             break;
                         case 5: // CURRX
                             this.navigateToMenu('CURRX', 'CURRX: Câmbio de Moedas (1 USD = R$ 5,65)');
@@ -320,23 +320,23 @@ def run():
                 if (this.currentMenu === 'FIN') {
                     switch (index) {
                         case 0: // TVM
-                            this.navigateToMenu('TVM', 'MENU TVM: Matemática Financeira');
                             this.switchTab('TVM');
+                            this.navigateToMenu('TVM', 'MENU TVM: Matemática Financeira');
                             break;
                         case 1: // ICNV
-                            this.navigateToMenu('ICNV', 'MENU ICNV: Conversão de Taxas');
                             this.switchTab('FIN_TOOLS');
+                            this.navigateToMenu('ICNV', 'MENU ICNV: Conversão de Taxas');
                             break;
                         case 2: // CFLO
-                            this.navigateToMenu('CFLO', 'MENU CFLO: Fluxo de Caixa Descontado');
                             this.switchTab('CFLO');
+                            this.navigateToMenu('CFLO', 'MENU CFLO: Fluxo de Caixa Descontado');
                             break;
                         case 3: // BOND
                             this.navigateToMenu('BOND', 'MENU BOND: Títulos de Renda Fixa');
                             break;
                         case 4: // DEPRC
-                            this.navigateToMenu('DEPRC', 'MENU DEPRC: Depreciação de Ativos');
                             this.switchTab('FIN_TOOLS');
+                            this.navigateToMenu('DEPRC', 'MENU DEPRC: Depreciação de Ativos');
                             break;
                         case 5: // MAIN
                             this.navigateToMenu('MAIN', 'HP 17bII+ Menu Principal');
@@ -1020,30 +1020,6 @@ def run():
     content = content.replace(old_pk_text, new_pk_text)
     print("✓ Block 3: pressKey EXIT stack pop corrected")
 
-    # 4. Atualizar syncModuleToCalculator para não destruir submenus nem desviar a pilha de menus
-    old_sync = '''syncModuleToCalculator(tabId) {
-                this.currentMenu = tabId;
-                const lcdLine1 = document.getElementById('lcdLine1');'''
-
-    new_sync = '''syncModuleToCalculator(tabId) {
-                const isSubmenuMatch = (tabId === 'TVM' && (this.currentMenu === 'TVM' || this.currentMenu === 'TVM_OTHER'))
-                    || (tabId === 'FIN_TOOLS' && (this.currentMenu === 'ICNV' || this.currentMenu === 'DEPRC'))
-                    || (tabId === 'BUS_SUM' && (this.currentMenu === 'BUS' || this.currentMenu === 'SUM' || (this.currentMenu && this.currentMenu.startsWith('BUS_'))))
-                    || (this.currentMenu === tabId);
-
-                if (!isSubmenuMatch) {
-                    this.currentMenu = tabId;
-                }
-                const lcdLine1 = document.getElementById('lcdLine1');'''
-
-    if old_sync in content:
-        content = content.replace(old_sync, new_sync)
-        print("✓ Block 4: syncModuleToCalculator submenu preservation added")
-    elif 'isSubmenuMatch' in content:
-        print("✓ Block 4: syncModuleToCalculator already updated")
-    else:
-        print("✗ Block 4: old_sync not found in content")
-
     # Normalizar quebras de linha para CRLF
     content = content.replace('\r\n', '\n').replace('\n', '\r\n')
 
@@ -1075,3 +1051,4 @@ def run():
 if __name__ == '__main__':
     success = run()
     exit(0 if success else 1)
+
