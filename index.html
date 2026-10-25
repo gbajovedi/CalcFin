@@ -3877,6 +3877,19 @@
                                     <p class="text-xs text-slate-400">Preencha os valores conhecidos e escolha qual variável deseja calcular.</p>
                                 </div>
 
+                                <!-- Barra de Ações Rápidas do Solver -->
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-1 p-2 rounded-xl bg-slate-950 border border-slate-800">
+                                    <button onclick="app.startAlphaEditor()" id="btn-open-alpha" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold font-mono text-xs rounded transition inline-flex items-center gap-1 shadow-sm">
+                                        <span>🔤</span> Digitar Equação no Visor (ALPHA)
+                                    </button>
+                                    <div class="flex items-center gap-1.5 min-w-[240px]">
+                                        <input type="text" id="input-quick-equation" placeholder="Ex: LUCRO = VENDA - CUSTO" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                                        <button onclick="app.submitQuickEquation()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold font-mono text-xs rounded border border-slate-700 transition shrink-0">
+                                            Salvar
+                                        </button>
+                                    </div>
+                                </div>
+
                                 <!-- Card da Fórmula Atual -->
                                 <div class="bg-slate-950/90 border border-amber-500/30 rounded-xl p-3.5">
                                     <div class="flex items-center justify-between mb-1.5">
@@ -5056,18 +5069,24 @@
             bond: { price: 100, ytm: 8, coupon: 8, years: 10 },
             depr: { cost: 10000, salvage: 1000, life: 5, year: 1, method: 'SL' },
             timeCalc: { date1: '2026-01-15', date2: '2026-04-15', daysAdd: 30, dateFormat: 'D.M' },
+            alphaBuffer: '',
+            alphaSubmenu: null,
             menuStack: [], // Pilha hierárquica oficial de navegação de menus
             bus: { oldVal: 0, newVal: 0, cost: 0, price: 0, total: 0, part: 0 },
             currx: { base: 'BRL', rates: { USD: 1.0, BRL: 5.65, EUR: 0.92, GBP: 0.78, JPY: 152.0, CAD: 1.38 } },
             bond: { price: 100, ytm: 8, coupon: 8, years: 10 },
             depr: { cost: 10000, salvage: 1000, life: 5, year: 1, method: 'SL' },
             timeCalc: { date1: '2026-01-15', date2: '2026-04-15', daysAdd: 30, dateFormat: 'D.M' },
+            alphaBuffer: '',
+            alphaSubmenu: null,
             menuStack: ['MAIN'], // Pilha hierárquica oficial de navegação de menus
             bus: { oldVal: 0, newVal: 0, cost: 0, price: 0, total: 0, part: 0 },
             currx: { base: 'BRL', rates: { USD: 1.0, BRL: 5.65, EUR: 0.92, GBP: 0.78, JPY: 152.0, CAD: 1.38 } },
             bond: { price: 100, ytm: 8, coupon: 8, years: 10 },
             depr: { cost: 10000, salvage: 1000, life: 5, year: 1, method: 'SL' },
             timeCalc: { date1: '2026-01-15', date2: '2026-04-15', daysAdd: 30, dateFormat: 'D.M' },
+            alphaBuffer: '',
+            alphaSubmenu: null,
 
             // Feedback Tátil e Sonoro (apenas em modo celular)
             audioCtx: null,
@@ -6301,6 +6320,10 @@
 
                 const v = { ...this.solve.vars, [targetVar]: testVal };
 
+                if (typeof form.evalResidual === 'function') {
+                    return form.evalResidual(v);
+                }
+
                 try {
                     switch (form.id) {
                         case 'coef_financiamento_carencia_premio': {
@@ -6406,8 +6429,15 @@
                             if (Math.abs(v.ESTOQUE_MEDIO) < 1e-12) return NaN;
                             return v.GMROI - (v.LUCRO_BRUTO / v.ESTOQUE_MEDIO);
                         }
-                        default:
+                        default: {
+                            if (form.equation && form.vars) {
+                                if (!form.evalResidual) {
+                                    form.evalResidual = this.compileEquation(form.equation, form.vars);
+                                }
+                                return form.evalResidual(v);
+                            }
                             return 0;
+                        }
                     }
                 } catch (e) {
                     return NaN;
@@ -6617,6 +6647,7 @@
                     case 'TIME': return 'MENU TIME: Relógio e Calendário';
                     case 'TIME_CALC': return 'TIME CALC: Prazos e Projeções de Datas';
                     case 'TIME_CALC': return 'TIME CALC: Prazos e Projeções de Datas';
+                    case 'ALPHA': return 'MENU ALPHA: Digitação de Equações';
                     case 'CURRX': return 'MENU CURRX: Câmbio de Moedas';
                     case 'DSP': return 'MENU DSP: Ajustes de Exibição';
                     case 'MODES': return 'MENU MODES: Configurações Gerais';
@@ -6807,7 +6838,32 @@
                                 labels[i] = this.solve.varNames[i];
                             }
                         }
+                        if (this.solve && this.solve.varNames && this.solve.varNames.length < 5) {
+                            labels[this.solve.varNames.length] = 'NOVA';
+                        }
                         labels[5] = 'MAIN';
+                        break;
+                    case 'ALPHA':
+                        if (!this.alphaSubmenu) {
+                            labels[0] = 'A-E';
+                            labels[1] = 'F-J';
+                            labels[2] = 'K-O';
+                            labels[3] = 'P-T';
+                            labels[4] = 'U-Z';
+                            labels[5] = 'OUTR';
+                        } else if (this.alphaSubmenu === 'AE') {
+                            labels[0] = 'A'; labels[1] = 'B'; labels[2] = 'C'; labels[3] = 'D'; labels[4] = 'E'; labels[5] = 'ALPH';
+                        } else if (this.alphaSubmenu === 'FJ') {
+                            labels[0] = 'F'; labels[1] = 'G'; labels[2] = 'H'; labels[3] = 'I'; labels[4] = 'J'; labels[5] = 'ALPH';
+                        } else if (this.alphaSubmenu === 'KO') {
+                            labels[0] = 'K'; labels[1] = 'L'; labels[2] = 'M'; labels[3] = 'N'; labels[4] = 'O'; labels[5] = 'ALPH';
+                        } else if (this.alphaSubmenu === 'PT') {
+                            labels[0] = 'P'; labels[1] = 'Q'; labels[2] = 'R'; labels[3] = 'S'; labels[4] = 'T'; labels[5] = 'ALPH';
+                        } else if (this.alphaSubmenu === 'UZ') {
+                            labels[0] = 'U'; labels[1] = 'V'; labels[2] = 'W'; labels[3] = 'X'; labels[4] = 'Y'; labels[5] = 'Z';
+                        } else if (this.alphaSubmenu === 'OUTR') {
+                            labels[0] = 'ESP'; labels[1] = '='; labels[2] = '+'; labels[3] = '-'; labels[4] = '*'; labels[5] = 'ALPH';
+                        }
                         break;
                     case 'TAPE':
                         labels[0] = 'COPIAR';
@@ -6838,6 +6894,48 @@
             // Execução Centralizada das Softkeys F1 a F6 no LCD
             pressSoftkey(index) {
                 this.triggerKeyFeedback();
+
+                // 0. MODO ALFANUMÉRICO (ALPHA) NO VISOR HP
+                if (this.isAlphaMode()) {
+                    if (!this.alphaSubmenu) {
+                        switch (index) {
+                            case 0: this.alphaSubmenu = 'AE'; break;
+                            case 1: this.alphaSubmenu = 'FJ'; break;
+                            case 2: this.alphaSubmenu = 'KO'; break;
+                            case 3: this.alphaSubmenu = 'PT'; break;
+                            case 4: this.alphaSubmenu = 'UZ'; break;
+                            case 5: this.alphaSubmenu = 'OUTR'; break;
+                        }
+                    } else {
+                        const sub = this.alphaSubmenu;
+                        if (sub === 'AE') {
+                            const letters = ['A', 'B', 'C', 'D', 'E'];
+                            if (index < 5) this.alphaBuffer += letters[index];
+                            else this.alphaSubmenu = null;
+                        } else if (sub === 'FJ') {
+                            const letters = ['F', 'G', 'H', 'I', 'J'];
+                            if (index < 5) this.alphaBuffer += letters[index];
+                            else this.alphaSubmenu = null;
+                        } else if (sub === 'KO') {
+                            const letters = ['K', 'L', 'M', 'N', 'O'];
+                            if (index < 5) this.alphaBuffer += letters[index];
+                            else this.alphaSubmenu = null;
+                        } else if (sub === 'PT') {
+                            const letters = ['P', 'Q', 'R', 'S', 'T'];
+                            if (index < 5) this.alphaBuffer += letters[index];
+                            else this.alphaSubmenu = null;
+                        } else if (sub === 'UZ') {
+                            const letters = ['U', 'V', 'W', 'X', 'Y', 'Z'];
+                            this.alphaBuffer += letters[index];
+                        } else if (sub === 'OUTR') {
+                            const syms = [' ', ' = ', ' + ', ' - ', ' * '];
+                            if (index < 5) this.alphaBuffer += syms[index];
+                            else this.alphaSubmenu = null;
+                        }
+                    }
+                    this.updateAlphaLcd();
+                    return;
+                }
 
                 // 1. MENU PRINCIPAL (MAIN)
                 if (this.currentMenu === 'MAIN') {
@@ -7517,6 +7615,11 @@
                         this.handleSolveSoftkey(this.solve.varNames[index]);
                         return;
                     }
+                    // Softkey NOVA para criar nova equação pelo visor
+                    if (this.solve && this.solve.varNames && index === this.solve.varNames.length) {
+                        this.startAlphaEditor();
+                        return;
+                    }
                     if (index === 5) {
                         this.navigateToMenu('MAIN', 'HP 17bII+ Menu Principal');
                         return;
@@ -7554,6 +7657,12 @@
             // Entrada Numérica Oficial HP 17bII+
             pressDigit(d) {
                 this.triggerKeyFeedback();
+
+                if (this.isAlphaMode()) {
+                    this.alphaBuffer += d;
+                    this.updateAlphaLcd();
+                    return;
+                }
 
                 // Armazenamento em Registrador: STO [0-9] ou STO [op] [0-9]
                 if (this.stoState === 'pending') {
@@ -7661,6 +7770,12 @@
 
             pressDot() {
                 this.triggerKeyFeedback();
+
+                if (this.isAlphaMode()) {
+                    this.alphaBuffer += '.';
+                    this.updateAlphaLcd();
+                    return;
+                }
                 // Sub-função SHOW (Shift + .) - Exibe os 12 dígitos reais sem formatação
                 if (this.shiftActive) {
                     this.shiftActive = false;
@@ -7942,6 +8057,12 @@
             pressOp(op) {
                 this.triggerKeyFeedback();
 
+                if (this.isAlphaMode()) {
+                    this.alphaBuffer += ' ' + op + ' ';
+                    this.updateAlphaLcd();
+                    return;
+                }
+
                 // Aritmética de Registrador: STO + [0-9], STO - [0-9], STO * [0-9], STO / [0-9]
                 if (this.stoState === 'pending' && !this.stoOp) {
                     if (['+', '-', '*', '/'].includes(op)) {
@@ -8078,6 +8199,44 @@
 
             pressKey(key) {
                 this.triggerKeyFeedback();
+
+                if (this.isAlphaMode()) {
+                    if (key === 'BACKSPACE') {
+                        this.alphaBuffer = this.alphaBuffer.trimEnd();
+                        this.alphaBuffer = this.alphaBuffer.slice(0, -1);
+                        this.updateAlphaLcd();
+                        return;
+                    }
+                    if (key === 'CLR') {
+                        this.alphaBuffer = '';
+                        this.updateAlphaLcd();
+                        return;
+                    }
+                    if (key === 'EXIT') {
+                        if (this.alphaSubmenu) {
+                            this.alphaSubmenu = null;
+                            this.renderSoftkeyLabels();
+                            this.updateLCD();
+                        } else {
+                            this.exitAlphaMode();
+                        }
+                        return;
+                    }
+                    if (key === 'INPUT' || key === 'ENTER') {
+                        this.commitAlphaEquation();
+                        return;
+                    }
+                    if (key === '(' || key === ')') {
+                        this.alphaBuffer += key;
+                        this.updateAlphaLcd();
+                        return;
+                    }
+                    if (key === '=') {
+                        this.alphaBuffer += ' = ';
+                        this.updateAlphaLcd();
+                        return;
+                    }
+                }
 
                 if (key === 'EXIT') {
                     this.stoState = null;
@@ -8876,6 +9035,7 @@
                     || (tabId === 'BUS_SUM' && (this.currentMenu === 'BUS' || this.currentMenu === 'SUM' || (this.currentMenu && this.currentMenu.startsWith('BUS_'))))
                     || (tabId === 'TIME' && (this.currentMenu === 'TIME' || this.currentMenu === 'TIME_CALC'))
                     || (tabId === 'CURRX' && this.currentMenu === 'CURRX')
+                    || (tabId === 'SOLVE' && (this.currentMenu === 'SOLVE' || this.currentMenu === 'ALPHA'))
                     || (this.currentMenu === tabId);
 
                 if (!isSubmenuMatch) {
@@ -9945,6 +10105,146 @@
                     disp.innerHTML = `Depreciação (${method} Ano ${year}): <strong class="text-white">R$ ${this.formatNum(dep)}</strong>`;
                 }
                 this.setResult(dep, `DEPR ${method} (Ano ${year}): R$ ${this.formatNum(dep)}`, null, 'R$');
+            },
+
+            // ==========================================
+            // MÓDULO ALFANUMÉRICO ALPHA (HP 17bII+ FASE 4)
+            // ==========================================
+            isAlphaMode() {
+                return this.currentMenu === 'ALPHA';
+            },
+
+            startAlphaEditor(initialText = '') {
+                this.switchTab('SOLVE');
+                this.alphaBuffer = initialText;
+                this.alphaSubmenu = null;
+                this.navigateToMenu('ALPHA', 'ALPHA: ' + (initialText || '_'));
+                this.updateAlphaLcd();
+            },
+
+            exitAlphaMode() {
+                this.alphaBuffer = '';
+                this.alphaSubmenu = null;
+                this.navigateToMenu('SOLVE', 'MENU SOLVE: Equações');
+                this.updateLCD();
+            },
+
+            updateAlphaLcd() {
+                const l1 = document.getElementById('lcdLine1');
+                const l2 = document.getElementById('lcdLine2');
+                if (l1) l1.textContent = 'ALPHA: ' + (this.alphaBuffer || '') + '_';
+                if (l2) l2.textContent = this.alphaBuffer ? 'INPUT: Salva | EXIT: Sai' : 'Digite letras e números';
+                this.renderSoftkeyLabels();
+            },
+
+            commitAlphaEquation() {
+                const eq = (this.alphaBuffer || '').trim();
+                if (!eq) {
+                    this.setError('Equação em branco');
+                    return;
+                }
+                const success = this.createCustomFormula(eq);
+                if (success) {
+                    this.alphaBuffer = '';
+                    this.alphaSubmenu = null;
+                    this.currentMenu = 'SOLVE';
+                    const form = this.formulas.find(f => f.id === this.solve.activeFormulaId);
+                    const l1 = document.getElementById('lcdLine1');
+                    if (l1) l1.textContent = `SOLVE: ${form.title}`;
+                    this.renderCatalog();
+                    this.renderSoftkeyLabels();
+                    this.updateLCD();
+                    this.setResult(0, `Nova equação salva: ${eq}`);
+                }
+            },
+
+            submitQuickEquation() {
+                const inp = document.getElementById('input-quick-equation');
+                const eq = inp ? inp.value.trim() : '';
+                if (!eq) {
+                    this.setError('Informe a equação');
+                    return;
+                }
+                const success = this.createCustomFormula(eq);
+                if (success && inp) inp.value = '';
+            },
+
+            createCustomFormula(eqStr) {
+                const vars = this.extractVariablesFromEquation(eqStr);
+                if (!vars || vars.length === 0) {
+                    this.setError('Nenhuma variável válida');
+                    return false;
+                }
+                const id = 'custom_' + Date.now();
+                const title = eqStr.split('=')[0].trim() || 'Equação Custom';
+                const compiled = this.compileEquation(eqStr, vars);
+
+                const newForm = {
+                    id,
+                    title,
+                    category: 'Personalizadas (ALPHA)',
+                    equation: eqStr,
+                    vars,
+                    evalResidual: compiled
+                };
+
+                this.formulas.push(newForm);
+                this.selectFormula(id);
+                return true;
+            },
+
+            extractVariablesFromEquation(eqStr) {
+                let eq = eqStr;
+                if (eq.includes(':')) {
+                    eq = eq.split(':')[1];
+                }
+                const tokens = eq.match(/\b[A-Za-z_][A-Za-z0-9_]*\b/g) || [];
+                const keywords = new Set(['EXP', 'LN', 'LOG', 'SQRT', 'SIN', 'COS', 'TAN', 'IF', 'MAX', 'MIN', 'ABS', 'INV']);
+                const vars = [];
+                for (const t of tokens) {
+                    const u = t.toUpperCase();
+                    if (!keywords.has(u) && !vars.includes(u)) {
+                        vars.push(u);
+                    }
+                }
+                return vars;
+            },
+
+            compileEquation(eqStr, varNames) {
+                let eq = eqStr;
+                if (eq.includes(':')) {
+                    eq = eq.split(':')[1];
+                }
+                const parts = eq.split('=');
+                let lhs = parts[0].trim();
+                let rhs = parts.length > 1 ? parts.slice(1).join('=').trim() : '0';
+
+                lhs = lhs.replace(/\^/g, '**')
+                         .replace(/\bLN\s*\(/gi, 'Math.log(')
+                         .replace(/\bLOG\s*\(/gi, 'Math.log10(')
+                         .replace(/\bEXP\s*\(/gi, 'Math.exp(')
+                         .replace(/\bSQRT\s*\(/gi, 'Math.sqrt(');
+
+                rhs = rhs.replace(/\^/g, '**')
+                         .replace(/\bLN\s*\(/gi, 'Math.log(')
+                         .replace(/\bLOG\s*\(/gi, 'Math.log10(')
+                         .replace(/\bEXP\s*\(/gi, 'Math.exp(')
+                         .replace(/\bSQRT\s*\(/gi, 'Math.sqrt(');
+
+                const sortedVars = [...varNames].sort((a, b) => b.length - a.length);
+                let evalStr = `(${lhs}) - (${rhs})`;
+                for (const v of sortedVars) {
+                    const regex = new RegExp(`\\b${v}\\b`, 'g');
+                    evalStr = evalStr.replace(regex, `(v['${v}'] !== undefined ? Number(v['${v}']) : 0)`);
+                }
+
+                return (v) => {
+                    try {
+                        return Function('v', `return ${evalStr};`)(v);
+                    } catch (e) {
+                        return NaN;
+                    }
+                };
             },
 
             calcDepreciationSL() {
