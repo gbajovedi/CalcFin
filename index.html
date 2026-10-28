@@ -8796,11 +8796,15 @@
             calculateTVM(target) {
                 const cfKeys = ['PV', 'PMT', 'FV'];
 
-                // 1. Ler e validar P/YR (não auto-preenche 12 na interface)
+                // 1. Ler e validar P/YR (se não preenchido, preenche automaticamente com 1)
                 const pyrField = document.getElementById('input-tvm-PYR');
-                const rawPyr = (pyrField && pyrField.value.trim() !== '') ? this.parseNumericValue(pyrField.value) : null;
-                const pyr = (rawPyr && rawPyr > 0) ? rawPyr : 12;
+                let rawPyr = (pyrField && pyrField.value.trim() !== '') ? this.parseNumericValue(pyrField.value) : null;
+                if (rawPyr === null || !Number.isFinite(rawPyr) || rawPyr <= 0) {
+                    rawPyr = 1;
+                    if (pyrField) pyrField.value = '1';
+                }
                 this.tvm.PYR = rawPyr;
+                const pyr = rawPyr;
 
                 // 2. Se o alvo não for N, N é obrigatório e deve ser > 0
                 if (target !== 'N') {
@@ -9188,7 +9192,13 @@
                 const fvField = document.getElementById('input-tvm-FV');
 
                 let balance = Math.abs(this.tvm.PV !== null ? this.tvm.PV : (pvField ? this.parseNumericValue(pvField.value) || 0 : 0));
-                const pyr = this.tvm.PYR || 12;
+                let pyrVal = (this.tvm.PYR !== null && this.tvm.PYR !== undefined && this.tvm.PYR > 0) ? this.tvm.PYR : (pyrField ? this.parseNumericValue(pyrField.value) : null);
+                if (pyrVal === null || !Number.isFinite(pyrVal) || pyrVal <= 0) {
+                    pyrVal = 1;
+                    if (pyrField && pyrField.value.trim() === '') pyrField.value = '1';
+                    this.tvm.PYR = 1;
+                }
+                const pyr = pyrVal;
                 const iRate = this.tvm.I !== null ? this.tvm.I : (iField ? this.parseNumericValue(iField.value) || 0 : 0);
                 const i = pyr !== 0 ? (iRate / 100) / pyr : 0;
                 const pmt = Math.abs(this.tvm.PMT !== null ? this.tvm.PMT : (pmtField ? this.parseNumericValue(pmtField.value) || 0 : 0));
